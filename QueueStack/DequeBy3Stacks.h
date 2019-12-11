@@ -68,7 +68,7 @@ private:
     if (!dst.empty()) return;
 
     // 1st half src to buffer
-    int halfSize = (int)src.size() / 2;
+    int halfSize = src.size() / 2;
     for (int n = 0; n < halfSize; ++n) {
       buffer.push(src.top());
       src.pop();

@@ -42,7 +42,7 @@ public:
   bool allUnique(string word) {
     vector<int> bit_vec(8, 0);
 
-    for (int i = 0; i < (int)word.size(); ++i) {
+    for (int i = 0; i < word.size(); ++i) {
       char ch = word[i];
       int row = ch / 32;
       int col = ch % 32;

@@ -167,7 +167,7 @@ public:
     vector<vector<int>> res;
     unordered_map<int, vector<int>> map;
 
-    for (int i = 0; i < (int)input.size(); ++i) {
+    for (int i = 0; i < input.size(); ++i) {
       if (map.find(target - input[i]) != map.end()) {
         auto indices = map[target - input[i]];
         for (auto j : indices)
@@ -214,7 +214,7 @@ public:
     sort(input.begin(), input.end());
     vector<int> res(2);
     int minDiff = INT_MAX;
-    int i = 0, j = (int)input.size() - 1;
+    int i = 0, j = input.size() - 1;
 
     while (i < j) {
       int diff = target - (input[i] + input[j]);
@@ -290,7 +290,7 @@ public:
   // Time: O(n^2)
   vector<vector<int>> ThreeSum(vector<int> nums, int target) {
     vector<vector<int>> res;
-    const int size = (int)nums.size();
+    const int size = nums.size();
     std::sort(nums.begin(), nums.end());
 
     for (int n = 0; n < size; ++n) {
@@ -632,7 +632,7 @@ public:
 
   // Sorted, keep 1 of the dups
   vector<int> arrayDedup(vector<int> nums) {
-    int size = (int)nums.size();
+    int size = nums.size();
     if (size <= 1) return nums;
 
     // s
@@ -671,7 +671,7 @@ public:
   // Else, overwrite slow
   vector<int> arrayDedup2(vector<int> nums) {
     int slow = 0;
-    for (int fast = 0; fast < (int)nums.size(); fast++)
+    for (int fast = 0; fast < nums.size(); fast++)
       if (slow < 2 || nums[fast] > nums[slow - 2])
         nums[slow++] = nums[fast];
     nums.resize(slow);
@@ -684,7 +684,7 @@ public:
   // Key: track how many dups we have seen?
   // one 1, three 2s, two 3s -- do something about the 2s and 3s
   vector<int> arrayDedup3(vector<int> nums) {
-    int size = (int)nums.size();
+    int size = nums.size();
     if (size <= 1) return nums;
 
     int slow = 0, fast = 0;
@@ -717,7 +717,7 @@ public:
   // Rules: 1. always push new value regardless
   //        2. if seeing dups (that means the number just pushed into the stack need to be removed), keep skipping dups, then pop the stack
   vector<int> arrayDedup4(vector<int> nums) {
-    int size = (int)nums.size();
+    int size = nums.size();
     if (size <= 1) return nums;
 
     deque<int> s;
@@ -752,8 +752,8 @@ public:
   vector<int> nextGreater(vector<int> partial, vector<int> all) {
     const int n = all.size();
     stack<int> stack;
-    vector<int> nextGreat(n);
-    unordered_map<int, int> map; // simply for book keeping
+    vector<int> nextGreater(n);
+    unordered_map<int, int> map; // simply for book keeping, key: element value, value: index
 
     for (int i = n - 1; i >= 0; --i) {
       int curr = all[i];
@@ -764,13 +764,13 @@ public:
         stack.pop();
 
       // stack top is the "next greater", or not found
-      nextGreat[i] = stack.empty() ? -1 : stack.top();
+      nextGreater[i] = stack.empty() ? -1 : stack.top();
       stack.push(curr);
     }
 
     vector<int> out;
     for (auto p : partial)
-      out.push_back(nextGreat[map[p]]);
+      out.push_back(nextGreater[map[p]]);
     return out;
   }
 
@@ -781,7 +781,7 @@ public:
   vector<int> nextGreater2(vector<int> nums) {
     const int size = nums.size();
     stack<int> stack;
-    vector<int> out(nums.size());
+    vector<int> nextGreater(nums.size());
 
     for (int i = size - 1; i >= 0; i--) {
       int curr = nums[i];
@@ -793,21 +793,21 @@ public:
         bool found = false;
         for (int j = 0; j < i; j++) {
           if (nums[j] > curr) {
-            out[i] = nums[j];
+            nextGreater[i] = nums[j];
             found = true;
             break;
           }
         }
 
-        if (!found) out[i] = -1;
+        if (!found) nextGreater[i] = -1;
       }
       else {
-        out[i] = stack.top();
+        nextGreater[i] = stack.top();
       }
 
       stack.push(curr);
     }
-    return out;
+    return nextGreater;
   }
 
 

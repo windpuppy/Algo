@@ -129,7 +129,7 @@ public:
     vector<int> res;
     if (array.size() == 0) return res;
 
-    quickSelect(array, 0, (int)array.size() - 1, k - 1);
+    quickSelect(array, 0, array.size() - 1, k - 1);
     res.assign(array.begin(), array.begin() + k);
 
     return res;
@@ -441,7 +441,7 @@ public:
     vector<int> res{ 0, INT_MAX };
 
     // push head element from all arrays,
-    for (int n = 0; n < (int)arrays.size(); ++n) {
+    for (int n = 0; n < arrays.size(); ++n) {
       auto val = arrays[n].front();
       pq.push(Node(val, n, 0));
       maxVal = max(maxVal, val);
@@ -456,7 +456,7 @@ public:
       if (maxVal - minVal < res[1] - res[0]) res = vector<int>{ minVal, maxVal };
 
       // one of the lists is used up - we terminate
-      if (j == (int)arrays[i].size() - 1) return res;
+      if (j == arrays[i].size() - 1) return res;
 
       // otherwise, grab the next node from the min-value list, replace with heap top
       j++;
@@ -561,7 +561,7 @@ public:
       int k = curr[2];
 
       // try a
-      if (i + 1 < (int)a.size()) {
+      if (i + 1 < a.size()) {
         vector<int> aa{ i + 1, j, k };
         //if (visited.find(aa) == visited.end()) {
         pq.push(aa);
@@ -570,7 +570,7 @@ public:
       }
 
       // try b
-      if (j + 1 < (int)b.size()) {
+      if (j + 1 < b.size()) {
         vector<int> bb{ i, j + 1, k };
         //if (visited.find(bb) == visited.end()) {
         pq.push(bb);
@@ -579,7 +579,7 @@ public:
       }
 
       // try c
-      if (k + 1 < (int)c.size()) {
+      if (k + 1 < c.size()) {
         vector<int> cc{ i, j, k + 1 };
         //if (visited.find(cc) == visited.end()) {
         pq.push(cc);
@@ -978,7 +978,7 @@ public:
       auto numSpacing = (int)pow(2, list.size() - n - 1);
       string leftSpace(numSpacing, ' ');
 
-      auto numItems = (int)list[n].size();
+      auto numItems = list[n].size();
       auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
       string middleSpace(numMiddleSpacing, ' ');
 

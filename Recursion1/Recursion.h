@@ -53,8 +53,8 @@ public:
   }
 
   bool match_recur(string& s, string& t, int si, int ti) {
-    int slen = (int)s.length();
-    int tlen = (int)t.length();
+    int slen = s.length();
+    int tlen = t.length();
 
     // The ONLY base case that returns true
     // when both s and t run out, we have a match

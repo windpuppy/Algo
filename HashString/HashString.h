@@ -53,7 +53,7 @@ public:
   // method 4: bit operation
   int missingNumber(vector<int> nums) {
     if (nums.empty()) return 1;
-    int n = (int)nums.size() + 1;
+    int n = nums.size() + 1;
     int res = 0;
     for (int i = 0; i <= n; ++i) res ^= i; // xor 1 to n
     for (auto i : nums) res ^= i; // xor input
@@ -63,7 +63,7 @@ public:
   vector<int> commonNumbers(vector<int> a, vector<int> b) {
     vector<int> res;
     int i = 0, j = 0;
-    while (i < (int)a.size() && j < (int)b.size())
+    while (i < a.size() && j < b.size())
       if (a[i] == b[j]) {
         res.push_back(a[i++]);
         j++;
@@ -83,7 +83,7 @@ public:
 
     // slow faster pointers
     int slow = 0;
-    for (int fast = slow; fast < (int)input.size(); ++fast)
+    for (int fast = slow; fast < input.size(); ++fast)
       if (set.find(input[fast]) == set.end())
         input[slow++] = input[fast];
 
@@ -96,7 +96,7 @@ public:
     char space(' ');
 
     int slow = 0;
-    for (int fast = 0; fast < (int)input.size(); ++fast) {
+    for (int fast = 0; fast < input.size(); ++fast) {
       // skip spaces if 1) at begining, or 2) repeating space
       if (input[fast] == space && (fast == 0 || input[fast - 1] == space))
         continue;
@@ -118,7 +118,7 @@ public:
     if (input.empty() || input.size() == 1) return input;
 
     int slow = 1;
-    for (int fast = 1; fast < (int)input.size(); ++fast) {
+    for (int fast = 1; fast < input.size(); ++fast) {
       if (input[fast] != input[slow - 1])
         input[slow++] = input[fast];
     }
@@ -130,10 +130,10 @@ public:
   // Use a stack
   string removeAdjacentRepeatedCharsIV(string input) {
     if (input.empty() || input.size() == 1) return input;
-    int size = (int)input.size();
+    int size = input.size();
     deque<char> stack;
     stack.push_back(input.front());
-    for (int n = 1; n < (int)input.size(); ++n) {
+    for (int n = 1; n < input.size(); ++n) {
       // if not equal, keep pushing
       if (stack.empty() || input[n] != stack.back()) {
         stack.push_back(input[n]);
@@ -159,7 +159,7 @@ public:
     if (large.size() < small.size()) return -1;
     if (small.empty()) return 0;
 
-    for (int i = 0; i < (int)large.size() - (int)small.size() + 1; ++i) {
+    for (int i = 0; i < large.size() - (int)small.size() + 1; ++i) {
       if (areEqualAt(large, i, small))
         return i;
     }
@@ -168,7 +168,7 @@ public:
 
   // Compare small with large at n
   bool areEqualAt(string large, int n, string small) {
-    for (int i = 0; i < (int)small.size(); ++i)
+    for (int i = 0; i < small.size(); ++i)
       if (large[i + n] != small[i])
         return false;
     return true;
@@ -183,12 +183,12 @@ public:
     unsigned long long targetHash = getHashCode(small);
 
     int slow = 0;
-    int fast = (int)small.size() - 1;
+    int fast = small.size() - 1;
     unsigned long long currHash = getHashCode(large, slow, fast);
     if (currHash == targetHash)
       return slow;
 
-    for (fast = (int)small.size(), slow = 1; fast < (int)large.size(); fast++, slow++) {
+    for (fast = small.size(), slow = 1; fast < large.size(); fast++, slow++) {
       updateHashCode(large, slow, fast, currHash);
       if (currHash == targetHash)
         return slow;
@@ -197,7 +197,7 @@ public:
   }
 
   string reverseString(string input) {
-    int i = 0, j = (int)input.size() - 1;
+    int i = 0, j = input.size() - 1;
     while (i < j)
       swap(input[i++], input[j--]);
     return input;
@@ -205,7 +205,7 @@ public:
 
   string reverseWords(string input) {
     if (input.empty() || input.size() == 1) return input;
-    int size = (int)input.size();
+    int size = input.size();
 
     // Step 1: reverse each words (using two pointers)
     int i = 0, j = 0;
@@ -245,7 +245,7 @@ public:
   }
 
   string replaceShorter(string input, string s, string t) {
-    int size = (int)input.size(), size1 = (int)s.size(), size2 = (int)t.size();
+    int size = input.size(), size1 = s.size(), size2 = t.size();
 
     // Slow: left of slow are all processed. When we do substring replacement, we do it at slow. At the end, slow will be out final output.
     // Fast: the faster pointer that looks for the matching and returns the char(s) need to be copied to the final output
@@ -265,12 +265,12 @@ public:
   }
 
   string replaceLonger(string input, string s, string t) {
-    int size = (int)input.size(), size1 = (int)s.size(), size2 = (int)t.size();
+    int size = input.size(), size1 = s.size(), size2 = t.size();
 
     // Get all the matches first, get ready for input array allocation / expansion.
     auto matches = getAllMatches(input, s);
     if (matches.empty()) return input;
-    int expandSize = (int)matches.size() * (size2 - size1);
+    int expandSize = matches.size() * (size2 - size1);
     input += string(expandSize, ' ');
 
     // Slow and fast both coming from right this time
@@ -279,7 +279,7 @@ public:
     // Match index: going through the (previously found) matches
     int slow = size + expandSize - 1;
     int fast = size - 1;
-    int matchIndex = (int)matches.size() - 1;
+    int matchIndex = matches.size() - 1;
     while (fast >= 0) {
       // Copy only if: matches not all processed, and when fast hit a match
       if (matchIndex >= 0 && fast == matches[matchIndex]) {
@@ -297,15 +297,15 @@ public:
 
   // Copy small into large at n
   void copySubstringAt(string& large, int n, string small) {
-    for (int i = 0; i < (int)small.size(); ++i)
+    for (int i = 0; i < small.size(); ++i)
       large[i + n] = small[i];
   }
 
   // Get all matches. Record end indexes for later convenience
   vector<int> getAllMatches(string large, string small) {
     vector<int> res;
-    int size1 = (int)large.size();
-    int size2 = (int)small.size();
+    int size1 = large.size();
+    int size2 = small.size();
     int i = 0;
     while (i <= size1) {
       if (areEqualAt(large, i, small)) {
@@ -335,9 +335,9 @@ public:
   // so on...
   vector<int> reorderArray(vector<int> input) {
     if (input.size() % 2 == 0)
-      reorder(input, 0, (int)input.size() - 1);
+      reorder(input, 0, input.size() - 1);
     else
-      reorder(input, 0, (int)input.size() - 2); // odd size array? ignore the last element
+      reorder(input, 0, input.size() - 2); // odd size array? ignore the last element
     return input;
   }
 
@@ -375,7 +375,7 @@ public:
   // 2nd pass - move slow and fast backwards, append "1"s to unique chars
   string compress(string input) {
     if (input.empty() || input.size() == 1) return input;
-    int length = (int)input.size();
+    int length = input.size();
     int newLength = 0; // newLength can be shorter than input length, so we start from zero and build it!
 
     // FIRST PASS ///////////////////////////////////////
@@ -440,7 +440,7 @@ public:
   int copyDigits(string& input, int index, int count) {
     if (!count) return 0;
     auto str = to_string(count);
-    for (int n = 0; n < (int)str.size(); ++n) {
+    for (int n = 0; n < str.size(); ++n) {
       input[index++] = str[n];
     }
     return (int)str.size();
@@ -471,7 +471,7 @@ public:
   }
 
   void decompressShort(string& input, int& shortSize, int& longSize) {
-    int length = (int)input.size();
+    int length = input.size();
     int slow = 0;
     int fast = 0;
     longSize = 0;
@@ -570,7 +570,7 @@ public:
     unordered_set<char> set;
     int slow = 0, fast = 0, longest = 0;
 
-    while (fast < (int)s.size()) {
+    while (fast < s.size()) {
       char curr = s[fast];
 
       if (set.find(curr) != set.end()) {
@@ -604,7 +604,7 @@ public:
     map[s[0]] = 0;
 
     int i;
-    for (i = 1; i < (int)s.length(); i++) {
+    for (i = 1; i < s.length(); i++) {
       char c = s[i];
 
       // Only do this if:
@@ -637,8 +637,8 @@ public:
   vector<int> allAnagrams(string large, string small) {
     vector<int> res;
     if (large.empty() || large.size() < small.size()) return res;
-    const int size1 = (int)large.size();
-    const int size2 = (int)small.size();
+    const int size1 = large.size();
+    const int size2 = small.size();
 
     // e.g. nothing else other than chars in small string will goes into this map
     unordered_map<char, int> map;
@@ -665,7 +665,7 @@ public:
       }
 
       // 3) Check current matching condition
-      if (match == (int)map.size())
+      if (match == map.size())
         res.push_back(i - size2 + 1);
     }
     return res;
@@ -751,7 +751,7 @@ public:
       return true;
 
     int i = 0;
-    int j = (int)input.size() - 1;
+    int j = input.size() - 1;
 
     while (i < j) {
       char a = input[i];
@@ -817,7 +817,7 @@ public:
   bool validPalinedromeWithOneDelete(string s) {
     if (s.size() <= 2) return true;
     int i = 0;
-    int j = (int)s.size() - 1;
+    int j = s.size() - 1;
 
     while (i < j) {
       char a = s[i];
@@ -863,7 +863,7 @@ public:
   // 3 a |       T F
   // 4 a |         T
   string longestPalindromeSubstring(string str) {
-    int n = (int)str.size();
+    int n = str.size();
     vector<bool> tmp(n, false);
     vector<vector<bool>> table(n, tmp);
 
@@ -922,7 +922,7 @@ public:
   // So longest palindrome subsequence is from 0 to 5 : "abdba"
   // We can also start from the top right corner, 5, and go bottom left direction to recover this string
   int longestPalindromeSubsequence(string str) {
-    int n = (int)str.size();
+    int n = str.size();
     vector<int> tmp(n, 0);
     vector<vector<int>> table(n, tmp);
 
@@ -1026,7 +1026,7 @@ public:
     // "" considered palindrome already
     if (str.empty()) return 0;
 
-    int n = (int)str.size();
+    int n = str.size();
     vector<int> tmp(n, 0);
     vector<vector<int>> table(n, tmp);
 
@@ -1105,7 +1105,7 @@ public:
 private:
 
   unsigned long long getHashCode(string small) {
-    const int size = (int)small.size();
+    const int size = small.size();
     unsigned long long sum = 0;
     for (int i = 0; i < size; ++i) {
       auto t1 = (unsigned long long)(small[i] - 'a');

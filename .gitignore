@@ -3,3 +3,19 @@
 ################################################################################
 
 /.vs
+/Array/x64/Debug
+/BinarySearch/x64/Debug
+/BinaryTreeBST/x64/Debug
+/Bit/x64/Debug
+/DP/x64/Debug
+/Graph1-DFS/x64/Debug
+/Graph2-DFS/x64/Debug
+/HashString/x64/Debug
+/Heap/x64/Debug
+/LinkedList/x64/Debug
+/OOD/x64/Debug
+/QueueStack/x64/Debug
+/Recursion1/x64/Debug
+/Sampling/x64/Debug
+/Sorting/x64/Debug
+/x64/Debug

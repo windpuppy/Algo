@@ -11,7 +11,7 @@ class BinarySearch
 public:
   // O(logn), O(1)
   int binarySearch(vector<int> array, int target) {
-    int size = (int)array.size();
+    int size = array.size();
     if (size == 0) return -1;
 
     int left = 0;
@@ -32,8 +32,8 @@ public:
     vector<int> invalid{ -1, -1 };
     if (matrix.empty() || matrix[0].empty()) return invalid;
 
-    int rows = (int)matrix.size();
-    int cols = (int)matrix[0].size();
+    int rows = matrix.size();
+    int cols = matrix[0].size();
 
     int left = 0;
     int right = rows * cols - 1;
@@ -59,7 +59,7 @@ public:
     if (array.empty()) return -1;
 
     int left = 0;
-    int right = (int)array.size();
+    int right = array.size();
 
     // leave minimum 2 elements here
     while (left < right - 1) {
@@ -83,7 +83,7 @@ public:
     if (array.empty()) return -1;
 
     int left = 0;
-    int right = (int)array.size() - 1;
+    int right = array.size() - 1;
 
     // leave minimum 2 elements here
     while (left < right - 1) {
@@ -107,7 +107,7 @@ public:
     if (array.empty()) return -1;
 
     int left = 0;
-    int right = (int)array.size() - 1;
+    int right = array.size() - 1;
 
     // leave minimum 2 elements here
     while (left < right - 1) {
@@ -135,7 +135,7 @@ public:
   // If k very very large ==? O(logn) + O(n), so it's O(n)
   vector<int> kClosest(vector<int> arr, int target, int k) {
     vector<int> res;
-    int size = (int)arr.size();
+    int size = arr.size();
     if (size == 0 || k == 0) return res;
 
     // left (smallest less equal) and right should be the closest pair!
@@ -161,7 +161,7 @@ public:
 
   int largestLessEqual(const vector<int>& arr, int target) {
     int left = 0;
-    int right = (int)arr.size() - 1;
+    int right = arr.size() - 1;
 
     while (left < right - 1) {
       int mid = left + (right - left) / 2;
@@ -187,7 +187,7 @@ public:
     if (array.empty()) return -1;
 
     int left = 0;
-    int right = (int)array.size() - 1;
+    int right = array.size() - 1;
 
     // need 2 elements left
     while (left < right - 1) {

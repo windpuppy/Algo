@@ -1334,7 +1334,7 @@ public:
   // Time: O(3n), so it's O(n)
   // Space: O(1)
   bool ascendingTriple(vector<int> nums) {
-    const int size = (int)nums.size();
+    const int size = nums.size();
 
     // build smaller
     int min_i = 0;

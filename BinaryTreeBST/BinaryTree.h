@@ -481,7 +481,7 @@ public:
       height++;
 
       // pop current level nodes, push next level nodes
-      int count = (int)q.size();
+      int count = q.size();
       while (count > 0) {
         TreeNode* curr = q.front(); q.pop_front();
 
@@ -1172,7 +1172,7 @@ public:
 
 
   TreeNode* reconstructWithPreIn(const vector<int>& preOrder, const vector<int>& inOrder) {
-    int size = (int)preOrder.size();
+    int size = preOrder.size();
 
     unordered_map<int, int> inMap;
     for (auto n = 0; n != inOrder.size(); ++n)
@@ -1213,7 +1213,7 @@ public:
 
   // Assumption: BST!
   TreeNode* reconstructWithPostBST(const vector<int>& postOrder) {
-    int lastIndex = (int)postOrder.size() - 1;
+    int lastIndex = postOrder.size() - 1;
 
     // Physical meaning of the postOrder last element? Yes, it's the ROOT of THE TREE we are building!
     return buildSubTreePost(postOrder, lastIndex, postOrder[lastIndex], INT_MIN, INT_MAX);
@@ -1462,20 +1462,20 @@ public:
   // Related problem: subArraySumToTarget
   bool pathSumToTarget2(TreeNode* root, int target) {
     if (!root) return false;
-    unordered_set<int> set;
-    set.insert(0); // important!
-    return pathSum2_helper(root, target, set, 0);
+    unordered_set<int> prefixSum;
+    prefixSum.insert(0); // important!
+    return pathSum2_helper(root, 0, target, prefixSum);
   }
 
-  bool pathSum2_helper(TreeNode* root, int target, unordered_set<int> set, int currSum) {
+  bool pathSum2_helper(TreeNode* root, int currSum, int target, unordered_set<int> prefixSum) {
     currSum += root->value;
-    if (set.find(currSum - target) != set.end())
+    if (prefixSum.find(currSum - target) != prefixSum.end())
       return true;
-    set.insert(currSum);
+    prefixSum.insert(currSum);
 
-    if (root->left && pathSum2_helper(root->left, target, set, currSum))
+    if (root->left && pathSum2_helper(root->left, currSum, target, prefixSum))
       return true;
-    if (root->right && pathSum2_helper(root->right, target, set, currSum))
+    if (root->right && pathSum2_helper(root->right, currSum, target, prefixSum))
       return true;
     return false;
   }
@@ -1600,7 +1600,7 @@ public:
       auto numSpacing = (int)pow(2, list.size() - n - 1);
       string leftSpace(numSpacing, ' ');
 
-      auto numItems = (int)list[n].size();
+      auto numItems = list[n].size();
       auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
       string middleSpace(numMiddleSpacing, ' ');
 

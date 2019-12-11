@@ -21,7 +21,7 @@ public:
 class Heap {
 public:
   vector<int> heapify(vector<int> array) {
-    int size = (int)array.size();
+    int size = array.size();
 
     // start with  size / 2 -1 (ie non leaf row, first node), do percolateDown leftwards through the array
     for (int n = size / 2 - 1; n >= 0; --n)
@@ -31,7 +31,7 @@ public:
   }
 
   vector<int> offerHeap(vector<int> array, int element) {
-    int size = (int)array.size();
+    int size = array.size();
     array.at(size - 1) = element;
 
     percolateUp(array, size - 1);
@@ -40,7 +40,7 @@ public:
   }
 
   vector<int> updateHeap(vector<int> array, int index, int element) {
-    int size = (int)array.size();
+    int size = array.size();
     if (index < 0 || index > size - 1) return array;
 
     // It's already a heap, remember this! (ie. no need to heapify)
@@ -60,7 +60,7 @@ public:
 
   // Heap sort with MAX HEAP!!!
   vector<int> heapsort(vector<int> array) {
-    int size = (int)array.size();
+    int size = array.size();
 
     // Build max heap, using the n/2-1 technique
     for (int n = size / 2 - 1; n >= 0; --n) {
@@ -79,7 +79,7 @@ public:
   }
 
   bool isMinHeap(vector<int> array) {
-    int size = (int)array.size();
+    int size = array.size();
     if (array.empty() || size == 1) return true;
 
     // similar to level order traversal, use queue!
@@ -338,7 +338,7 @@ public:
       auto numSpacing = (int)pow(2, list.size() - n - 1);
       string leftSpace(numSpacing, ' ');
 
-      auto numItems = (int)list[n].size();
+      auto numItems = list[n].size();
       auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
       string middleSpace(numMiddleSpacing, ' ');
 

@@ -25,7 +25,7 @@ public:
   // 1 + 2 + 3 + ... + n = n(n+1)/2 = n^2
   vector<int> selectionSort(vector<int> nums)
   {
-    int size = (int)nums.size();
+    int size = nums.size();
     if (size <= 1) return nums;
 
     for (int i = 0; i < size - 1; ++i) {
@@ -59,7 +59,7 @@ public:
   // Conclusion: O(n) for array, O(logn) for LL
   vector<int> mergeSort(const vector<int>& array) {
     if (array.size() == 0 || array.size() == 1) return array;
-    return mergeSort(array, 0, (int)array.size() - 1);
+    return mergeSort(array, 0, array.size() - 1);
   }
 
   vector<int> mergeSort(const vector<int>& array, int left, int right) {
@@ -101,7 +101,7 @@ public:
   vector<int> quickSort(vector<int> array) {
     if (array.size() <= 1) return array;
 
-    quickSort(array, 0, (int)array.size() - 1);
+    quickSort(array, 0, array.size() - 1);
     return array;
   }
 
@@ -153,7 +153,7 @@ public:
 
     // Two bounds
     int lb = 0;
-    int rb = (int)array.size() - 1;
+    int rb = array.size() - 1;
 
     while (lb <= rb) {
       if (array[lb] != 0) // non-zero on left: push lb
@@ -175,7 +175,7 @@ public:
     // Three bounds
     int left = 0;
     int mid = 0;
-    int right = (int)nums.size() - 1;
+    int right = nums.size() - 1;
 
     // Move mid towards right
     while (mid <= right) {
@@ -230,8 +230,8 @@ public:
   // Now a bigger problem becomes a smaller problem, and we continue
   // Time O(logk)
   int kthSmallestInTwoSortedArrays(vector<int> a, vector<int> b, int k) {
-    int sizea = (int)a.size();
-    int sizeb = (int)b.size();
+    int sizea = a.size();
+    int sizeb = b.size();
     if (k < 1 || k > sizea + sizeb)
       return -1;
 
@@ -244,8 +244,8 @@ public:
   }
 
   int kthSmallest_helper(vector<int> a, int low1, vector<int> b, int low2, int kmore) {
-    int high1 = (int)a.size() - 1;
-    int high2 = (int)b.size() - 1;
+    int high1 = a.size() - 1;
+    int high2 = b.size() - 1;
 
     if (low1 > high1) // a used up, answer is in b
       return b[low2 + kmore - 1];

@@ -48,7 +48,7 @@ public:
   }
 
   void subsets_dfs(const string& input, int index, string& out, vector<string>& res) {
-    if (index == (int)input.size()) {
+    if (index == input.size()) {
       res.push_back(out);
       return;
     }
@@ -90,7 +90,7 @@ public:
 
   void subsets2_dfs(const string& input, int index, string& out, vector<string>& res) {
     // Base case
-    int size = (int)input.length();
+    int size = input.length();
     if (index == size) {
       res.push_back(out);
       return;
@@ -114,7 +114,7 @@ public:
   
   // All subsets of k size
   vector<string> subsetsOfK(string input, int k) {
-    int size = (int)input.length();
+    int size = input.length();
     if (size == 0 && k == 0) return vector<string>{""};
     else if (size == k) return vector<string>{input};
     else if (size < k) return vector<string>();
@@ -197,7 +197,7 @@ public:
     // Pre-sort string for dedup later on during recursion
     sort(input.begin(), input.end());
 
-    int size = (int)input.length();
+    int size = input.length();
     if (size == 0 && k == 0) return vector<string>{""};
     else if (size < k) return vector<string>();
     else if (size == k) return vector<string>{input};
@@ -221,7 +221,7 @@ public:
       subsetsOfK2_dfs(input, index + 1, k, out, res);
 
     // dedup - skip repeating chars
-    while (index + 1 < (int)input.length() && input[index] == input[index + 1])
+    while (index + 1 < input.length() && input[index] == input[index + 1])
       index++;
 
     if (out.size() <= k - 1) { // pruning
@@ -392,7 +392,7 @@ public:
 
   void coinCombinations_dfs(vector<int> coins, int moneyLeft, int index, vector<int>& out, vector<vector<int>>& res) {
     // General base case
-    if (index == (int)coins.size() - 1) {
+    if (index == coins.size() - 1) {
       // Only consider this a valid solution if the remaining money can be represented by the final coin type
       if (moneyLeft % coins.back() == 0) {
         out[index] = moneyLeft / coins.back();
@@ -506,13 +506,13 @@ public:
 
   // using a set for horizontal dedup
   void permutations2_dfs(string input, int index, vector<string>& res) {
-    if (index == (int)input.size()) {
+    if (index == input.size()) {
       res.push_back(input);
       return;
     }
 
     unordered_set<char> set;
-    for (int i = index; i < (int)input.size(); ++i) {
+    for (int i = index; i < input.size(); ++i) {
       if (set.find(input[i]) != set.end())
         continue;
       set.insert(input[i]);
@@ -647,14 +647,14 @@ public:
   // Fixed level, use out[], same as coins
   void telephonePad_dfs(const unordered_map<char, string>& dict, const string& digits, int index, vector<char>& out, vector<string>& res) {
     // base case just like the classical subset 1 problem - take all
-    if (index == (int)digits.length()) {
+    if (index == digits.length()) {
       res.push_back(string(out.begin(), out.end()));
       return;
     }
 
     char num = digits[index];
     string chars = dict.at(num);
-    for (int n = 0; n < (int)chars.size(); ++n) {
+    for (int n = 0; n < chars.size(); ++n) {
       out[index] = chars[n];
       telephonePad_dfs(dict, digits, index + 1, out, res);
     }
@@ -704,7 +704,7 @@ public:
   // Because we are placing the queens col by col from left to right,
   //     this function only checks attacking queesn from the left
   bool isQueenSafe(const vector<vector<int>>& board, int row, int col) {
-    int n = (int)board.size();
+    int n = board.size();
     for (int i = 0; i < col; ++i) if (board[row][i]) return false; // look left
     // no need to look up: current column is always safe (bc. it's a new column)
     for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) if (board[i][j]) return false; // upper left diagonal
@@ -713,7 +713,7 @@ public:
   }
 
   void saveQueenResult(const vector<vector<int>>& board, vector<vector<int>>& result) {
-    int size = (int)board.size();
+    int size = board.size();
     vector<int> tmp;
     for (int i = 0; i < size; ++i)
       for (int j = 0; j < size; ++j)
@@ -732,8 +732,8 @@ public:
   // Space: O(1) - because we operate on the original grid
   int numIslands(vector<vector<char>> grid) {
     if (grid.empty() || grid[0].empty()) return 0;
-    int rows = (int)grid.size();
-    int cols = (int)grid[0].size();
+    int rows = grid.size();
+    int cols = grid[0].size();
 
     int count = 0;
     for (int i = 0; i < rows; ++i)
@@ -747,8 +747,8 @@ public:
 
   // The DFS recursive function
   void numIslands_dfs(vector<vector<char>>& grid, int i, int j) {
-    int rows = (int)grid.size();
-    int cols = (int)grid[0].size();
+    int rows = grid.size();
+    int cols = grid[0].size();
     if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] == '0')
       return;
 
@@ -1385,7 +1385,7 @@ public:
       auto numSpacing = (int)pow(2, list.size() - n - 1);
       string leftSpace(numSpacing, ' ');
 
-      auto numItems = (int)list[n].size();
+      auto numItems = list[n].size();
       auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
       string middleSpace(numMiddleSpacing, ' ');
 
