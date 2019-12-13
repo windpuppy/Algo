@@ -21,6 +21,21 @@ public:
   TreeNode(int v) : value(v), left(NULL), right(NULL) {}
 };
 
+
+struct Point {
+  int i;
+  int j;
+  int height;
+  Point(int i, int j, int h) : i(i), j(j), height(h) {}
+};
+
+class PointComparatorGreater {
+public:
+  bool operator()(Point a, Point b) {
+    return a.height > b.height;
+  }
+};
+
 class DynamicProgramming {
 
 public:
@@ -1135,6 +1150,76 @@ public:
     return sum;
   }
 
+
+
+
+
+  // Max water trapped 2 - a BFS problem
+  // 99599
+  // 9 8 9
+  // 9   7
+  // 9   7
+  // 99999
+  // Step 1: push all boundary points into a min heap
+  // Step 2: generate the min (5), expand its neighors
+  // Keep doing so until the whole grid is visited
+  // Physnical meaning of what's being maintained in the min heap: all the border points bounding the inner area
+  // Time: O(mn)
+  // Space: O(mn)
+  int maxWaterTrapped2(vector<vector<int>> grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    if (rows < 3 || cols < 3) return 0;
+
+    vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+    priority_queue<Point, vector<Point>, PointComparatorGreater> minHeap;
+    addBorderPoints(grid, visited, minHeap);
+
+    int res = 0;
+    while (!minHeap.empty()) {
+      Point curr = minHeap.top();
+      minHeap.pop();
+
+      auto neibs = getNeighbors(grid, curr, visited);
+      for (auto n : neibs) {
+        res += max(0, curr.height - n.height); // accummulate water
+
+        n.height = max(curr.height, n.height); // IMPORTANT: if the (inner neighbor) has a higher bar, don't ignore it, but use it as the new bounardy point instead
+        minHeap.push(n);
+      }
+    }
+    return res;
+  }
+
+  // Pump all border points into min heap (and mark them visited)
+  void addBorderPoints(const vector<vector<int>>& grid, vector<vector<bool>>& visited, priority_queue<Point, vector<Point>, PointComparatorGreater>& minHeap) {
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    for (int j = 0; j < cols; ++j) {
+      minHeap.push(Point(0, j, grid[0][j])); visited[0][j] = true;
+      minHeap.push(Point(rows - 1, j, grid[rows - 1][j])); visited[rows - 1][j] = true;
+    }
+    for (int i = 1; i < rows - 1; ++i) {
+      minHeap.push(Point(i, 0, grid[i][0])); visited[i][0] = true;
+      minHeap.push(Point(i, cols - 1, grid[i][cols - 1])); visited[i][cols - 1] = true;
+    }
+  }
+
+  // Get all UNVISITED neighbors (and mark them visited)
+  vector<Point> getNeighbors(const vector<vector<int>>& grid, const Point& p, vector<vector<bool>>& visited) {
+    vector<Point> points;
+    int i = p.i, j = p.j;
+    i--;
+    if (i >= 0 && !visited[i][j]) { points.push_back(Point(i, j, grid[i][j])); visited[i][j] = true; }
+    i += 2;
+    if (i < grid.size() && !visited[i][j]) { points.push_back(Point(i, j, grid[i][j])); visited[i][j] = true; }
+    i--; j--;
+    if (j >= 0 && !visited[i][j]) { points.push_back(Point(i, j, grid[i][j])); visited[i][j] = true; }
+    j += 2;
+    if (j < grid[0].size() && !visited[i][j]) { points.push_back(Point(i, j, grid[i][j])); visited[i][j] = true; }
+    return points;
+  }
 
 
   // 1 transaction!
