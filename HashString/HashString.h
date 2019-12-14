@@ -13,16 +13,22 @@ using namespace std;
 
 const int MAGIC_NUMBER = 26;
 
+bool StringLengthComparator(const string& s1, const string& s2) {
+  return s1.size() < s2.size();
+}
+
+
 class HashString {
 
   // max heap
-  class PairComparator_Less {
+  class PairComparatorLess {
   public:
     bool operator()(pair<string, int> p1, pair<string, int> p2) {
       return p1.second < p2.second;
     }
   };
 
+  
 public:
   // O(n) + O(nlogn) + O(klogn)
   vector<string> topKFrequent(vector<string> input, int k) {
@@ -32,7 +38,7 @@ public:
       map[n]++;
 
     // step 2: PQ, O(nlogn)
-    priority_queue<pair<string, int>, vector<pair<string, int>>, PairComparator_Less> pq;
+    priority_queue<pair<string, int>, vector<pair<string, int>>, PairComparatorLess> pq;
     for (auto const& n : map)
       pq.push({ n.first, n.second });
 
@@ -1090,7 +1096,34 @@ public:
 
   
 
+ 
+  // Clue: each int has 32bit, which is "enough" for our 26 characters, so we can use int to set the x-th bit of each character
+  // For example, for "abcw", we set 0th, 1st, 2nd, 23rd bit, and stack them together with bit operation OR
+  // 0000 0000 0100 0000 0000 0000 0000 0111 ==> "acbw" (but backwards)
+  // Time: O(n^2)
+  // Space: O(1)
+  int maxProductOfLength(vector<string> words) {
+    if (words.empty()) return 0;
+    sort(words.begin(), words.end(), StringLengthComparator);
+    vector<int> wordBits(words.size(), 0);
+    int res = 0;
 
+    for (int i = 0; i < words.size(); ++i) {
+      string wi = words[i];
+
+      for (auto c : wi)
+        wordBits[i] |= 1 << (c - 'a');
+
+      for (int j = i - 1; j >= 0; j--) {
+        string wj = words[j];
+
+        if ((wordBits[j] & wordBits[i]) == false) {
+          res = max(res, (int)(wi.size() * wj.size()));
+        }
+      }
+    }
+    return res;
+  }
 
 
 

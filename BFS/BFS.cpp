@@ -117,6 +117,30 @@ int main()
     auto res = sol.shortestDistanceFromAllPoints(grid);
   }
 
+  // Best meeting point
+  // 0: space, 1: person
+  {
+    vector<vector<int>> grid{
+      {1, 0, 0, 0, 1},
+      {0, 0, 0, 0, 0},
+      {0, 0, 1, 0, 0} };
+    auto res = sol.bestMeetingPoint(grid);
+    vector<vector<int>> grid2{{1,1}};
+    res = sol.bestMeetingPoint(grid2);
+  }
+
+  // Place to put the chair
+  // C: empty, E: equipment, O: obstacle
+  {
+    vector<vector<char>> grid{
+      {'C', 'C', 'E', 'O', 'C'},
+      {'C', 'C', 'O', 'C', 'E'},
+      {'C', 'C', 'E', 'E', 'C'},
+      {'C', 'O', 'C', 'E', 'E'},
+      {'C', 'C', 'O', 'C', 'C'}};
+    auto res = sol.placeToPutChair(grid);
+  }
+
   // Closest distance to zero
   {
     vector<vector<int>> grid{ {1, 1, 1}, {0, 1, 0}, {0, 0, 0} };

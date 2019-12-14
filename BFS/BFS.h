@@ -642,6 +642,7 @@ public:
   }
 
 
+
   // '0' good, '1' obstacles, 's' src, 'd' dst
   // The nature of BFS: we move ahead one unit in each path at the SAME time
   //    which means the first time we see the destination - that's the shortest path
@@ -690,6 +691,67 @@ public:
 
   
 
+  // Best meeting point
+  // 1 - 0 - 0 - 0 - 1
+  // |   |   |   |   |
+  // 0 - 0 - 0 - 0 - 0
+  // |   |   |   |   |
+  // 0 - 0 - 1 - 0 - 0
+  int bestMeetingPoint(vector<vector<int>> grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    vector<pair<int, int>> persons;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (grid[i][j] == 1)
+          persons.emplace_back(i, j);
+
+    int minDist = INT_MAX;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j) {
+        int sum = 0;
+        for (auto p : persons)
+          sum += shortestDistanceAToB(grid, { i, j }, p);
+        minDist = min(minDist, sum);
+      }
+    return minDist;
+  }
+
+  // Helper function to find the shortest distance from A to B; can handle obstacle; return -1 if no such path
+  int shortestDistanceAToB(const vector<vector<int>>& grid, pair<int, int> src, pair<int, int> dst, bool hasObstacle = false, int obstacle = -1) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    vector<pair<int, int>> dirs = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+    vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+    queue<pair<int, int>> q;
+    q.push(src);
+    visited[src.first][src.second] = true;
+    int dist = 0;
+
+    while (!q.empty()) {
+      const int size = q.size();
+      for (int k = 0; k < size; ++k) {
+        auto curr = q.front(); q.pop();
+        if (curr == dst) return dist;
+        for (auto dir : dirs) {
+          int i = curr.first + dir.first, j = curr.second + dir.second;
+          if (i >= 0 && i < rows && j >= 0 && j < cols && !visited[i][j]) {
+            if (!hasObstacle || grid[i][j] != obstacle) {
+              q.emplace(i, j);
+              visited[i][j] = true;
+            }
+          }
+        }
+      }
+      if (!q.empty()) dist++; // level by level, we increment distance
+    }
+    return -1;
+  }
+
+
+
   // 1 - 0 - 2 - 0 - 1
   // |   |   |   |   |
   // 0 - 0 - 0 - 0 - 0
@@ -703,12 +765,11 @@ public:
   int shortestDistanceFromAllPoints(vector<vector<int>> grid) {
     const int rows = grid.size();
     const int cols = grid[0].size();
-
-    vector<Cell> houses;
+    vector<pair<int,int>> houses;
     for (int i = 0; i < rows; ++i)
       for (int j = 0; j < cols; ++j)
-          if (grid[i][j] == 1)
-            houses.push_back(Cell(i, j, 0));
+        if (grid[i][j] == 1)
+          houses.emplace_back(i, j);
 
     int globalMin = -1;
     for (int i = 0; i < rows; ++i)
@@ -717,9 +778,8 @@ public:
           continue;
 
         int sum = 0;
-        Cell src(i, j, 0);
         for (auto house : houses) {
-          int dist = shortestDistanceAToB(grid, src, house);
+          int dist = shortestDistanceAToB(grid, { i, j }, house, true, 2);
           if (dist == -1) { sum = -1; break; } // if one house is not reachable, this entire solution is no good
           else sum += dist;
         }
@@ -732,42 +792,153 @@ public:
     return globalMin;
   }
 
-  int shortestDistanceAToB(const vector<vector<int>>& grid, Cell src, Cell dst) {
+
+
+  // 'E': equipment, 'O': obstacles, 'C': empty space
+  // This is almost identical to the "house" problem aove, Shortest Distance from All Points
+  vector<int> placeToPutChair(vector<vector<char>> grid) {
     const int rows = grid.size();
     const int cols = grid[0].size();
-    vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+
+    vector<pair<int, int>> equipments;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (grid[i][j] == 'E')
+          equipments.emplace_back(i, j);
+
+    // global best result
+    Cell globalMin(0, 0, -1);
+
     for (int i = 0; i < rows; ++i)
       for (int j = 0; j < cols; ++j) {
-        visited[i][j] = grid[i][j] > 0 ? true : false;
+        if (grid[i][j] != 'C') // we can only place a chair at an empty cell
+          continue;
+
+        int sum = 0;
+        Cell src(i, j, 0);
+        for (auto eq : equipments) {
+          int dist = shortestDistanceAToB2(grid, { i, j }, eq, true, 'O');
+          if (dist == -1) { sum = -1; break; } // if one equipment is not reachable, this entire solution is no good
+          else sum += dist;
+        }
+
+        if (sum != -1) {
+          if (globalMin.value == -1 || sum < globalMin.value)
+            globalMin = Cell(i, j, sum);
+        }
       }
 
-    // start from src
-    queue<Cell> q;
+    return globalMin.value == -1 ? vector<int>{-1, -1} : vector<int>{ globalMin.i, globalMin.j };
+  }
+
+  // Helper function to find the shortest distance from A to B; can handle obstacle; return -1 if no such path
+  int shortestDistanceAToB2(const vector<vector<char>>& grid, pair<int, int> src, pair<int, int> dst, bool hasObstacle = false, char obstacle = ' ') {
+    if (grid.empty() || grid[0].empty()) return 0;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    vector<pair<int, int>> dirs = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+    vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+    queue<pair<int, int>> q;
     q.push(src);
+    visited[src.first][src.second] = true;
+    int dist = 0;
+
     while (!q.empty()) {
-      auto p = q.front();
-      q.pop();
-      int i = p.i;
-      int j = p.j;
-      int dist = p.value;
-
-      i--;
-      if (dst.i == i && dst.j == j) return dist + 1;
-      if (i >= 0 && !visited[i][j]) { q.push(Cell(i, j, dist + 1)); visited[i][j] = true; } // up
-
-      i += 2;
-      if (dst.i == i && dst.j == j) return dist + 1;
-      if (i < rows && !visited[i][j]) { q.push(Cell(i, j, dist + 1)); visited[i][j] = true; } // down
-
-      i--; j--;
-      if (dst.i == i && dst.j == j) return dist + 1;
-      if (j >= 0 && !visited[i][j]) { q.push(Cell(i, j, dist + 1)); visited[i][j] = true; } // left
-
-      j += 2;
-      if (dst.i == i && dst.j == j) return dist + 1;
-      if (j < cols && !visited[i][j]) { q.push(Cell(i, j, dist + 1)); visited[i][j] = true; } // right
+      const int size = q.size();
+      for (int k = 0; k < size; ++k) {
+        auto curr = q.front(); q.pop();
+        if (curr == dst) return dist;
+        for (auto dir : dirs) {
+          int i = curr.first + dir.first, j = curr.second + dir.second;
+          if (i >= 0 && i < rows && j >= 0 && j < cols && !visited[i][j]) {
+            if (!hasObstacle || grid[i][j] != obstacle) {
+              q.emplace(i, j);
+              visited[i][j] = true;
+            }
+          }
+        }
+      }
+      if (!q.empty()) dist++; // level by level, we increment distance
     }
-    return -1; // not found
+    return -1;
+  }
+
+
+
+  // 'E': equipment, ' ': empty, and we can put the chair anywhere
+  // This is actuall a simplified version of Place to Put Chair I
+  vector<int> placeToPutChair2(vector<vector<char>> grid) {
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+
+    vector<pair<int,int>> equipments;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (grid[i][j] == 'E')
+          equipments.emplace_back(i, j);
+
+    // global best result
+    Cell globalMin(0, 0, -1);
+
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j) {
+        // we can only place a chair anywhere, including on the Equipment itself!
+        int sum = 0;
+        for (auto eq : equipments) {
+          int dist = shortestDistanceAToB2(grid, { i, j }, eq);
+          if (dist == -1) { sum = -1; break; } // if one equipment is not reachable, this entire solution is no good
+          else sum += dist;
+        }
+
+        if (sum != -1) {
+          if (globalMin.value == -1 || sum < globalMin.value)
+            globalMin = Cell(i, j, sum);
+        }
+      }
+
+    return globalMin.value == -1 ? vector<int>{-1, -1} : vector<int>{ globalMin.i, globalMin.j };
+  }
+
+
+
+  // -1: wall, 0: gate, INT_MAX: space
+  // Different from above "put chair" solutions, this time we do not need to find the distance to each gate to get the min,
+  //    because BFS will give us the distance when it first hit the closest gate
+  //
+  // Naive solution:
+  // Iterate through all '0' cells, use BFS to find its nearest gate
+  // Better Solution: we can work "reverse" way
+  // 1. start from each gate, do BFS
+  // 2. fill empty cells with increasing distance, skip walls
+  // 3. if we see a valid cell already filled with a smaller value, skip it
+  // Keep doing this until the grid is filled
+  vector<vector<int>> wallsAndGates(vector<vector<int>> grid) {
+    if (grid.empty() || grid[0].empty()) return grid;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    queue<pair<int, int>> distList;
+    vector<pair<int, int>> dirs = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (grid[i][j] == 0)
+          distList.emplace(i, j);
+
+    while (!distList.empty()) {
+      int ci = distList.front().first;
+      int cj = distList.front().second;
+      int currDist = grid[ci][cj];
+      distList.pop();
+
+      for (auto dir : dirs) {
+        int i = ci + dir.first, j = cj + dir.second;
+        // if the (i, j) we are exploring is in range, AND it has a distance larger than the current + 1, update it.
+        if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] > currDist + 1) {
+          grid[i][j] = currDist + 1;
+          distList.emplace(i, j);
+        }
+      }
+    }
+    return grid;
   }
 
 
