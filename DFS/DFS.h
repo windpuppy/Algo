@@ -34,8 +34,7 @@ class DFS
 
 public:
 
-  // Go down each level, 1) add char (need split after), 2) not add char
-  //
+  // DFS solution
   // Time: O(2^n) - total number of nodes
   // Space O(n) - n extra space for result, logn recursion stack can be ignored because O(n) dominates
   vector<string> subsets(string input) {
@@ -60,6 +59,52 @@ public:
 
     // We don't pick 'a'
     subsets_dfs(input, index + 1, out, res);
+  }
+
+  // BFS solution:
+  // Time: O(2^n)
+  // Space: O(2^(n+1))
+  vector<string> subsets_bfs(string input) {
+    if (input.empty()) return vector<string>{""};
+    vector<string> res;
+    queue<string> q;
+    q.push("");
+    while (!q.empty()) {
+      string curr = q.front();
+      q.pop();
+      res.push_back(curr);
+
+      for (int i = 0; i < input.size(); ++i) {
+        if (curr.empty() || curr.back() < input[i]) {
+          string next = curr;
+          next.push_back(input[i]);
+          q.push(next);
+        }
+      }
+    }
+    return res;
+  }
+
+  // Iterative solution
+  // Time: O(2^n * n)
+  // Space: O(n)
+  vector<string> subsets_iter(string input) {
+    if (input.empty()) return vector<string>{""};
+    vector<string> res;
+    const int size = input.size();
+    const int len = pow(2, size);
+
+    for (int i = 0; i < len; ++i) {
+      string out;
+      int b = i;
+      for (int j = 0; j < size; ++j) {
+        if (b & 1)
+          out += input[j];
+        b >>= 1;
+      }
+      res.push_back(out);
+    }
+    return res;
   }
 
 

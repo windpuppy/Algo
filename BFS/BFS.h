@@ -796,6 +796,7 @@ public:
 
   // 'E': equipment, 'O': obstacles, 'C': empty space
   // This is almost identical to the "house" problem aove, Shortest Distance from All Points
+  // Time: mn*(mnlog(mn)+k)
   vector<int> placeToPutChair(vector<vector<char>> grid) {
     const int rows = grid.size();
     const int cols = grid[0].size();
@@ -1075,6 +1076,65 @@ public:
         dist = min(dist, abs(i - j));
     }
     return dist == INT_MAX ? -1 : dist;
+  }
+
+
+
+  // Topological sort
+  string alienDictionary(vector<string> words) {
+    if (words.size() == 0) return "";
+    unordered_map<char, int> inEdges;
+    unordered_map<char, unordered_set<char>> g;
+
+    // initialize inEdges map
+    for (int i = 0; i < words.size(); i++)
+      for (int j = 0; j < words[i].size(); j++) {
+        char c = words[i][j];
+        inEdges[c] = 0;
+      }
+
+    // build graph nodes, and their inEdges
+    for (int i = 0; i < words.size() - 1; i++) {
+      string curr = words[i];
+      string next = words[i + 1];
+      int len = min(curr.size(), next.size());
+      for (int j = 0; j < len; j++) {
+        char c1 = curr[j], c2 = next[j];
+        if (c1 != c2) {
+          if (g[c1].find(next[j]) == g[c1].end()) {
+            g[c1].insert(c2);
+            inEdges[c2]++;
+          }
+          break;
+        }
+      }
+    }
+
+    // push all nodes with 0 inEdges into the queue
+    queue<char> q;
+    for (auto& e : inEdges)
+      if (e.second == 0)
+        q.push(e.first);
+
+    // start topological sort
+    string ans = "";
+    while (!q.empty()) {
+      char curr = q.front();
+      q.pop();
+      ans += curr;
+
+      if (g[curr].size() != 0) {
+        for (auto& e : g[curr]) {
+          inEdges[e]--;
+          if (inEdges[e] == 0) {
+            q.push(e);
+          }
+        }
+      }
+    }
+
+    // REMEMBER TO CHECK FOR CYCLES!
+    return ans.length() == inEdges.size() ? ans : "";
   }
 
 };

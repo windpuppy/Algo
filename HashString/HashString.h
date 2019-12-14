@@ -1102,7 +1102,7 @@ public:
   // 0000 0000 0100 0000 0000 0000 0000 0111 ==> "acbw" (but backwards)
   // Time: O(n^2)
   // Space: O(1)
-  int maxProductOfLength(vector<string> words) {
+  int largestProductOfLength(vector<string> words) {
     if (words.empty()) return 0;
     sort(words.begin(), words.end(), StringLengthComparator);
     vector<int> wordBits(words.size(), 0);

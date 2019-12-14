@@ -9,6 +9,8 @@ int main()
   // Subsets
   {
     auto res = sol.subsets("abc");
+    res = sol.subsets_bfs("abcd");
+    res = sol.subsets_iter("abc");
     res = sol.subsets("");
   }
 
