@@ -1104,69 +1104,6 @@ public:
 
 
 
-  // This is essentially a topological sorting problem using DFS
-  // If the graph has cycle, return false, otherwise return true
-  // We mark each node as 0: unmarked, 1: visiting, 2: visited
-  // If we see a node: if visited, return ok
-  //                   if visiting, return cycle
-  //                   otherwise, mark it visiting, then for loop call DFS on its neighbors, then mark it visited
-  // Time: O(n)
-  bool courseSchedule(int numCourses, vector<vector<int>> prerequisites) {
-    vector<vector<int>> graph(numCourses);
-    for (auto p : prerequisites)
-      graph[p[1]].push_back(p[0]); // here p[0] and p[1] are interchangeable because dependency loop can be reversed
-    vector<int> visit(numCourses, 0);
-    for (int i = 0; i < numCourses; ++i)
-      if (!courseSchedule_dfs(i, graph, visit))
-        return false;
-    return true;
-  }
-
-  bool courseSchedule_dfs(int curr, const vector<vector<int>>& graph, vector<int>& visit) {
-    if (visit[curr] == 1) return false; // visiting
-    if (visit[curr] == 2) return true; // visited
-
-    visit[curr] = 1; // mark visiting
-    for (auto c : graph[curr])
-      if (!courseSchedule_dfs(c, graph, visit))
-        return false;
-    visit[curr] = 2; // mark visited
-    return true;
-  }
-
-
-
-  // Essentially the same as above, except we now need to return the topological sorted order
-  // Remember: the first one marked as Visited should be the last one in the returned list
-  // Trick: we can reverse the dependency order to achieve this
-  vector<int> courseSchedule2(int numCourses, vector<vector<int>> prerequisites) {
-    vector<vector<int>> graph(numCourses);
-    for (auto p : prerequisites)
-      graph[p[0]].push_back(p[1]); // The little trick
-    vector<int> visit(numCourses, 0);
-    vector<int> res;
-    for (int i = 0; i < numCourses; ++i)
-      if (!courseSchedule2_dfs(i, graph, visit, res))
-        return vector<int>{};
-    return res;
-  }
-
-  bool courseSchedule2_dfs(int curr, const vector<vector<int>>& graph, vector<int>& visit, vector<int>& res) {
-    if (visit[curr] == 1) return false; // visiting
-    if (visit[curr] == 2) return true; // visited
-
-    visit[curr] = 1; // mark visiting
-    for (auto c : graph[curr])
-      if (!courseSchedule2_dfs(c, graph, visit, res))
-        return false;
-    visit[curr] = 2; // mark visited
-    res.push_back(curr);
-    return true;
-  }
-
-
-
-
   // DFS solution
   // 4 levels in this DFS recursion tree - 4 sections of the IP address, so in this solution, remainSections is our "level"
   // At each level, we try 1 ~ 3 digits per section, and we need to do pruning for

@@ -1127,6 +1127,45 @@ public:
 
 
 
+  // Given a set of points, find the most points that form a single 2D line
+  // Naive solution: 2 for loops to try each pair of points, then a 3rd for loop to try the remaining points
+  // Time: O(n^3)
+  // Better soluiton: use hashmap
+  // Hashmap, key: <a, b>, value: a list of points
+  // for for each pair of points pi and pj
+  //    calculate y = ax + b, insert pi and pj
+  // need to use a second hashmap for vertical lines, ie x = a
+  // Time: O(n^2)
+  int mostPointsOnALine(vector<pair<int, int>> points) {
+    if (points.empty()) return 0;
+    int res = 0;
+    for (int i = 0; i < points.size(); ++i) {
+      int same = 1; // for dedup
+      int vert = 0; // treat vertical lines as special case (infinite slope)
+      int most = 0;
+      unordered_map<double, int> map;
+      auto pi = points[i];
+
+      for (int j = 0; j < points.size(); ++j) {
+        if (i == j) continue;
+        auto pj = points[j];
+        if (pi == pj) same++;
+        else if (pi.first == pj.first) vert++;
+        else {
+          double slope = (double)(pj.second - pi.second) / (pj.first - pi.first);
+          map[slope]++;
+          most = max(most, map[slope]);
+        }
+      }
+
+      most = max(most, vert); // compare against special case
+      most += same; // add dups
+      res = max(res, most);
+    }
+    return res;
+  }
+
+
 
 
 

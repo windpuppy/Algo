@@ -23,6 +23,17 @@ int main()
     auto res = sol.longestAscendingSubSequence(input); // 4
   }
 
+  // Longest common substring
+  {
+    auto res = sol.longestCommonSubstring("abcdefg", "bbcefgh"); // efg
+    res = sol.longestCommonSubstring("aaaaaa", "bbaaba"); //aa
+  }
+
+  // Longest common subsequence
+  {
+    auto res = sol.longestCommonSubsequence("acbcf", "abcdaf"); // 4
+  }
+
   // Longest consecutive ones
   {
     vector<int> input{ 1, 0, 0, 1, 1, 0, 1, 1, 1, 0 };
@@ -141,6 +152,11 @@ int main()
   // Max product cutting rope
   {
     auto res = sol.maxProductCuttingRope(5); // 6, one cut, _ _ | _ _ _
+  }
+
+  // Cutting wood stick
+  {
+    auto res = sol.cuttingWood(vector<int>{2, 4, 7}, 10);
   }
 
   // Array hopper

@@ -118,6 +118,70 @@ public:
 
 
 
+  // Fill 2D table
+  // M[i][j] = M[i-1][j-1] if s[i] == s[j]
+  //           0, otherwise
+  //   a b c d f
+  // x 0 0 0 0 0
+  // b 0 1 0 0 0
+  // c 0 0 2 0 0
+  // y 0 0 0 0 0
+  // f 0 0 0 0 1
+  // Note: in practice, we create n+1 by m+1 2D table, so that we can conveniently prefill all zeros, and just copy zeros from the first row/column
+  // ie. first row/column means: "" is not a common string with any character
+  string longestCommonSubstring(string a, string b) {
+    if (a.empty() || b.empty()) return "";
+    const int lena = a.size();
+    const int lenb = b.size();
+    vector<vector<int>> M(lena+1, vector<int>(lenb+1, 0));
+    int maxPos = 0, maxLen = 0;
+
+    for (int i = 1; i <= lena; ++i)
+      for (int j = 1; j <= lenb; ++j) {
+        if (a[i - 1] == b[j - 1]) {
+          M[i][j] = M[i - 1][j - 1] + 1;
+          if (M[i][j] > maxLen) {
+            maxLen = M[i][j];
+            maxPos = i;
+          }
+        }
+      }
+    return a.substr(maxPos - maxLen, maxLen);
+  }
+
+
+
+  // Fill 2D table
+  //
+  //   a b c d a f
+  // a 1 1 1 1 1 1
+  // c 1
+  // b 1
+  // c 1
+  // f 1
+  // Induction rule:
+  // If same char, fill with diag + 1; if not, fill with max (top, left)
+  // Like wise, we create the 2D table of n+1 by m+1 for convenience
+  int longestCommonSubsequence(string a, string b) {
+    if (a.empty() || b.empty()) return 0;
+    const int lena = a.size();
+    const int lenb = b.size();
+    vector<vector<int>> M(lena + 1, vector<int>(lenb + 1, 0));
+    int maxPos = 0, maxLen = 0;
+
+    for (int i = 1; i <= lena; ++i)
+      for (int j = 1; j <= lenb; ++j) {
+        char one = a[i - 1], two = b[j - 1];
+        if (one == two)
+          M[i][j] = M[i - 1][j - 1] + 1;
+        else
+          M[i][j] = max(M[i - 1][j], M[i][j - 1]);
+      }
+    return M.back().back();
+  }
+
+
+
   // Longest consecutive ones
   int longestConsecutiveOnes(vector<int> nums) {
     if (nums.empty()) return 0;
@@ -638,6 +702,45 @@ public:
     }
 
     return M[n];
+  }
+
+
+
+  // Naive solution: perform DFS all permutation of all the cuts, take the minimum cost
+  // Same idea: ×ó´ó¶ÎÓÒÐ¡¶Î
+  //     0 2 4 7 10
+  //     ----------
+  // 0 |   0 M M M
+  // 2 |     0 M M
+  // 4 |       0 M
+  // 7 |         0
+  // 10|
+  // We gradually fill the table towards top right
+  int cuttingWood(vector<int> cuts, int length) {
+    vector<int> helper{ 0 };
+    for (auto c : cuts) helper.push_back(c);
+    helper.push_back(length);
+    const int n = helper.size();
+    vector<vector<int>> M(n, vector<int>(n, -1));
+
+    for (int i = 0; i < n; ++i)
+      for (int j = i - 1; j >= 0; --j)
+        if (j == i - 1)
+          M[j][i] = 0;
+        else {
+          M[j][i] = INT_MAX;
+          // LEFT BIG
+          for (int k = j + 1; k <= i - 1; ++k) {
+            int a = M[j][k];
+            int b = M[k][i];
+            M[j][i] = min(M[j][i], a + b);
+          }
+          // RIGHT SMALL
+          int right = helper[i] - helper[j];
+          M[j][i] += right;
+        }
+
+    return M[0].back();
   }
 
 
