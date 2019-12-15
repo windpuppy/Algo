@@ -28,6 +28,7 @@ using namespace std;
 //        c. if Y has zero incoming edges, push it into the queue
 
 class Topology {
+public:
 
   // This is essentially a topological sorting problem using DFS
   // If the graph has cycle, return false, otherwise return true
@@ -36,6 +37,7 @@ class Topology {
   //                   if visiting, return cycle
   //                   otherwise, mark it visiting, then for loop call DFS on its neighbors, then mark it visited
   // Time: O(n)
+  // Space: O(n^2) - we used an additional 2D graph
   bool courseSchedule(int numCourses, vector<vector<int>> prerequisites) {
     vector<vector<int>> graph(numCourses);
     for (auto p : prerequisites)
@@ -59,11 +61,51 @@ class Topology {
     return true;
   }
 
+  // Topological sort
+  // Time: O(n)
+  // Space: O(n^2) - we used an additional 2D graph, also edges and queue
+  bool courseSchedule_topo(int numCourses, vector<vector<int>> prerequisites) {
+    // Initialize inEdges: if course A depends on B, inEges[B]++
+    vector<int> inEdges(numCourses, 0);
+    for (vector<int> p : prerequisites)
+      inEdges[p[1]]++;
+
+    // Initialize graph
+    vector<vector<int>> g(numCourses, vector<int>());
+    for (vector<int> p : prerequisites)
+      g[p[0]].push_back(p[1]);
+
+    // Push all nodes with zero incoming edges into the queue
+    queue<int> q;
+    for (int i = 0; i < numCourses; ++i)
+      if (inEdges[i] == 0)
+        q.push(i);
+
+    int numExpanded = 0;
+    while (!q.empty()) {
+      int curr = q.front();
+      q.pop();
+      numExpanded++; // or save course if needed by output
+
+      // get course c's dependencies (ie.
+      vector<int> prereqs = g[curr];
+      for (int i : prereqs) {
+        inEdges[i]--;
+        if (inEdges[i] == 0)
+          q.push(i);
+      }
+    }
+    // if there are still nodes not expanded and with non-zero incoming edges, we detected a cycle
+    return numExpanded == numCourses;
+  }
+
 
 
   // Essentially the same as above, except we now need to return the topological sorted order
   // Remember: the first one marked as Visited should be the last one in the returned list
   // Trick: we can reverse the dependency order to achieve this
+  // Time: O(n)
+  // Space: O(n^2) - we used an additional 2D graph
   vector<int> courseSchedule2(int numCourses, vector<vector<int>> prerequisites) {
     vector<vector<int>> graph(numCourses);
     for (auto p : prerequisites)
@@ -87,6 +129,50 @@ class Topology {
     visit[curr] = 2; // mark visited
     res.push_back(curr);
     return true;
+  }
+
+  // Topological sort
+  //
+  // Trick: here we can reverse the dependency pointing order:
+  // if A depends on B, we do inEdges[A]++ instead of inEdges[B]++
+  // So that at the end, we don't have to reverse the oupput
+  // Time: O(n)
+  // Space: O(n^2) - we used an additional 2D graph, also edges and queue
+  vector<int> courseSchedule2_topo(int numCourses, vector<vector<int>> prerequisites) {
+    // Initialize inEdges: if course A depends on B, inEges[B]++
+    vector<int> inEdges(numCourses, 0);
+    for (vector<int> p : prerequisites)
+      inEdges[p[1]]++;
+
+    // Initialize graph
+    vector<vector<int>> g(numCourses, vector<int>());
+    for (vector<int> p : prerequisites)
+      g[p[0]].push_back(p[1]);
+
+    // Push all nodes with zero incoming edges into the queue
+    queue<int> q;
+    for (int i = 0; i < numCourses; ++i)
+      if (inEdges[i] == 0)
+        q.push(i);
+
+    vector<int> res;
+    while (!q.empty()) {
+      int curr = q.front();
+      q.pop();
+      res.push_back(curr); // or counter++ for number of nodes expanded
+
+      // get course c's dependencies (ie.
+      vector<int> prereqs = g[curr];
+      for (int i : prereqs) {
+        inEdges[i]--;
+        if (inEdges[i] == 0)
+          q.push(i);
+      }
+    }
+    // if there are still nodes not expanded and with non-zero incoming edges, we detected a cycle
+    if (res.size() != numCourses) return vector<int>();
+    reverse(res.begin(), res.end());
+    return res;
   }
 
 
