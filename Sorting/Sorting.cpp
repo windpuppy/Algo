@@ -67,6 +67,10 @@ int main()
     vector<int> g{ 1, 2, 3, 4 };
     vector<int> h{ 5 };
     res = sol.kthSmallestInTwoSortedArrays(g, h, 5);
+
+    vector<int> i{ 1, 3, 5, 7 };
+    vector<int> j{ 2, 4, 6, 8, 10, 12 };
+    res = sol.kthSmallestInTwoSortedArrays(i, j, 6);
   }
 
   // Meeting rooms

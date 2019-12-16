@@ -1,4 +1,5 @@
 #include "LRUCache.h"
+//#include "LRUCacheInt.h"
 
 #include <iostream>
 #include <string>
@@ -86,6 +87,32 @@ void func() {
 
 int main()
 {
+  int val = 0;
+
+  LRUCache<int, int> cache(2);
+  cache.get(1, val);
+  cache.set(1, 1);
+  cache.set(2, 2);
+  cache.get(2, val);
+  cache.get(1, val);
+  cache.set(3, 3);
+  cache.get(1, val);
+  cache.get(2, val);
+  cache.get(3, val);
+
+  //LRUCacheInt c(2);
+  //c.set(1, 1);
+  //c.set(2, 2);
+  //c.get(1, val);
+  //c.set(3, 3);
+  //c.get(2, val);
+  //c.set(4, 4);
+  //c.get(1, val);
+  //c.get(3, val);
+  //c.get(4, val);
+
+
+
   std::thread t1(func); // t1 starts running
   cout << "hello 2" << endl;
   //t1.join(); // main thread waits for t1
@@ -185,20 +212,6 @@ int main()
     it = std::unique(b.begin(), b.end());
     b.resize(distance(b.begin(), it));
   }
-
-  // Singleton
-  //{
-  //  auto a1 = Singleton::getInstance();
-  //}
-
-  LRUCache<int, int>* cache = new LRUCache<int, int>(2);
-  int value;
-  bool res = cache->get(1, value);
-  cache->set(1, 1);
-  cache->set(2, 2);
-  res = cache->get(2, value);
-  res = cache->get(1, value);
-  cache->set(3, 3);
 
 }
 

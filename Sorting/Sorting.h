@@ -215,11 +215,12 @@ public:
 
 
   // Naive approach - SHUI XIAO YI SHUI
-  // Time O(n), Space O(m+n)
+  // Time O(k), Space O(1)
   //
   // Binary search approach - divide and conquer
   // We can compare the k/2th element from a and b
   // If a[k/2] > b[k/2], then we can throw away the first K/2 elements from b because it's guaranteed that the kth smallest will not be within that range
+  // e.g.
   // a: 1 3 5 7 
   // b: 2 4 6 8 10 12
   // k: 6, so k/2 = 3

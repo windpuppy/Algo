@@ -601,16 +601,24 @@ public:
 
   // Use a deque to record the indices, make sure:
   // 1) the front of the deque is always the max value
+  //      Because for any incoming a[i], for its lifetime in the sliding window, any smaller numbers in that window DON'T MATTER
   // 2) deque only contains indices from current sliding window
   // eg.
-  // 123: gradualy throw away 1, 2, only keep 3 in the queue
-  // 321: keep 3, 2, 1, so 3 is still the head element
-  // 312: keep 3, keep 1, then throw away 1 and push 2, so 3 is still at the head
+  // --->
+  // [1, 2, 3]: gradualy throw away 1, 2, only keep 3 in the queue
+  // [3, 2, 1]: incoming 2, we throw away 1 and 2 in the deque, push 2, so it becomes [3, 2]
+  //
+  // Time space analysis (somewhat complicated)
+  // Amortized for each move O(1)
+  // Worst case for each move O(k)
+  // Time for all moves O(n)
+  // Space: easy, O(k)
   vector<int> maxValueOfSizeKSlidingWindows(vector<int> a, int k) {
     vector<int> res;
     deque<int> q;
     for (int i = 0; i < a.size(); ++i) {
       // throw away any smaller values on the right
+      // Because for a[i], for its lifetime in the sliding window, any smaller numbers in that window DON'T MATTER
       while (!q.empty() && a[q.back()] <= a[i])
         q.pop_back();
 
