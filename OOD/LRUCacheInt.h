@@ -82,7 +82,7 @@ public:
 
 private:
   // remove and isolate
-  Node* remove(Node* node) {
+  void remove(Node* node) {
     m_map.erase(node->key);
     m_size--;
 
@@ -96,11 +96,10 @@ private:
       m_tail = m_tail->prev;
 
     node->next = node->prev = NULL; // isolate it
-    return node;
   }
 
   // append to head
-  Node* append(Node* node) {
+  void append(Node* node) {
     m_map[node->key] = node;
     m_size++;
 
@@ -111,6 +110,5 @@ private:
       m_head->prev = node;
       m_head = node;
     }
-    return node;
   }
 };

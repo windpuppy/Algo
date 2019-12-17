@@ -12,13 +12,13 @@ using namespace std;
 
 // double linked list
 template<class K, class V>
-struct Node {
+struct NodeT {
   K key;
   V value;
-  Node* next;
-  Node* prev;
+  NodeT* next;
+  NodeT* prev;
 
-  Node(K key, V value) {
+  NodeT(K key, V value) {
     this->key = key;
     this->value = value;
     this->next = NULL;
@@ -38,9 +38,9 @@ class LRUCache {
 public:
   int m_limit; // capacity of the cache
   int m_size;
-  Node<K, V>* m_head; // most recent
-  Node<K, V>* m_tail; // least recent
-  unordered_map<K, Node<K, V>*> m_map;
+  NodeT<K, V>* m_head; // most recent
+  NodeT<K, V>* m_tail; // least recent
+  unordered_map<K, NodeT<K, V>*> m_map;
 
 
   LRUCache(int limit) {
@@ -51,7 +51,7 @@ public:
   }
 
   void set(K key, V val) {
-    Node<K, V>* node = NULL;
+    NodeT<K, V>* node = NULL;
 
     // 1. if key is in the cache, update it
     if (m_map.find(key) != m_map.end()) {
@@ -63,7 +63,7 @@ public:
     // 2. if key is not in the cache
     // 2a. if cache not full? just create the node
     else if (m_size < m_limit) {
-      node = new Node<K, V>(key, val);
+      node = new NodeT<K, V>(key, val);
     }
 
     // 2b. if cache is full? need to erase the tail and replace it with the new node
@@ -85,7 +85,7 @@ public:
       return false;
     }
 
-    Node<K, V>* node = m_map[key];
+    NodeT<K, V>* node = m_map[key];
     remove(node);
     append(node);
     val = node->value;
@@ -97,7 +97,7 @@ public:
 private:
   // not actually a remove, but rather a "disconnect and isolate"
   // because we will be re-using its allocated space to hold the new data
-  Node<K, V>* remove(Node<K, V>* node) {
+  void remove(NodeT<K, V>* node) {
     m_map.erase(node->key);
     m_size--;
 
@@ -111,12 +111,11 @@ private:
       m_tail = m_tail->prev;
 
     node->next = node->prev = NULL; // isolate it
-    return node;
   }
 
   // made the node a head node
   // watch out: special case of empty list
-  Node<K, V>* append(Node<K, V>* node) {
+  void append(NodeT<K, V>* node) {
     m_map[node->key] = node;
     m_size++;
 
@@ -127,6 +126,5 @@ private:
       m_head->prev = node;
       m_head = node;
     }
-    return node;
   }
 };

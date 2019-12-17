@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />
+    <ClInclude Include="FirstNonRepeating.h" />
   </ItemGroup>
 </Project>

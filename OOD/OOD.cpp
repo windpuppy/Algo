@@ -1,5 +1,5 @@
 #include "LRUCache.h"
-//#include "LRUCacheInt.h"
+#include "LRUCacheInt.h"
 
 #include <iostream>
 #include <string>
@@ -100,16 +100,16 @@ int main()
   cache.get(2, val);
   cache.get(3, val);
 
-  //LRUCacheInt c(2);
-  //c.set(1, 1);
-  //c.set(2, 2);
-  //c.get(1, val);
-  //c.set(3, 3);
-  //c.get(2, val);
-  //c.set(4, 4);
-  //c.get(1, val);
-  //c.get(3, val);
-  //c.get(4, val);
+  LRUCacheInt c(2);
+  c.set(1, 1);
+  c.set(2, 2);
+  c.get(1, val);
+  c.set(3, 3);
+  c.get(2, val);
+  c.set(4, 4);
+  c.get(1, val);
+  c.get(3, val);
+  c.get(4, val);
 
 
 
