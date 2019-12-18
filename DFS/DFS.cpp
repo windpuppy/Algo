@@ -93,8 +93,8 @@ int main()
 
   // Telephone pad
   {
-    // TODO
     auto res = sol.telephonePad(213);
+    res = sol.telephonePad_bfs(102);
   }
 
   // N queens

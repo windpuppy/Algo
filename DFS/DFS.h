@@ -707,6 +707,53 @@ public:
 
 
 
+  vector<string> telephonePad_bfs(int number) {
+    unordered_map<char, string> dict;
+    dict.insert({ '0', "" });
+    dict.insert({ '1', "" });
+    dict.insert({ '2', "abc" });
+    dict.insert({ '3', "def" });
+    dict.insert({ '4', "ghi" });
+    dict.insert({ '5', "jkl" });
+    dict.insert({ '6', "mno" });
+    dict.insert({ '7', "pqrs" });
+    dict.insert({ '8', "tuv" });
+    dict.insert({ '9', "wxyz" });
+
+    string digits = std::to_string(number);
+    queue<string> q;
+    auto s = dict.at(digits[0]);
+    if (s.empty())
+      q.push("");
+    else
+      for (char c : s)
+        q.push(string(1, c));
+
+    for (int i = 1; i < digits.size(); ++i) {
+      int size = q.size();
+      while (size-- > 0) {
+        string prev = q.front();
+        q.pop();
+
+        string curr = dict.at(digits[i]);
+        if (curr.empty())
+          q.push(prev + "");
+        else
+          for (char c : curr)
+            q.push(prev + c);
+      }
+    }
+
+    vector<string> res;
+    while (!q.empty()) {
+      res.push_back(q.front());
+      q.pop();
+    }
+    return res;
+  }
+
+
+
   // Time: O(n!)
   vector<vector<int>> nQueens(int n) {
     if (n == 1) return vector<vector<int>>{vector<int>{0}};
