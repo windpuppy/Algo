@@ -180,6 +180,11 @@ int main()
     res = sol.validParenthese("(]");
   }
 
+  // Largest set of points with positive slope
+  {
+    vector<pair<int, int>> points{ {0,0},{1,1},{2,3},{3,2},{3,3}};
+    auto res = sol.largestSetOfPointsWithPositiveSlope(points);
+  }
 
   cin.get();
   return 0;

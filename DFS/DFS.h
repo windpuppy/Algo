@@ -993,48 +993,6 @@ public:
 
 
 
-  // 2D grid, see if we can find the word
-  // We can only move up, down, left and right
-  bool wordSearch(vector<vector<char>> board, string word) {
-    if (board.empty() || board[0].empty()) return false;
-    for (int i = 0; i < board.size(); ++i)
-      for (int j = 0; j < board[0].size(); ++j)
-        if (wordSearch_dfs(board, word, 0, i, j))
-          return true;
-    return false;
-  }
-
-  bool wordSearch_dfs(vector<vector<char>>& board, string& word, int index, int i, int j) {
-    if (index == word.size()) return true;
-    if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || board[i][j] != word[index]) return false;
-    char tmp = board[i][j];
-    board[i][j] = ' ';
-    bool found = wordSearch_dfs(board, word, index + 1, i, j - 1) ||
-                 wordSearch_dfs(board, word, index + 1, i, j + 1) ||
-                 wordSearch_dfs(board, word, index + 1, i - 1, j) ||
-                 wordSearch_dfs(board, word, index + 1, i + 1, j);
-    board[i][j] = tmp;
-    return found;
-  }
-
-  // Find all solutions (need to dedup!)
-  vector<string> wordSearch2(vector<vector<char>> board, vector<string> words) {
-    vector<string> res;
-    if (board.empty() || board[0].empty()) return res;
-    unordered_set<string> set;
-    for (auto word : words) {
-      for (int i = 0; i < board.size(); ++i)
-        for (int j = 0; j < board[0].size(); ++j)
-          if (wordSearch_dfs(board, word, 0, i, j) && set.find(word) == set.end()) {
-            res.push_back(word);
-            set.insert(word);
-          }
-    }
-    return res;
-  }
-
-
-
   // Check if a word can be brokend into words that come from the dictionary
   // DFS solution: not very efficient
   //               for "abcde", we checked a|bcde, then a|b|cde, but we will also check ab|cde, so "cde" part will be checked multiple times

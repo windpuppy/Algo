@@ -92,12 +92,18 @@ public:
   //                             physical meaning: find the max answer at j (a[j] also a smaller number than myself), then plus 1 (myself) is my current answer
   //                             M[i] = 1, if no such j exists
   // Return, max(M)
+  // eg.
+  // Use M as usual, also use pred for "predecessor"
+  // index:  0  1  2  3  4  5  6  7
+  // value:  7  2  3  1  5  8  9  6
+  //     M:  1  1  2  1  3  4  5  4
   // Time: O(n^2), Space: O(n)
   int longestAscendingSubSequence(vector<int> nums) {
     if (nums.empty()) return 0;
     const int size = nums.size();
     vector<int> M(size);
     M[0] = 1;
+    int res = 1;
 
     for (int i = 1; i < size; ++i) {
       // Now lets find the max number within (0,i) that
@@ -109,10 +115,60 @@ public:
           pos = j;
         }
 
-      M[i] = pos == -1 ? 1 : 1 + M[pos];
+      M[i] = pos == -1 ? 1 : M[pos] + 1;
+      res = max(res, M[i]);
     }
 
-    int res = *max_element(M.begin(), M.end());
+    return res;
+  }
+
+
+
+  // DP solution:
+  // Use M as usual, also use pred for "predecessor"
+  // index:  0  1  2  3  4  5  6  7
+  // value:  7  2  3  1  5  8  9  6
+  //     M:  1  1  2  1  3  4  5  4
+  //  pred: -1 -1  1 -1  2  4  5  4  ---> index of "predecessor"
+  // sub-s:     o  o     o  o  o
+  // Then
+  // we follow the predecessor array and find the longest subsequence (remember to reverse it)
+  // 6(9) -> 5(8) -> 4(5) -> 2(3) -> 1(2)
+  vector<int> longestAscendingSubSequence2(vector<int> nums) {
+    if (nums.empty() || nums.size() == 1) return nums;
+    const int size = nums.size();
+    vector<int> M(size), pred(size);
+    M[0] = 1;
+    pred[0] = -1; // predecessor indices
+    int globalMax = 0; // global max
+    int globalEnd = -1; // global max end index
+
+    for (int i = 1; i < size; ++i) {
+      // Now lets find the max number within (0,i) that
+      int pos = -1;
+      int len = 0;
+      for (int j = 0; j < i; ++j)
+        if (M[j] > len&& nums[j] < nums[i]) {
+          len = M[j];
+          pos = j;
+        }
+
+      M[i] = pos == -1 ? 1 : 1 + M[pos];
+      pred[i] = pos;
+
+      if (M[i] > globalMax) {
+        globalMax = M[i];
+        globalEnd = i;
+      }
+    }
+
+    // Post process for result
+    vector<int> res;
+    while (globalEnd != -1) {
+      res.push_back(nums[globalEnd]);
+      globalEnd = pred[globalEnd];
+    }
+    reverse(res.begin(), res.end());
     return res;
   }
 
@@ -707,6 +763,10 @@ public:
 
 
   // Naive solution: perform DFS all permutation of all the cuts, take the minimum cost
+  // 0   1   2     3     4    -> index
+  // 0 1 2 3 4 5 6 7 8 9 10   -> length
+  //     |   |     |          -> 3 mandatory cuts
+  // M[i][j]: cut from i to j, minimum cost
   // Same idea: ×ó´ó¶ÎÓÒÐ¡¶Î
   //     0 2 4 7 10
   //     ----------
@@ -2026,4 +2086,55 @@ public:
   }
 
 
+
+  // Can I Win, aka Pizza problem
+  // Array of positive integers with NO duplicates; you and your friend take turns; your friend always pick the bigger one from either end; you go first, how to max?
+  // Base case: 1 piece of pizza M[i][i] = a[i]
+  //            2 pieces of pizza M[i][i+1] = max(a[i], a[i+1])
+  // Induction rule:
+  //            M[i][j] represents the largest total sum of [from i-th pizza to j-th pizza]
+  //            M[i][j] = max( case 1: if I take the left pizza
+  //                                   a[i] + M[i+2][j],   if a[i+1] > a[j],  bc my friend will take a[i+1]
+  //                                   a[i] + M[i+1][j-1], if a[i+1] < a[j],  bc my friend will take a[j]
+  //                           case 2: if I take the right pizza
+  //                                   a[j] + M[i+1][j-1], if a[i] > a[j-1],  bc my friend will take a[i]
+  //                                   a[j] + M[i][j-2],   if a[i] < a[j-1]), bc my friend will take a[j-1]
+  // How to fill table for pizza: [2 1 4 5 3]
+  // First fill base case (see below), then fill towards top right
+  //       0 1 2 3 4
+  //       2 1 4 5 3
+  // ---------------
+  // 0 2 | 2 2
+  // 1 1 |   1 4 
+  // 2 4 |     4 5
+  // 3 5 |       5 5
+  // 4 3 |         3
+  // Time: O(n^2)
+  bool canIWin(vector<int> a) {
+    const int size = a.size();
+    if (size <= 2) return true;
+    vector<vector<int>> M(size, vector<int>(size, 0));
+
+    // Initialize base cases
+    for (int i = 0; i < size; ++i) {
+      M[i][i] = a[i];
+      if (i + 1 < size)
+        M[i][i + 1] = max(a[i], a[i + 1]);
+    }
+
+    for (int offset = 2; offset < size; ++offset)
+      for (int i = 0; i < size - offset; ++i) {
+        int j = i + offset;
+
+        int leftSolution = a[i + 1] > a[j] ? a[i] + M[i + 2][j] : M[i + 1][j - 1]; // case 1: if I take the left pizza
+        int rightSolution = a[i] > a[j - 1] ? a[j] + M[i + 1][j - 1] : a[j] + M[i][j - 2]; // case 2: if I take the right pizza
+        M[i][j] = max(leftSolution, rightSolution);
+      }
+
+    int sum = 0;
+    for (auto i : a)
+      sum += i;
+
+    return M[0][size - 1] > sum / 2;
+  }
 };

@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DFS", "DFS\DFS.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Topology", "Topology\Topology.vcxproj", "{23B0576C-B887-48F6-8FE9-22D18CEAE426}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trie", "Trie\Trie.vcxproj", "{5B515F14-4E66-4650-B5F2-BD6C60A92C65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -171,6 +173,14 @@ Global
 		{23B0576C-B887-48F6-8FE9-22D18CEAE426}.Release|x64.Build.0 = Release|x64
 		{23B0576C-B887-48F6-8FE9-22D18CEAE426}.Release|x86.ActiveCfg = Release|Win32
 		{23B0576C-B887-48F6-8FE9-22D18CEAE426}.Release|x86.Build.0 = Release|Win32
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Debug|x64.ActiveCfg = Debug|x64
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Debug|x64.Build.0 = Debug|x64
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Debug|x86.ActiveCfg = Debug|Win32
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Debug|x86.Build.0 = Debug|Win32
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Release|x64.ActiveCfg = Release|x64
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Release|x64.Build.0 = Release|x64
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Release|x86.ActiveCfg = Release|Win32
+		{5B515F14-4E66-4650-B5F2-BD6C60A92C65}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

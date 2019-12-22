@@ -202,6 +202,11 @@ int main()
     res = sol.minimumSizeSubarraySum(vector<int>{ 2, 3, 1, 2, 4, 3 }, 7);
   }
 
+  // Asteroids collision
+  {
+    auto res = sol.asteroidCollision(vector<int>{ -2, -1, 1, 2 });
+  }
+
   cin.get();
   return 0;
 }

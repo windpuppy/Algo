@@ -28,6 +28,14 @@ class HashString {
     }
   };
 
+  // point(x, y), sort the points by x ascending and y descending
+  class SlopeComparator {
+  public:
+    bool operator()(pair<int, int> p1, pair<int, int> p2) {
+      return p1.first != p2.first ? p1.first < p2.first : p2.second < p1.second;
+    }
+  };
+
   
 public:
   // O(n) + O(nlogn) + O(klogn)
@@ -1163,6 +1171,25 @@ public:
       res = max(res, most);
     }
     return res;
+  }
+
+
+
+  // Similar to longest ascending subsequence
+  int largestSetOfPointsWithPositiveSlope(vector<pair<int, int>> points) {
+    sort(points.begin(), points.end(), SlopeComparator());
+    int res = 0;
+    vector<int> M(points.size(), 0);
+    for (int i = 0; i < points.size(); ++i) {
+      for (int j = 0; j < i; ++j)
+        if (points[j].second < points[i].second)
+          M[i] = max(M[i], M[j]);
+      
+      M[i]++;
+      res = max(res, M[i]);
+    }
+
+    return res == 1 ? 0 : res; // IMPORTANT, a single point cannot form a line!
   }
 
 

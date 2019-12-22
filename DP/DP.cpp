@@ -19,8 +19,10 @@ int main()
 
   // Longest ascending subsequence
   {
-    vector<int> input{ 10, 11, 1, 2, 12, 3, 4 };
-    auto res = sol.longestAscendingSubSequence(input); // 4
+    vector<int> input{ 7, 2, 3, 1, 5, 8, 9, 6};
+    auto res = sol.longestAscendingSubSequence(input); // 5
+    auto res2 = sol.longestAscendingSubSequence2(input); // [2,3,5,8,9]
+    res2 = sol.longestAscendingSubSequence2({ 1 }); // 1
   }
 
   // Longest common substring
@@ -293,6 +295,12 @@ int main()
   {
     vector<int> nums{ 7, 2, 5, 10, 8 };
     auto res = sol.splitArrayLargestSum(nums, 2); // 18
+  }
+
+  // Can I win
+  {
+    vector<int> nums{ 2, 1, 4, 5, 3 };
+    auto res = sol.canIWin(nums);
   }
 
   cin.get();
