@@ -1054,6 +1054,39 @@ public:
 
 
 
+  // Equal sum partitions
+  // Given an array of numbers, partition it into multiple subarrays, and return the smallest sum (not the fewest partitions!)
+  // Here we use DFS
+  // Time: O(n^2)
+  int minEqualSumPartition(vector<int> nums) {
+    const int size = nums.size();
+    int partSum = 0;
+    for (int i = 0; i < size; ++i) {
+      partSum += nums[i]; // sum of the current partition
+      if (i == size - 1)
+        return partSum;
+
+      if (equalSum_helper(nums, i + 1, partSum))
+        return partSum;
+    }
+    return partSum;
+  }
+
+  bool equalSum_helper(vector<int> nums, int index, int partSum) {
+    const int size = nums.size();
+    if (index == size) return true;
+
+    int currSum = 0;
+    while (index < size) {
+      currSum += nums[index++];
+      if (currSum >= partSum)
+        break;
+    }
+    
+    if (currSum != partSum) return false; // cannot find the solution (note, it's possible currSum < partSum, e.g. final item is not big enough)
+    return equalSum_helper(nums, index, partSum);
+  }
+
   // Asteroids Collision problem
   // For example: [5, -10, 5] ==> output will be [-5, 5], because -10 moves left, 5 and 5 move right
   //              [5, 5, -10] ==> output will be [-10], because -10 will destroy both 5s

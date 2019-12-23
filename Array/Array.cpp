@@ -202,6 +202,16 @@ int main()
     res = sol.minimumSizeSubarraySum(vector<int>{ 2, 3, 1, 2, 4, 3 }, 7);
   }
 
+  // Equal sum partitions (look for the smallest sum, not the fewest partition!)
+  {
+    vector<int> nums{ 2, 5, 1, 3, 3, 7 };
+    auto res = sol.minEqualSumPartition(nums); // 7
+    vector<int> nums2{ 1, 1, 1, 1, 1 };
+    res = sol.minEqualSumPartition(nums2); // 1
+    vector<int> nums3{ 1, 2, 3, 4 };
+    res = sol.minEqualSumPartition(nums3); // 10
+  }
+
   // Asteroids collision
   {
     auto res = sol.asteroidCollision(vector<int>{ -2, -1, 1, 2 });

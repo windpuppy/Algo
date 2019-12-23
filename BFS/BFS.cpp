@@ -87,8 +87,10 @@ int main()
 
   // Word ladder
   {
-    vector<string> dict{ "git", "hit", "hog", "hot" };
+    vector<string> dict{ "git", "hit", "hog", "hot", "got" };
     auto res = sol.wordLadder("git", "hot", dict);
+    auto res2 = sol.wordLadder2("git", "hot", dict);
+    auto res3 = sol.wordLadder3("git", "hot", dict);
   }
 
   // Super ugly number
@@ -145,6 +147,13 @@ int main()
   {
     vector<vector<int>> grid{ {1, 1, 1}, {0, 1, 0}, {0, 0, 0} };
     auto res = sol.closestDistanceToZero(grid);
+  }
+
+  // Pacific Atlantic flow
+  {
+    vector<vector<int>> grid{ {1,2,2,3},{3,2,3,4},{2,4,5,3},{6,7,1,4} };
+    auto res = sol.pacificAtlantic(grid);
+    res = sol.pacificAtlantic_bfs(grid);
   }
 
   // Shortest distance to char

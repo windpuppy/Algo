@@ -461,7 +461,10 @@ public:
 
   // Given 24, return all its factor combinations
   // Start with factor 2, product 1, and gradually recurse up
-  // DO NOT START WITH FACTOR 1
+  // Notes:
+  // 1) we can repeatedly use the same factor, eg 12 = [2,2,3]
+  // 2) 1 is not a factor
+  // 3) target itself is a factor
   vector<vector<int>> factorCombinations(int target) {
     vector<vector<int>> res;
     vector<int> out;
@@ -479,7 +482,9 @@ public:
       return;
     }
 
-    for (int n = currFactor; n < target; n++) {
+    // starting from currFactor, not currFactor + 1 because we can use it multiple times
+    // ending <= target not < target, because target itself is also a factor!
+    for (int n = currFactor; n <= target; n++) {
       int newProduct = n * currProduct;
       if (newProduct > target) break; // overflow
 
@@ -490,7 +495,6 @@ public:
       }
     }
   }
-
 
 
 

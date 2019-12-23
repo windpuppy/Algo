@@ -474,8 +474,8 @@ public:
   // Assumptions: a and b are not the same, all words equal length, no dups in dictionary
   // BFS Solution: start from a, traverse all words adjacent to it until we find b
   //               if we traversed all words and still haven't found b, return 0
-  int wordLadder(string a, string b, vector<string> list) {
-    unordered_set<string> dict(list.begin(), list.end());
+  int wordLadder(string a, string b, vector<string> wordList) {
+    unordered_set<string> dict(wordList.begin(), wordList.end());
     queue<pair<string, int>> q;
     q.push({ a, 1 });
 
@@ -484,20 +484,19 @@ public:
       auto dist = q.front().second;
       q.pop();
 
-      auto dict2 = dict;
-      for (auto it = dict.begin(); it != dict.end(); it++) {
-        string w = *it;
+      auto backup = dict;
+      for (auto w : dict) {
         if (curr == w) { // do not jump to yourself
-          dict2.erase(w);
+          backup.erase(w);
         }
         else if (isAdjacent(curr, w)) { // only if one char adjacent, we might have our solution
           if (w == b) return dist + 1;
 
-          dict2.erase(w);
+          backup.erase(w);
           q.push({ w, dist + 1 });
         }
       }
-      dict = dict2; // recover, because a word 2 char away in this loop might be 1 char away in the next loop
+      dict = backup; // recover, because a word 2 char away in this loop might be 1 char away in the next loop
     }
     return 0;
   }
@@ -508,6 +507,74 @@ public:
       if (a[i] != b[i] && !seenDiff) seenDiff = true;
       else if (a[i] != b[i]) return false;
     return true;
+  }
+
+
+
+  // Return the transformation path instead
+  vector<string> wordLadder2(string a, string b, vector<string> wordList) {
+    unordered_set<string> dict(wordList.begin(), wordList.end());
+    queue<vector<string>> q; // a queue of paths, not words
+    q.push({ a });
+
+    while (!q.empty()) {
+      const int size = q.size();
+      for (int i = 0; i < size; ++i) { // go through current level only
+        vector<string> curr = q.front();
+        q.pop();
+
+        auto backup = dict;
+        for (string w : dict) {
+          if (w != a && isAdjacent(curr.back(), w)) {
+            curr.push_back(w);
+            if (w == b) return curr;
+
+            q.push(curr);
+            curr.pop_back();
+            backup.erase(w);
+          }
+        }
+        dict = backup;
+      }
+    }
+    return vector<string>();
+  }
+
+
+
+  // Return all transformation paths
+  vector<vector<string>> wordLadder3(string a, string b, vector<string> wordList) {
+    unordered_set<string> dict(wordList.begin(), wordList.end());
+    queue<vector<string>> q; // a queue of paths, not words
+    q.push({ a });
+    vector<vector<string>> res;
+
+    while (!q.empty()) {
+      if (!res.empty()) return res; // if res is not empty, that means we already found our best solution in the previous loop
+
+      const int size = q.size();
+      for (int i = 0; i < size; ++i) { // go through current level only
+        vector<string> curr = q.front();
+        q.pop();
+
+        auto backup = dict;
+        for (string w : dict) {
+          if (w != a && isAdjacent(curr.back(), w)) {
+            curr.push_back(w);
+            if (w == b) {
+              res.push_back(curr);
+              continue;
+            }
+
+            q.push(curr);
+            curr.pop_back();
+            backup.erase(w);
+          }
+        }
+        dict = backup;
+      }
+    }
+    return res;
   }
 
 
@@ -940,6 +1007,102 @@ public:
       }
     }
     return grid;
+  }
+
+
+
+  // Find the list of points that can reach both Pacific and Atlantic
+  // (can move up, down, left, right; can move to equal or lower height)
+  // Pacific   ~   ~    ~    ~
+  //       ~  1    2    2   (3) *
+  //       ~  3    2    3   (4) *
+  //       ~  2    4   (5)   3  *
+  //       ~ (6)  (7)   1    4  *
+  //          *    *    *    *  Atlantic
+  // DFS solution: O(4^(mn))
+  vector<vector<int>> pacificAtlantic(vector<vector<int>> grid) {
+    if (grid.empty() || grid[0].empty()) return vector<vector<int>>();
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    vector<vector<int>> res;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (pacific_helper(grid, i, j, grid[i][j]) == 3)
+          res.push_back(vector<int>{i, j});
+    return res;
+  }
+
+  int pacific_helper(vector<vector<int>>& grid, int i, int j, int h) {
+    if (i < 0 || j < 0) return 1; // reached Pacific
+    if (i == grid.size() || j == grid[0].size()) return 2; // reached Atlantic
+    if (grid[i][j] > h) return 0; // hit a higher ground, cannot proceed further
+
+    h = grid[i][j];
+    grid[i][j] = INT_MAX; // mark visited
+    int valid = pacific_helper(grid, i-1, j, h) | // note: |, not ||
+                pacific_helper(grid, i+1, j, h) |
+                pacific_helper(grid, i, j-1, h) |
+                pacific_helper(grid, i, j+1, h);
+    grid[i][j] = h; // backtrack
+    return valid;
+  }
+
+
+  
+  // Pacific Atlantic BFS solution
+  // Start from both oceans (top/left border, right/bottom border), see how many points we can reach
+  // Take the AND of those two set of points
+  // Time: O(mn)
+  vector<vector<int>> pacificAtlantic_bfs(vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) return {};
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    const vector<int> dirs{ 0, 1, 0, -1, 0 };
+
+    // define bfs method
+    auto bfs = [&](queue<pair<int, int>>& q, vector<vector<bool>>& visited) {
+      while (!q.empty()) {
+        int i = q.front().first;
+        int j = q.front().second;
+        int h = grid[i][j];
+        q.pop();
+
+        if (visited[i][j]) continue; // check visited
+        visited[i][j] = true; // set visited
+
+        for (int k = 0; k < 4; ++k) {
+          int i2 = i + dirs[k + 1];
+          int j2 = j + dirs[k];
+          if (i2 < 0 || j2 < 0 || i2 == rows || j2 == cols || grid[i2][j2] < h || visited[i2][j2]) continue;
+          q.push({ i2, j2 });
+        }
+      }
+    };
+
+    queue<pair<int, int>> qp, qa; // pacific queue, atlantic queue
+    vector<vector<bool>> vp(rows, vector<bool>(cols, false));
+    auto va = vp;
+
+    for (int j = 0; j < cols; ++j) {
+      qp.push({ 0, j }); // top border
+      qa.push({ rows - 1, j }); // bottom border
+    }
+
+    for (int i = 0; i < rows; ++i) {
+      qp.push({ i, 0 }); // left border
+      qa.push({ i, cols - 1 }); // right border
+    }
+
+    bfs(qp, vp);
+    bfs(qa, va);
+
+    // Our visited grids are actually the results
+    vector<vector<int>> res;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (vp[i][j] && va[i][j])
+          res.push_back(vector<int>{i, j});
+    return res;
   }
 
 
