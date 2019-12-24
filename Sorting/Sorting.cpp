@@ -41,8 +41,13 @@ int main()
 
   // Rainbow sort (another quick sort problem)
   {
-    auto array = vector<int>{ 1, 0, 1, -1, 0 };
-    auto res = sol.rainbowSort(array);
+    auto nums = vector<int>{ 1, 0, 1, -1, 0 };
+    auto res = sol.rainbowSort(nums);
+
+    auto nums2 = vector<int>{ 1, 3, 0, 2, 0, 0, 1 };
+    res = sol.rainbowSort2(nums2);
+    nums2 = vector<int>{ 2, 0, 0, 1, 1 };
+    res = sol.rainbowSort2(nums2);
   }
 
   // Insertion sort

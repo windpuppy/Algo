@@ -167,31 +167,90 @@ public:
     return array;
   }
 
+
+
+  // Three colors: -1, 0, 1
   // Time O(n) - iterate through all elements once
   // space O(1)
   vector<int> rainbowSort(vector<int> nums) {
     if (nums.size() <= 1) return nums;
 
-    // Three bounds
-    int left = 0;
-    int mid = 0;
-    int right = nums.size() - 1;
+    // Three gates
+    int g1 = 0;
+    int g2 = 0;
+    int g3 = nums.size() - 1;
 
-    // Move mid towards right
-    while (mid <= right) {
-      int val = nums[mid];
+    // Move g2 towards g3
+    while (g2 <= g3) {
+      int val = nums[g2];
 
-      // Check mid value: -1, 0, or 1
       if (val == -1)
-        swap(nums[left++], nums[mid++]);
+        swap(nums[g1++], nums[g2++]);
       else if (val == 0)
-        mid++;
+        g2++;
       else
-        swap(nums[mid], nums[right--]); // do NOT mid++ !!!
+        swap(nums[g2], nums[g3--]); // do NOT g2++ !!!
     }
 
     return nums;
   }
+
+
+
+  // Four colors: 0, 1, 2, 3
+  // 0000 1111 2222 xxxx 3333
+  //      a    b    c  d
+  // Time O(n) - iterate through all elements once
+  // space O(1)
+  vector<int> rainbowSort2(vector<int> nums) {
+    if (nums.size() <= 1) return nums;
+
+    // Four gates
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int d = nums.size() - 1;
+
+    // Move g3 towards g4
+    while (c <= d) {
+      int val = nums[c];
+
+      if (val == 0) {
+        swap(nums[b], nums[c++]); // first, from unknown section to 1 section
+        swap(nums[a++], nums[b++]); // then from 1 section to 0 section
+      }
+      else if (val == 1)
+        swap(nums[b++], nums[c++]);
+      else if (val == 2)
+        c++;
+      else
+        swap(nums[c], nums[d--]);
+    }
+
+    return nums;
+  }
+
+
+
+  // Rainbow sort 3: sort k colors, 1~k
+  // Solution: counting sort
+  // Time: O(n)
+  // Space: O(k)
+  vector<int> rainbowSort3(vector<int> nums, int k) {
+    vector<int> count(k + 1, 0);
+    for (auto n : nums)
+      count[n]++;
+
+    int i = 0;
+    for (int color = 1; color <= k; color++) {
+      int c = count[color];
+      while (c-- > 0)
+        nums[i++] = color;
+    }
+    return nums;
+  }
+
+
 
   // Time: O(n^2)
   vector<int> insertionSort(vector<int> input) {
