@@ -203,6 +203,90 @@ public:
     return -1;
   }
 
+
+
+  // Search in shifted sorted array
+  // Shifted: [3,4,5,1,2], no dups, target might not exist in the array
+  // Time: O(logN)
+  // Space: O(1)
+  int searchInShiftedSortedArray(vector<int> nums, int target) {
+    if (nums.empty()) return -1;
+    int left = 0, right = nums.size() - 1;
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+      int midVal = nums[mid], leftVal = nums[left], rightVal = nums[right];
+      if (target == midVal)
+        return mid;
+
+      // (Left) shift happened, real mid is in the left section
+      if (midVal > rightVal)
+        if (target < midVal && target >= leftVal)
+          right = mid - 1;
+        else
+          left = mid + 1;
+
+      // (Right shift) happened, real mid is in the right section
+      else if (midVal < leftVal)
+        if (target > midVal&& target <= rightVal)
+          left = mid + 1;
+        else
+          right = mid - 1;
+
+      // No shift
+      else
+        if (target > midVal)
+          left = mid + 1;
+        else
+          right = mid - 1;
+    }
+    return -1;
+  }
+
+
+
+  // Search in shifted sorted array
+  // Shifted: [3,4,5,1,2], with dups, target might not exist in the array
+  // Time: O(logN)
+  // Space: O(1)
+  int searchInShiftedSortedArray2(vector<int> nums, int target) {
+    if (nums.empty()) return -1;
+    int left = 0, right = nums.size() - 1;
+    while (left <= right) {
+      // dedup
+      while (left < right && nums[left] == nums[left + 1]) left++;
+      while (left < right && nums[right] == nums[right - 1]) right--;
+
+      int mid = left + (right - left) / 2;
+      int midVal = nums[mid], leftVal = nums[left], rightVal = nums[right];
+      if (target == midVal)
+        return mid;
+
+      // (Left) shift happened, real mid is in the left section
+      if (midVal > rightVal)
+        if (target < midVal && target >= leftVal)
+          right = mid - 1;
+        else
+          left = mid + 1;
+
+      // (Right shift) happened, real mid is in the right section
+      else if (midVal < leftVal)
+        if (target > midVal&& target <= rightVal)
+          left = mid + 1;
+        else
+          right = mid - 1;
+
+      // No shift
+      else
+        if (target > midVal)
+          left = mid + 1;
+        else
+          right = mid - 1;
+    }
+    return -1;
+  }
+
+
+
 private:
   
 
