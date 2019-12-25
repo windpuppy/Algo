@@ -13,6 +13,14 @@
 
 using namespace std;
 
+class TreeNode {
+public:
+  int value;
+  TreeNode* left;
+  TreeNode* right;
+  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
+};
+
 class Array {
 public:
   vector<int> mergeTwoSortedArrays(vector<int> one, vector<int> two) {
@@ -269,6 +277,9 @@ public:
     return max;
   }
 
+
+
+  // Two sum, pick one from each array
   // Hash a, check b against it
   bool TwoSumTwoArrays(vector<int> a, vector<int> b, int target) {
     unordered_set<int> set;
@@ -281,6 +292,27 @@ public:
 
     return false;
   }
+
+
+
+  // Two sum in BST
+  // Time: O(n)
+  // Space: O(height)
+  // Note: we can not use the BST property to go left and right, we have to search both subtree, because tree might contain negative elements
+  bool TwoSumBST(TreeNode* root, int target) {
+    if (!root) return false;
+    unordered_set<int> set;
+    return TwoSumBST_helper(root, target, set);
+  }
+
+  bool TwoSumBST_helper(TreeNode* root, int target, unordered_set<int>& set) {
+    if (!root) return false;
+    if (set.find(root->value) != set.end()) return true;
+    set.insert(target - root->value);
+    return TwoSumBST_helper(root->left, target, set) ||
+           TwoSumBST_helper(root->right, target, set);
+  }
+
 
   // Return 3 Sum, no duplicates
   // Solution:

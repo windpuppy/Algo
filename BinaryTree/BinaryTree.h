@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <queue>
 #include <map>
+#include <set>
 
 using namespace std;
 
@@ -423,38 +424,29 @@ public:
     helper_scanVertical(root->right, line, minLine, offset + 1, res);
   }
 
+
+
   // A more efficient implementation using map
   // Time: O(nlogn)
   // map in STL is implemented as O(logn) insertion
   vector<vector<int>> verticalOrder2(TreeNode* root) {
+    map<int, set<pair<int, int>>> values; // map<x, set[y, value]>
+    traverse(root, 0, 0, values);
     vector<vector<int>> res;
-    if (!root) return res;
-
-    map<int, vector<int>> map;
-    helper_scanVertical(root, 0, map);
-    for (auto m : map)
-      res.push_back(m.second);
-    return res;
-  }
-
-  void helper_scanVertical(TreeNode* root, int offset, map<int, vector<int>>& map) {
-    if (!root) return;
-    map[offset].push_back(root->value);
-    helper_scanVertical(root->left, offset - 1, map);
-    helper_scanVertical(root->right, offset + 1, map);
-  }
-
-  vector<int> verticalOrder3(TreeNode* root) {
-    vector<int> res;
-    if (!root) return res;
-
-    map<int, vector<int>> map;
-    helper_scanVertical(root, 0, map);
-    for (auto m : map) {
-      for (auto n : m.second)
-        res.push_back(n);
+    for (const auto& v : values) {
+      vector<int> tmp;
+      for (auto p : v.second)
+        tmp.push_back(p.second);
+      res.push_back(tmp);
     }
     return res;
+  }
+
+  void traverse(TreeNode* root, int x, int y, map<int, set<pair<int, int>>>& values) {
+    if (!root) return;
+    values[x].insert({ y, root->value });
+    traverse(root->left, x - 1, y + 1, values);
+    traverse(root->right, x + 1, y + 1, values);
   }
 
   // recursive
@@ -737,6 +729,8 @@ public:
       && isBST(root->right, root->value, max);
   }
 
+
+
   // Time O(n) worst case, better answer: O(height + # of nods in [min, max])
   // Space O(height), recursion call stack
   vector<int> getRange(TreeNode* root, int min, int max) {
@@ -759,13 +753,17 @@ public:
       getRange(root->right, max, root->value, res);
   }
 
+
+
   // Time: O(h), worst case O(n) for skewed tree
-  TreeNode* search(TreeNode* root, int target) {
+  TreeNode* searchInBST(TreeNode* root, int target) {
     if (!root || root->value == target) return root;
     return target < root->value
-      ? search(root->left, target)
-      : search(root->right, target);
+      ? searchInBST(root->left, target)
+      : searchInBST(root->right, target);
   }
+
+
 
   // Naive: in-order traversal, find closest
   // Efficient: if equal? return; if not equal? go left / right
@@ -794,6 +792,8 @@ public:
     }
     return res;
   }
+
+
 
   // Inorder traversal
   // Optimization 1: use k-size max heap, throw away n-k max, remaining will be out k closest
@@ -877,6 +877,24 @@ public:
 
 
 
+  // Target guaranteed to be in the tree, no dups, return inorder successor of the target (or -1 if no such exist)
+  // Time: O(h), Space: O(h)
+  int inorderSuccessorInBST(TreeNode* root, int p) {
+    int res = -1;
+    while (root) {
+      int val = root->value;
+
+      if (p < val) {
+        res = val;
+        root = root->left;
+      }
+      else
+        root = root->right;
+    }
+    return res;
+  }
+
+
   // Assumption
   // 1) each node either has 0 or 2 children
   // 2) root equals to its smaller child
@@ -900,6 +918,25 @@ public:
     return min(left, right);
   }
 
+
+
+  // Longest consecutive sequence path in binary tree
+  // Consecutive means: 1, 2, 3, etc, cannot have gap
+  // Path means: can start from any node to any node, but only top-down wise, not bottom-up
+  // Time: O(n), Space: O(h)
+  int longestConsecutiveInBinaryTree(TreeNode* root) {
+    if (!root) return 0;
+    return getLongest(root, root->value, 0);
+  }
+
+  int getLongest(TreeNode* root, int parentVal, int len) {
+    if (!root) return len;
+
+    len = root->value == parentVal + 1 ? len + 1 : 1; // reset
+    int left = getLongest(root->left, root->value, len);
+    int right = getLongest(root->right, root->value, len);
+    return max(left, right);
+  }
 
 
   TreeNode* insert_iter(TreeNode* root, int key) {

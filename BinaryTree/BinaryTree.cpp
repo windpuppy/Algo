@@ -96,14 +96,6 @@ int main()
     auto res = sol.verticalOrder2(root);
   }
 
-  // Vertical order traversal 3 - more efficient O(nlogn), return all in one vector
-  {
-    vector<optional<int>> values{ 1, 2, 3, 4, 5, 6, 7, nullopt, nullopt, nullopt, nullopt, nullopt, 8, nullopt, 9 };
-    auto root = Helper::buildTree(values);
-    Helper::printTree(root);
-    auto res = sol.verticalOrder3(root);
-  }
-
   // Height
   {
     vector<optional<int>> values{ 1, 2, 3, 4, 5, nullopt, 7, 8 };
@@ -205,8 +197,8 @@ int main()
     vector<optional<int>> values{ 7, nullopt, 16, 11, 18, nullopt, 12, nullopt, 20 };
     auto root = Helper::buildTree(values);
     Helper::printTree(root);
-    auto res = sol.search(root, 10);
-    res = sol.search(root, 10);
+    auto res = sol.searchInBST(root, 10);
+    res = sol.searchInBST(root, 10);
   }
 
   // Find closest
@@ -277,7 +269,7 @@ int main()
       nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, 11, 14,
       nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, 9, nullopt, nullopt, nullopt };
     root = Helper::buildTree(values2);
-    auto node9 = sol.search(root, 9);
+    auto node9 = sol.searchInBST(root, 9);
     node9->right = new TreeNode(10);
     Helper::printTree(root);
     res = sol.deleteTree(root, 8);
