@@ -13,6 +13,7 @@
 #include <functional>
 #include <utility>
 #include <tuple>
+#include <set>
 
 using namespace std;
 
@@ -1239,6 +1240,68 @@ public:
         dist = min(dist, abs(i - j));
     }
     return dist == INT_MAX ? -1 : dist;
+  }
+
+
+
+  // For every building enters (left edge), we push the height into the max heap.
+  //    if heap top changes, we have a new key point which will be part of the output
+  // For every building exits (right edge), we pop the height out of the max heap.
+  //    if hep top changes, we have a new key point as well.
+  //      -------
+  // 3    |     |
+  // 2 -------  |
+  // 1 |  |  |  |
+  // 0 |  |  |  |
+  //-----------------
+  // 0 1  2  3  4
+  //
+  // Above we have 3 buildings, [1,3,2], [2,4,3]
+  // We noticed for building 1, its entering edge affects the skyline, but not its exiting edge,
+  //            for building 2, both its entering and exiting edge affects the skyline.
+  // EDGE CASES:
+  // 1) if two entering edges overlap, process the higher one first
+  // 2) if two exiting edges overlap, process the lower one first
+  // 3) if entering and exiting edges overlap, process the entering first (bc entering edge will affect the next skyline height)
+  // Implementation:
+  // Because heap supports O(logn) insert and pop, but not delete; we use multiset which supports O(logn) insert and delete
+  typedef pair<int, int> Event;
+  vector<vector<int>> skyLine(vector<vector<int>> buildings) {
+    multiset<int> set;
+    vector<Event> edges;
+    for (auto b : buildings) {
+      edges.emplace_back(b[0], b[2]);
+      edges.emplace_back(b[1], -b[2]); // minus to denote exiting edges
+    }
+
+    auto sortBuildings = [&](const Event& a, const Event& b) {
+      if (a.first != b.first) return a.first < b.first; // sort by x ascending
+      else return a.second > b.second; // if equal x, sort by y descending (takes care of both positives and negatives!)
+    };
+    sort(edges.begin(), edges.end(), sortBuildings);
+
+    vector<vector<int>> res;
+    for (auto const& e : edges) {
+      int x = e.first;
+      bool entering = e.second > 0;
+      int y = abs(e.second); // current building height
+
+      if (entering) {
+        if (y > maxHeight(set))
+          res.push_back({ x, y });
+        set.insert(y);
+      }
+      else {
+        set.erase(set.equal_range(y).first); // delete all current edges with y height
+        if (y > maxHeight(set))
+          res.push_back({x, maxHeight(set)}); // note, not y!
+      }
+    }
+    return res;
+  }
+
+  int maxHeight(multiset<int>& set) {
+    return set.empty() ? 0 : *set.rbegin(); // tail of the multiset, which is the max
   }
 
 };

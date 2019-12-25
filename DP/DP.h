@@ -2137,4 +2137,118 @@ public:
 
     return M[0][size - 1] > sum / 2;
   }
+
+
+
+  // Assign signs (+, -) to each number, how many ways to sum to target?
+  // DFS solution: O(2^n)
+  int waysToTargetSum(vector<int>& nums, int target) {
+    return ways_helper(nums, 0, target);
+  }
+
+  int ways_helper(vector<int>& nums, int index, int remain) {
+    if (index == nums.size())
+      return remain == 0;
+    return ways_helper(nums, index + 1, remain - nums[index]) +
+           ways_helper(nums, index + 1, remain + nums[index]);
+  }
+
+  // DFS with memo
+  // At [index, targetSum], we are doing repeated calculation. Use memo to directly look up the previously computed result.
+  // key for the map: index_target, value for the map: number of ways
+  int waysToTargetSum2(vector<int>& nums, int target) {
+    unordered_map<string, int> map;
+    return ways_helper2(nums, 0, target, map);
+  }
+
+  int ways_helper2(vector<int>& nums, int index, int remain, unordered_map<string, int>& map) {
+    if (index == nums.size())
+      return remain == 0;
+
+    string key = to_string(index) + " " + to_string(remain);
+    if (map.find(key) != map.end())
+      return map[key];
+
+    int ways = ways_helper2(nums, index + 1, remain - nums[index], map) +
+               ways_helper2(nums, index + 1, remain + nums[index], map);
+    map[key] = ways;
+    return ways;
+  }
+
+  // DP solution
+  // DP matrix: vector<unordered_map<int, int>>
+  // matrix is a 1D vector of maps
+  // M[i][j] stores: up to i-th element (inclusive), to sum up to j, how many ways in total
+  // Base case:      M[0][0] = 1  ==> up to 0-th element (ie. zero elements), to sum to 0, there is 1 way - take nothing
+  // Induction rule: M[i][j] for all map entrys <sum, ways> in M[i-1]
+  //                         M[i][sum + val] += ways
+  //                         M[i][sum - val] += ways
+  // Final answer: M[size][target]
+  int waysToTargetSum3(vector<int>& nums, int target) {
+    const int size = nums.size();
+    vector<unordered_map<int, int>> M(size + 1);
+    M[0][0] = 1;
+    
+    for (int i = 1; i <= size; ++i)
+      for (auto m : M[i - 1]) {
+        int sum = m.first;
+        int ways = m.second;
+        int val = nums[i - 1];
+        M[i][sum + val] += ways;
+        M[i][sum - val] += ways;
+      }
+    return M[size][target];
+  }
+
+
+
+  // Burst ballons (DP)
+  // An array of integers, one burst you get coins nums[left] * nums[i] * nums[right]; find max coins
+  // This is a typical 2D DP problem
+  // M[i][j]: from baloon i to j both inclusive, what's the max coins
+  // Initialize:
+  //     0  1   2   3
+  //     3  1   5   8
+  // 0 3 3  30
+  // 1 1    15 135
+  // 2 5        40  48
+  // 3 8            40
+  // Then we look at (0,1): Case 1, burst 0 last: look up (1,1) = 15, burst 0 = 3*5 = 15 (now 1 is gone), sum = 30
+  //                        Case 2, burst 1 last: look up (0,0) = 3, burst 1 = 1*5 = 5 (now 0 is gone), sum = 8
+  //                        max(30,8) = 30
+  //      we look at (1,2): Case 1, burst 1 last: look up (2,2) = 40, burst 1 = 3*8 = 24 (now 2 is gone), sum = 64
+  //                        Case 2, burst 2 last: look up (1,1) = 15, burst 2 = 3*5*8 = 120 (now 1 is gone), sum = 135
+  //                        max(64,135) = 135
+  //      we look at (2,3): Case 1, burst 2 last: look up (3,3) = 40, burst 2 = 1*5 = 5 (now 3 is gone), sum = 45
+  //                        Case 2, burst 3 last: look up (2,2) = 40, burst 3 = 1*8 = 8 (now 2 is gone), sum = 48
+  //                        max(45,48) = 48
+  // Eventually
+  //     0   1   2   3
+  //     3   1   5   8
+  // 0 3 3  30 159 167
+  // 1 1    15 135 159
+  // 2 5        40  48
+  // 3 8            40
+  // Time: O(n^3), Space: O(n^2)
+  int burstBalloons(vector<int> nums) {
+    if (nums.empty()) return 0;
+    const int size = nums.size();
+    vector<vector<int>> M(size, vector<int>(size, 0));
+
+    for (int len = 1; len <= size; ++len)
+      for (int i = 0; i <= size - len; ++i) {
+        int j = i + len - 1;
+        int leftValue = i == 0 ? 1 : nums[i - 1];
+        int rightValue = j == size - 1 ? 1 : nums[j + 1];
+
+        // now we fixed the [i,j] boundaries, we try all possible k between them
+        for (int k = i; k <= j; ++k) {
+          int coins = leftValue * nums[k] * rightValue;
+          if (i != k) coins += M[i][k - 1]; // left lookup
+          if (j != k) coins += M[k + 1][j]; // right lookup
+          M[i][j] = max(M[i][j], coins);
+        }
+      }
+    return M[0][size - 1];
+  }
 };
