@@ -30,6 +30,11 @@ int main()
     auto res = sol.subsetsOfK2("abab", 2);
   }
 
+  // subset of k in n
+  {
+    auto res = sol.subsetsOfK_nums(4, 2);
+  }
+
   // Valid parentheses
   {
     auto res = sol.validParentheses(3);
@@ -71,6 +76,12 @@ int main()
   // All permutations of subsets
   {
     auto res = sol.permutationOfSubsets("abc");
+  }
+
+  // Palindrome permutation 1 & 2
+  {
+    auto res = sol.palindromePermutation("aabbcc");
+    auto res2 = sol.palindromePermutation2("aabb");
   }
 
   // Combination sum

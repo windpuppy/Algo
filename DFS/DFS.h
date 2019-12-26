@@ -222,15 +222,16 @@ public:
       return;
     }
 
+    // case 1: not adding the current number
     if (out.size() <= k) // pruning
       subsetsOfK_nums_dfs(nums, index + 1, k, out, res);
 
+    // case 2: adding the number
     if (out.size() <= k - 1) { // pruning
       out.push_back(nums[index]);
       subsetsOfK_nums_dfs(nums, index + 1, k, out, res);
       out.pop_back();
     }
-    
   }
 
 
@@ -562,9 +563,9 @@ public:
 
     unordered_set<char> set;
     for (int i = index; i < input.size(); ++i) {
-      if (set.find(input[i]) != set.end())
-        continue;
+      if (set.count(input[i])) continue;
       set.insert(input[i]);
+
       swap(input[i], input[index]);
       permutations2_dfs(input, index + 1, res);
       swap(input[i], input[index]);
@@ -600,6 +601,55 @@ public:
       permutationOfSubsets_helper(input, index + 1, res);
       swap(input[i], input[index]);
     }
+  }
+
+
+
+  // Given a string, determine if any of its permutation can form a palindrome. e.g. "aab" => true
+  bool palindromePermutation(string input) {
+    unordered_set<char> set;
+    for (auto c : input)
+      if (!set.count(c)) set.insert(c);
+      else set.erase(c);
+    return set.empty() || set.size() == 1;
+  }
+
+
+
+  // Same as above, but return all palindromes. e.g. "aabb" => "abba" "baab"
+  // Need to create a set to dedup
+  // Time: O(n! * n)
+  // Space: O(n^2) - one hashset per level
+  vector<string> palindromePermutation2(string input) {
+    if (input.empty()) return {};
+    vector<string> res;
+    palindrome_helper(input, 0, res);
+    return res;
+  }
+
+  void palindrome_helper(string input, int level, vector<string>& res) {
+    if (level == input.size()) {
+      if (isPalinedrome(input))
+        res.push_back(input);
+      return;
+    }
+
+    unordered_set<char> set;
+    for (int i = level; i < input.size(); ++i) {
+      if (set.count(input[i])) continue;
+      set.insert(input[i]);
+
+      swap(input[level], input[i]);
+      palindrome_helper(input, level + 1, res);
+      swap(input[level], input[i]);
+    }
+  }
+
+  bool isPalinedrome(string s) {
+    if (s.empty()) return true;
+    int l = 0, r = s.size() - 1;
+    while (l < r) if (s[l++] != s[r--]) return false;
+    return true;
   }
 
 
