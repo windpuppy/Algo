@@ -80,12 +80,17 @@ int main()
 
   // Compress string 2
   {
-    auto res = sol.compress("aaabbcdee");
+    auto res = sol.compress2("aaabbcdee");
   }
 
-  //Decompress string 2
+  // Dceompress string 1
   {
-    auto res = sol.decompress("a2b0c1d3"); // 0 will be ignored
+    auto res = sol.decompress("ap2lec3n");
+  }
+
+  // Decompress string 2
+  {
+    auto res = sol.decompress2("a2b0c1d3"); // 0 will be ignored
   }
 
   // Encode Space

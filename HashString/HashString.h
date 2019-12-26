@@ -383,11 +383,55 @@ public:
   }
 
 
+
+  // compress abbccc -> ab2c3, instead of a1b2c3
+  string compress(string input) {
+    if (input.empty() || input.size() == 1) return input;
+    const int length = input.size();
+    int newLength = 0;
+
+    int slow = 0;
+    int fast = 0;
+    while (fast < length) {
+      // pinpoint first char in each while loop
+      int first = fast;
+      fast++;
+      while (fast < length && input[fast] == input[first])
+        fast++;
+
+      // copy first char
+      input[slow++] = input[first];
+
+      // repeating chars?
+      int count = 0;
+      if (fast - first > 1) {
+        count = copyDigits(input, slow, fast - first);
+        slow += count; // slow moves num digits (it can be a1, or it can be a12 if there are 12 'a's)
+      }
+      newLength += 1 + count; // char itself + num digits
+    }
+
+    input.resize(newLength);
+    return input;
+  }
+
+  // copy n chars to slow position
+  int copyDigits(string& input, int index, int count) {
+    if (!count) return 0;
+    auto str = to_string(count);
+    for (int n = 0; n < str.size(); ++n) {
+      input[index++] = str[n];
+    }
+    return (int)str.size();
+  }
+
+
+
   // compress 2 : aaabbcdee -> a3b2c1d1e2
   // We run two passes
   // 1st pass - use slow and fast pointers, compress repeating chars
   // 2nd pass - move slow and fast backwards, append "1"s to unique chars
-  string compress(string input) {
+  string compress2(string input) {
     if (input.empty() || input.size() == 1) return input;
     int length = input.size();
     int newLength = 0; // newLength can be shorter than input length, so we start from zero and build it!
@@ -396,7 +440,6 @@ public:
     int slow = 0;
     int fast = 0;
     while (fast < length) {
-
       // pinpoint first char in each while loop
       int first = fast++;
       while (fast < length && input[fast] == input[first])
@@ -450,14 +493,39 @@ public:
     return input;
   }
 
-  // copy n chars to slow position
-  int copyDigits(string& input, int index, int count) {
-    if (!count) return 0;
-    auto str = to_string(count);
-    for (int n = 0; n < str.size(); ++n) {
-      input[index++] = str[n];
+
+
+  // Decompress abc2 -> abcc
+  // Time: O(n)
+  string decompress(string input) {
+    if (input.empty()) return input;
+    int shortSize = input.size(), longSize = input.size();
+    for (auto c : input) {
+      int d = c - '0';
+      if (d > 0 && d <= 9)
+        longSize += d - 2;
     }
-    return (int)str.size();
+    input.resize(longSize);
+
+    int slow = longSize - 1;
+    int fast = shortSize - 1;
+
+    // we can skip fast == 0, because first char cannot be digit
+    while (fast > 0) {
+      int digit = input[fast] - '0';
+
+      // process a2 and beyond
+      if (digit >= 2 && digit <= 9) {
+        for (int i = 0; i < digit; ++i)
+          input[slow--] = input[fast - 1]; // copy 3 'd's
+        fast -= 2;
+      }
+      // a0, a1, a2 already processed earlier
+      else {
+        input[slow--] = input[fast--];
+      }
+    }
+    return input;
   }
 
 
@@ -465,7 +533,7 @@ public:
   // Two passes
   // decompress short (a0, a1, a2), decompress long (a3 -> aaa)
   // Assumption given: no repeating chars > 9, ie. input won have like 'a10', so all digits are single
-  string decompress(string input) {
+  string decompress2(string input) {
     if (input.empty()) return input;
 
     int shortSize = 0, longSize = 0;
@@ -1193,6 +1261,35 @@ public:
   }
 
 
+
+  string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+    "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+  string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+  int bil = 1000000000, mil = 1000000, tho = 1000, hun = 100;
+
+  string integerToEnglishWords(int num) {
+    if (num == 0) return "Zero";
+    string res = int2str(num);
+    res.erase(0, 1);
+    return res;
+  }
+
+  string int2str(int n) {
+    if (n >= bil)
+      return int2str(n / bil) + " Billion" + int2str(n % bil);
+    else if (n >= mil)
+      return int2str(n / mil) + " Million" + int2str(n % mil);
+    else if (n >= tho)
+      return int2str(n / tho) + " Thousand" + int2str(n % tho);
+    else if (n >= hun)
+      return int2str(n / hun) + " Hundred" + int2str(n % hun);
+    else if (n >= 20)
+      return " " + tens[n / 10] + int2str(n % 10);
+    else if (n >= 1)
+      return " " + digits[n];
+    else
+      return ""; // don't forget this
+  }
 
 
 

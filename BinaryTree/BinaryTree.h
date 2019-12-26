@@ -449,6 +449,72 @@ public:
     traverse(root->right, x + 1, y + 1, values);
   }
 
+
+
+  // Very similar to vertical order, except we take the first element of each vertical scan
+  // Time: O(nlogn)
+  vector<int> topView(TreeNode* root) {
+    map<int, set<pair<int, int>>> values; // map<x, set[y, value]>
+    traverse(root, 0, 0, values);
+    vector<int> res;
+    for (const auto& v : values)
+      res.push_back(v.second.begin()->second);
+    return res;
+  }
+
+
+
+  // Right view of binary tree
+  // Essentially level order, take last node of each level
+  // Time: O(n)
+  vector<int> rightView(TreeNode* root) {
+    if (!root) return {};
+    queue<TreeNode*> q;
+    q.push(root);
+    vector<int> res;
+
+    while (!q.empty()) {
+      int size = q.size();
+      for (int i = 0; i < size; ++i) {
+        auto curr = q.front();
+        q.pop();
+        if (curr->left) q.push(curr->left);
+        if (curr->right) q.push(curr->right);
+        if (i == size - 1)
+          res.push_back(curr->value);
+      }
+    }
+    return res;
+  }
+
+
+
+  // Border view: left border (top down), leaf nodes, then right border (bottom up, not including root again)
+  vector<int> borderView(TreeNode* root) {
+    if (!root) return {};
+    vector<int> res{ root->value };
+    traverseBorder(root->left, true, false, res);
+    traverseBorder(root->right, false, true, res);
+    return res;
+  }
+
+  void traverseBorder(TreeNode* root, bool lb, bool rb, vector<int>& res) {
+    if (!root) return;
+    if (lb) res.push_back(root->value); // pre-order-ish push left bound
+
+    bool noLeft = !root->left, noRight = !root->right;
+
+    if (!lb && !rb && noLeft && noRight) res.push_back(root->value); // in-order-ish push bottom leaves
+
+    traverseBorder(root->left, lb, rb && noRight, res); // left child must be lb if curr is lb
+    traverseBorder(root->right, lb && noLeft, rb, res); // right child could also be lb if curr is lb AND curr has no left child
+
+    if (rb) res.push_back(root->value); // post-order-ish push right bound
+  }
+
+
+
+
   // recursive
   // Time O(n), total number of nodes
   // Space O(height), worst case being O(n)
