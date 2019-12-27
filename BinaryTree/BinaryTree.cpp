@@ -294,22 +294,42 @@ int main()
 
   // Reconstruct with preOrder and inOrder
   {
-    vector<int> inOrder{ 1, 6, 5, 7, 4, 10, 9 };
     vector<int> preOrder{ 4, 1, 5, 6, 7, 10, 9 };
-    auto res = sol.reconstructWithPreIn(preOrder, inOrder);
+    vector<int> inOrder{ 1, 6, 5, 7, 4, 10, 9 };
+    auto res = sol.reconstructWithPreorderInorder(preOrder, inOrder);
     Helper::printTree(res);
   }
 
-  // Reconstruct with postOrder (assuming BST)
+  // Reconstruct with postOrder and inOrder
   {
-    vector<int> postOrder{ 1, 2, 4, 7, 5, 10, 13, 12, 8, 3 };
-    auto res = sol.reconstructWithPostBST(postOrder);
-    Helper::printTree(res);
+    vector<int> postOrder{ 6, 7, 5, 1, 9, 10, 4 };
+    vector<int> inOrder{ 1, 6, 5, 7, 4, 10, 9 };
+    auto res = sol.reconstructWithPostorderInorder(postOrder, inOrder);
   }
 
   // Reconstruct with levelOrder and inOrder
   {
 
+  }
+
+  // Reconstruct BST with preOrder
+  {
+    vector<int> preOrder{ 4, 2 };
+    auto res = sol.reconstructBSTWithPreOrder(preOrder);
+  }
+
+  // Reconstruct BST with postOrder
+  {
+    vector<int> postOrder{ 1, 2, 4, 7, 5, 10, 13, 12, 8, 3 };
+    auto res = sol.reconstructBSTWithPostOrder(postOrder);
+    Helper::printTree(res);
+  }
+
+  // Recover BST
+  {
+    vector<optional<int>> values{ 5, 3, 9, INT_MIN, 2 };
+    auto root = Helper::buildTree(values);
+    auto res = sol.recoverBST(root);
   }
 
   // Flatten

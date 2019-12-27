@@ -1274,17 +1274,20 @@ public:
 
 
 
-  TreeNode* reconstructWithPreIn(const vector<int>& preOrder, const vector<int>& inOrder) {
+  // For Inorder sequence, 2, 5, 7, [10], 12, 15, 20, all values left to 10 are left subtree, all values right to 10 are right subtree
+  // Use this rule to recursively build left and right subtrees
+  // User a hashmap, so that given a value, we can quickly lookup its index in the inorder sequence
+  TreeNode* reconstructWithPreorderInorder(const vector<int>& preOrder, const vector<int>& inOrder) {
     int size = preOrder.size();
 
     unordered_map<int, int> inMap;
     for (auto n = 0; n != inOrder.size(); ++n)
       inMap.insert({ inOrder[n], n });
 
-    return buildSubTreePreIn(preOrder, inMap, 0, size - 1, 0, size - 1);
+    return helper_prein(preOrder, inMap, 0, size - 1, 0, size - 1);
   }
 
-  TreeNode* buildSubTreePreIn(const vector<int>& preOrder, unordered_map<int, int>& inMap, int inLeft, int inRight, int preLeft, int preRight) {
+  TreeNode* helper_prein(const vector<int>& preOrder, unordered_map<int, int>& inMap, int inLeft, int inRight, int preLeft, int preRight) {
     if (inLeft > inRight) return NULL;
 
     int rootVal = preOrder[preLeft];
@@ -1299,7 +1302,7 @@ public:
     int preStart = preLeft + 1;
     int preEnd = preLeft - inLeft + inRoot;
 
-    root->left = buildSubTreePreIn(preOrder, inMap, inStart, inEnd, preStart, preEnd);
+    root->left = helper_prein(preOrder, inMap, inStart, inEnd, preStart, preEnd);
 
     // Boundaries for right subtree
     inStart = inEnd + 2; // +2: skip inRoot, then go next
@@ -1307,38 +1310,50 @@ public:
     preStart = preEnd + 1;
     preEnd = preRight;
 
-    root->right = buildSubTreePreIn(preOrder, inMap, inStart, inEnd, preStart, preEnd);
+    root->right = helper_prein(preOrder, inMap, inStart, inEnd, preStart, preEnd);
 
     return root;
   }
 
 
 
-  // Assumption: BST!
-  TreeNode* reconstructWithPostBST(const vector<int>& postOrder) {
-    int lastIndex = postOrder.size() - 1;
+  // Similar to above (reconstruct with postorder and inorder)
+  // Except now we have post order, where the root is at the end
+  // The way we use the inorder sequence remains the same, hashmap!
+  TreeNode* reconstructWithPostorderInorder(const vector<int>& postOrder, const vector<int>& inOrder) {
+    int size = postOrder.size();
 
-    // Physical meaning of the postOrder last element? Yes, it's the ROOT of THE TREE we are building!
-    return buildSubTreePost(postOrder, lastIndex, postOrder[lastIndex], INT_MIN, INT_MAX);
+    unordered_map<int, int> inMap;
+    for (auto n = 0; n != inOrder.size(); ++n)
+      inMap.insert({ inOrder[n], n });
+
+    return helper_postin(postOrder, inMap, 0, size - 1, 0, size - 1);
   }
 
-  TreeNode* buildSubTreePost(const vector<int>& postOrder, int& index, int key, int min, int max) {
-    // base case
-    if (index < 0) return NULL;
+  TreeNode* helper_postin(const vector<int>& postOrder, unordered_map<int, int>& inMap, int inLeft, int inRight, int postLeft, int postRight) {
+    if (inLeft > inRight) return NULL;
 
-    TreeNode* root = NULL;
+    int rootVal = postOrder[postRight];
+    TreeNode* root = new TreeNode(rootVal);
 
-    if (key > min&& key < max) {
-      root = new TreeNode(key);
-      index--;
+    // The physical meaning of inOrder reaching root? Left subtree all traversed, right subtree not traversed.
+    int inRoot = inMap[rootVal];
 
-      if (index >= 0) {
-        // pass in the reference of index, because as we build our tree, index will change
-        // but we do pass in a constant key
-        root->right = buildSubTreePost(postOrder, index, postOrder[index], key, max);
-        root->left = buildSubTreePost(postOrder, index, postOrder[index], min, key);
-      }
-    }
+    // Boundaries for left subtree
+    int inStart = inLeft;
+    int inEnd = inRoot - 1;
+    int postStart = postLeft;
+    int postEnd = postLeft + (inEnd - inStart);
+
+    root->left = helper_postin(postOrder, inMap, inStart, inEnd, postStart, postEnd);
+
+    // Boundaries for right subtree
+    inStart = inEnd + 2; // +2: skip inRoot, then go next
+    inEnd = inRight;
+    postStart = postRight - (inEnd - inStart) - 1;
+    postEnd = postRight - 1;
+
+    root->right = helper_postin(postOrder, inMap, inStart, inEnd, postStart, postEnd);
 
     return root;
   }
@@ -1349,11 +1364,11 @@ public:
   //    everything left to the root: left subtree; right: right subtree
   // For each subtree, extract its elements in the level order sequence, and use them to build from left to right
   TreeNode* reconstructWithLevelIn(const vector<int>& levelOrder, const vector<int>& inOrder) {
-    return buildSubTreePreIn(levelOrder, inOrder, 0, inOrder.size() - 1);
+    return helper_levelin(levelOrder, inOrder, 0, inOrder.size() - 1);
   }
 
   // build subtree given a NEW section of level order sequence (inorder sequence remains full size all the time but paired with two boundarys)
-  TreeNode* buildSubTreePreIn(const vector<int>& level, const vector<int>& in, int inLeft, int inRight) {
+  TreeNode* helper_levelin(const vector<int>& level, const vector<int>& in, int inLeft, int inRight) {
     if (inLeft > inRight) return NULL;
 
     auto root = new TreeNode(level.front());
@@ -1363,8 +1378,8 @@ public:
     auto levelLeft = extractNodes(level, in, inLeft, inIndex - 1);
     auto levelRight = extractNodes(level, in, inIndex + 1, inRight);
 
-    root->left = buildSubTreePreIn(levelLeft, in, inLeft, inIndex - 1);
-    root->right = buildSubTreePreIn(levelRight, in, inIndex + 1, inRight);
+    root->left = helper_levelin(levelLeft, in, inLeft, inIndex - 1);
+    root->right = helper_levelin(levelRight, in, inIndex + 1, inRight);
     return root;
   }
 
@@ -1386,6 +1401,107 @@ public:
   }
 
 
+
+  // Reconstruct BST with preOrder sequence
+  // Recursion, pass in index (reference), key, and min max for bounding purpose; recursion returns root of the subtree
+  // index starts from 0, because it's preOrder
+  TreeNode* reconstructBSTWithPreOrder(const vector<int>& preOrder) {
+    if (preOrder.empty()) return NULL;
+    // Physical meaning of preOrder first element? it's the ROOT of the the tree we are building.
+    int firstIndex = 0;
+    return helper_pre(preOrder, firstIndex, preOrder[firstIndex], INT_MIN, INT_MAX);
+  }
+
+  TreeNode* helper_pre(const vector<int>& preOrder, int& index, int key, int min, int max) {
+    if (index > preOrder.size() - 1) return NULL;
+
+    TreeNode* root = NULL;
+
+    if (key > min && key < max) {
+      root = new TreeNode(key);
+      index++;
+
+      if (index < preOrder.size())
+        root->left = helper_pre(preOrder, index, preOrder[index], min, key);
+      if (index < preOrder.size())
+        root->right = helper_pre(preOrder, index, preOrder[index], key, max);
+    }
+    return root;
+  }
+
+
+
+  // Reconstruct BST with postOrder sequence
+  // Recursion, pass in index (reference), key, and min max for bounding purpose; recursion returns root of the subtree
+  // index starts from size - 1, because it's postOrder
+  TreeNode* reconstructBSTWithPostOrder(const vector<int>& postOrder) {
+    if (postOrder.empty()) return NULL;
+    // Physical meaning of the postOrder last element? Yes, it's the ROOT of THE TREE we are building!
+    int lastIndex = postOrder.size() - 1;
+    return helper_post(postOrder, lastIndex, postOrder[lastIndex], INT_MIN, INT_MAX);
+  }
+
+  TreeNode* helper_post(const vector<int>& postOrder, int& index, int key, int min, int max) {
+    // base case
+    if (index < 0) return NULL;
+
+    TreeNode* root = NULL;
+    if (key > min && key < max) {
+      root = new TreeNode(key);
+      index--;
+
+      if (index >= 0) {
+        // pass in the reference of index, because as we build our tree, index will change
+        // but we do pass in a constant key
+        root->right = helper_post(postOrder, index, postOrder[index], key, max);
+        root->left = helper_post(postOrder, index, postOrder[index], min, key);
+      }
+    }
+    return root;
+  }
+
+
+
+  // Reconstruct BST with level order
+  TreeNode* reconstructBSTWithLevelOrder(const vector<int>& nums) {
+    if (nums.empty()) return NULL;
+    TreeNode* root = NULL;
+    for (auto n : nums)
+      root = helper_level(root, n);
+    return root;
+  }
+
+  TreeNode* helper_level(TreeNode* root, int val) {
+    if (!root)
+      root = new TreeNode(val);
+    else if (val <= root->value)
+      root->left = helper_level(root->left, val);
+    else
+      root->right = helper_level(root->right, val);
+    return root;
+  }
+
+
+
+  // Two elements in a BST are swapped by mistake. Find them and recover.
+  // Because inorder traversel of BST is sorted, this is essentially doing an inorder traversal and find two elements that violate the "sorted" property
+  TreeNode* na = NULL, * nb = NULL, * nprev = new TreeNode(INT_MIN);
+  TreeNode* recoverBST(TreeNode* root) {
+    helper_recover(root);
+    swap(na->value, nb->value);
+    return root;
+  }
+
+  void helper_recover(TreeNode* root) {
+    if (!root) return;
+    helper_recover(root->left);
+    if (nprev->value >= root->value) {
+      if (!na) na = nprev;
+      else nb = root;
+    }
+    nprev = root;
+    helper_recover(root->right);
+  }
 
   // pre-order + check k
   int kthSmallestInBST(TreeNode* root, int k) {
