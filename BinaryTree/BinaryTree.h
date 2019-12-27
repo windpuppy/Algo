@@ -1503,6 +1503,47 @@ public:
     helper_recover(root->right);
   }
 
+
+
+  // Diameter of binary tree: longest path between any two nodes (path doesn't have to pass root)
+  int diameterOfBinaryTree(TreeNode* root) {
+    int res = 0;
+    diameter_helper(root, res);
+    return res;
+  }
+
+  int diameter_helper(TreeNode* root, int& res) {
+    if (!root) return 0;
+    int l = diameter_helper(root->left, res);
+    int r = diameter_helper(root->right, res);
+    res = max(l + r, res); // update global max
+    return max(l, r) + 1; // return longer path (plus myself)
+  }
+
+
+
+  // Diameter of binary tree 2: longest path from LEAF to LEAF
+  // we can ONLY update global max when both leftand right are valid, because ÈË×ÖÐÎ
+  int diameterOfBinaryTree2(TreeNode* root) {
+    int res = 0;
+    diameter2_helper(root, res);
+    return res;
+  }
+
+  int diameter2_helper(TreeNode* root, int& res) {
+    if (!root) return 0;
+    int l = diameter2_helper(root->left, res);
+    int r = diameter2_helper(root->right, res);
+    if (root->left && root->right) {
+      res = max(l + r + 1, res);
+      return max(l, r) + 1;
+    }
+    else
+      return root->left ? l : r;
+  }
+
+
+
   // pre-order + check k
   int kthSmallestInBST(TreeNode* root, int k) {
     int n = 0;
