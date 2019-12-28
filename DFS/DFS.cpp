@@ -174,6 +174,11 @@ int main()
     auto res = sol.optimalAccountBalancing(debt);
   }
 
+  // Different ways to add parentheses
+  {
+    auto res = sol.differentWaysToAddParentheses("2-1-1");
+  }
+
   cin.get();
   return 0;
 }

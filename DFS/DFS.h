@@ -1350,6 +1350,60 @@ public:
   }
 
 
+
+  // Given "2-1-1", it can be (2-1)-1, or 2-(1-1), so we return [0, 2]
+  // Valid signs are +, -, *.
+  // Time: O(2^(n/2))
+  // Space: ???
+  vector<int> differentWaysToAddParentheses(string input) {
+    if (input.empty()) return {};
+    unordered_map<string, vector<int>> map; // a hashmap created for memo purpuse, <string, list of answers from that string>
+    vector<int> res = ways_helper(input, map);
+    sort(res.begin(), res.end());
+    return res;
+  }
+
+  vector<int> ways_helper(const string& input, unordered_map<string, vector<int>>& map) {
+    if (map.count(input)) return map[input];
+    vector<int> res;
+
+    if (input.size() == 1) {
+      // single character? must be a number!
+      res.push_back(stoi(input));
+    } else {
+      // input is num-char-num-char-num... format
+      // we break at every sign position, and run DFS recursion on left and right part
+      // we rely on the memo to avoid re-computing the same string that has been previously computed
+      for (int i = 1; i <= input.length() - 2; i += 2) {
+        // 1. get left and right part of the string, NOT including the current sign
+        string left = input.substr(0, i);
+        string right = input.substr(i + 1);
+
+        // 2. run DFS, get all possible answers from left and right
+        vector<int> leftRes = ways_helper(left, map);
+        vector<int> rightRes = ways_helper(right, map);
+
+        // 3. iterate through all combinations of the left and right answers, add them to the final answer list
+        for (auto a : leftRes)
+          for (auto b : rightRes)
+            res.push_back(compute_helper(a, b, input[i]));
+      }
+    }
+
+    // memo
+    map[input] = res;
+    return res;
+  }
+
+  int compute_helper(int a, int b, char sign) {
+    if (sign == '+')
+      return a + b;
+    else if (sign == '-')
+      return a - b;
+    else
+      return a * b;
+  }
+
 };
 
 

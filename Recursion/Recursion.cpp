@@ -33,7 +33,7 @@ int main()
       vector<int>{9, 10, 11, 12},
       vector<int>{13, 14, 15, 16},
     };
-    auto res = sol.spiral(matrix);
+    auto res = sol.spiralTraverse(matrix);
   }
 
   // Spiral order traverse 2
@@ -43,7 +43,7 @@ int main()
       vector<int>{5, 6, 7, 8},
       vector<int>{9, 10, 11, 12}
     };
-    auto res = sol.spiral2(matrix);
+    auto res = sol.spiralTraverse2(matrix);
   }
 
   cin.get();

@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <string>
 
 using namespace std;
 
@@ -87,7 +89,7 @@ public:
   // starting from 1, we go right 3 times, down 3 times, up 3 times
   // then call recursion for the inner matrix, of size - 2
   // Guaranteed - square matrix
-  vector<int> spiral(vector<vector<int>>& matrix) {
+  vector<int> spiralTraverse(vector<vector<int>>& matrix) {
     vector<int> res;
     const int size = matrix.size();
     spiral_recur(matrix, size, res);
@@ -118,10 +120,10 @@ public:
     spiral_recur(matrix, newSize - 2, res);
   }
 
-  
+
 
   // Rectangular matrix, not neccesarily square
-  vector<int> spiral2(vector<vector<int>>& matrix) {
+  vector<int> spiralTraverse2(vector<vector<int>>& matrix) {
     vector<int> res;
     const int height = matrix.size();
     const int width = matrix[0].size();
@@ -129,21 +131,22 @@ public:
     return res;
   }
 
+  
+  
   void spiral_recur2(const vector<vector<int>>& matrix, int newHeight, int newWidth, vector<int>& res) {
     // cases 1: either dim is zero
     if (newHeight == 0 || newWidth == 0) return;
-
     int off1 = (matrix.size() - newHeight) / 2;
     int off2 = (matrix[0].size() - newWidth) / 2;
 
     // case 2: single row
     if (newHeight == 1) {
-      for (int j = 0; j < newWidth; ++j)
-        res.push_back(matrix[off1][off2 + j]);
-      return;
+    for (int j = 0; j < newWidth; ++j)
+      res.push_back(matrix[off1][off2 + j]);
+    return;
     }
 
-    // case 3: single column
+   // case 3: single column
     if (newWidth == 1) {
       for (int i = 0; i < newHeight; ++i)
         res.push_back(matrix[off2 + i][off2]);
@@ -164,5 +167,27 @@ public:
   }
 
 
-  
+
+  // "2", "1", "+", "3", "*" ==> (2 + 1) * 3 = 9
+  // This is obviously a stack problem. If we see a number? Push. If we see a sign? Pop 2, compute, then push the result back
+  int reversePolish(vector<string> tokens) {
+    stack<int> s;
+    for (auto t : tokens) {
+      char c = t[0];
+      if (c >= '0' && c <= '9')
+        s.push(stoi(t));
+      else {
+        int b = s.top(); s.pop(); // be careful of the order of a & b!
+        int a = s.top(); s.pop();
+        switch (c) {
+        case '+': s.push(a + b); break;
+        case '-': s.push(a - b); break;
+        case '*': s.push(a * b); break;
+        case '/': s.push(a / b); break;
+        }
+      }
+    }
+    return s.top();
+  }
+
 };
