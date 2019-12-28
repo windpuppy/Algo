@@ -225,9 +225,9 @@ public:
         else
           left = mid + 1;
 
-      // (Right shift) happened, real mid is in the right section
+      // (Right) shift happened, real mid is in the right section
       else if (midVal < leftVal)
-        if (target > midVal&& target <= rightVal)
+        if (target > midVal && target <= rightVal)
           left = mid + 1;
         else
           right = mid - 1;
@@ -268,7 +268,7 @@ public:
         else
           left = mid + 1;
 
-      // (Right shift) happened, real mid is in the right section
+      // (Right) shift happened, real mid is in the right section
       else if (midVal < leftVal)
         if (target > midVal&& target <= rightVal)
           left = mid + 1;
@@ -287,7 +287,55 @@ public:
 
 
 
-private:
-  
+  // [3,4,5,1,2] given a shifted array, search for the min element
+  int shiftPosition(vector<int> nums) {
+    if (nums.empty()) return -1;
+    int left = 0, right = nums.size() - 1;
+    while (left < right) {
+      int mid = left + (right - left) / 2;
+      int midVal = nums[mid], leftVal = nums[left], rightVal = nums[right];
 
+      // (Left) shift happened, min is on the right
+      if (midVal > rightVal)
+        left = mid + 1; // +1, bc left CAN'T be min!
+
+      // (Right) shift happened, min is on the left (can also be mid)
+      else if (midVal < leftVal)
+        right = mid; // cannot -1, bc right CAN be min!
+
+      // No shift
+      else
+        right = mid;
+    }
+    return left;
+  }
+
+
+
+  // Total occurance
+  // given a sorted array (can have dups) and target, find its occurrence
+  int totalOccurrence(vector<int> nums, int target) {
+    if (nums.empty()) return 0;
+    int left = 0, right = nums.size() - 1;
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+      int midVal = nums[mid];
+
+      if (midVal == target) {
+        int count = 1;
+        int mid_bk = mid;
+        while (--mid >= 0 && nums[mid] == target)
+          count++;
+        mid = mid_bk;
+        while (++mid < nums.size() && nums[mid] == target)
+          count++;
+        return count;
+      }
+      else if (midVal > target)
+        right = mid - 1;
+      else
+        left = mid + 1;
+    }
+    return 0;
+  }
 };

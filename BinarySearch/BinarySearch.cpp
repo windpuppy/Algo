@@ -61,6 +61,13 @@ int main()
   {
     // See my LC submission online
   }
+  
+  // Shift position
+  {
+    auto res = sol.shiftPosition(vector<int>{3, 4, 5, 1, 2});
+    res = sol.shiftPosition(vector<int>{4, 5, 1, 2, 3});
+    res = sol.shiftPosition(vector<int>{1, 2, 3, 4, 5});
+  }
 
   cin.get();
   return 0;
