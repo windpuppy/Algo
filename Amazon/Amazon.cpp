@@ -20,6 +20,18 @@ int main()
     auto res = sol.searchMatrix2(matrix, 3);
   }
 
+  // Rotten oranges
+  {
+    vector<vector<int>> grid{ {2, 1, 1},{1, 1, 0},{0, 1, 1 } };
+    auto res = sol.rottingOranges(grid);
+  }
+
+  // Prison cells after N days
+  {
+    vector<int> cells{ 1, 0, 0, 1, 0, 0, 1, 0 };
+    auto res = sol.prisonAfterNDays(cells, 1000000000);
+  }
+
   cin.get();
   return 0;
 }

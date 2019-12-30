@@ -157,6 +157,7 @@
     <ClInclude Include="FirstNonRepeating.h" />
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />
+    <ClInclude Include="MedianFinder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

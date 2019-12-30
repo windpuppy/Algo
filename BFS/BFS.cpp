@@ -61,10 +61,10 @@ int main()
 
   // kth closest to (0, 0, 0)
   {
-    vector<int> a{ 1, 3, 5 };
+    vector<int> a{ 1, 2, 3 };
     vector<int> b{ 2, 4 };
-    vector<int> c{ 3, 6 };
-    //auto res = sol.kthClosestPointTo000(a, b, c, 4);
+    vector<int> c{ 1, 2 };
+    auto res = sol.kthClosestPointToOrigin(a, b, c, 10);
   }
 
   // Minimum distance of three arrays

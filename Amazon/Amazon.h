@@ -4,6 +4,8 @@
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
+#include <queue>
 
 using namespace std;
 
@@ -146,4 +148,133 @@ public:
     return false;
   }
 
+
+
+  // Rotting oranges
+  // 0: empty cell, 1: fresh orange, 2: rotten orange
+  // Every minute, any fresh orange adjacent to rotten orange becomes rotten, return the minimum minutes that no fresh oranges are left
+  // This is essentially a BFS problem, we first push all rotten oranges into the queue, and "rot" their neighbors
+  // Time: O(mn), Space: O(mn)
+  int rottingOranges(vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    int minutes = 0;
+    int freshOranges = 0;
+    queue<pair<int, int>> q;
+    for (int i = 0; i < rows; ++i)
+      for (int j = 0; j < cols; ++j)
+        if (grid[i][j] == 2)
+          q.push({ i, j });
+        else if (grid[i][j] == 1)
+          freshOranges++;
+
+    while (!q.empty()) {
+      const int size = q.size();
+      int before = freshOranges;
+      for (int k = 0; k < size; ++k) {
+        int i = q.front().first;
+        int j = q.front().second;
+        q.pop();
+        orangeHelper(grid, i - 1, j, q, freshOranges);
+        orangeHelper(grid, i + 1, j, q, freshOranges);
+        orangeHelper(grid, i, j - 1, q, freshOranges);
+        orangeHelper(grid, i, j + 1, q, freshOranges);
+      }
+      if (freshOranges < before)
+        minutes++;
+    }
+    return freshOranges == 0 ? minutes : -1; // only return minutes if all fresh oranges are rotten
+  }
+
+  void orangeHelper(vector<vector<int>>& grid, int i, int j, queue<pair<int, int>>& q, int& freshOranges) {
+    const int rows = grid.size(), cols = grid[0].size();
+    if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] != 1) return;
+    grid[i][j] = 2;
+    freshOranges--;
+    q.push({ i, j });
+  }
+
+
+
+  // Prison cells after N days
+  // Cell state change rule: if i-1 and i+1 both occupied or vacant, i becomes occupied next day; otherwise i becomes vacent next day
+  // (which implies first and last cells become vacant from day 2, and remain vacant because they don't have 2 neighbors)
+  // Idea: check if there is a cycle
+  vector<int> prisonAfterNDays(vector<int>& c, int N) {
+    if (c.empty() || N <= 0) return c;
+    unordered_set<string> set;
+    int count = 0;
+    bool hasCycle = false;
+    for (int i = 0; i < N; ++i) {
+      auto next = nextDay(c);
+
+      string s = "";
+      for (auto n : next) s += to_string(n);
+      if (!set.count(s)) {
+        set.insert(s);
+        count++;
+      }
+      else {
+        hasCycle = true;
+        break;
+      }
+      c = next;
+    }
+
+    if (hasCycle) {
+      N = N % count;
+      for (int i = 0; i < N; ++i)
+        c = nextDay(c);
+    }
+    return c;
+  }
+
+  vector<int> nextDay(vector<int>& cells) {
+    vector<int> ret(cells.size(), 0);
+    for (int i = 1; i < cells.size() - 1; ++i)
+      ret[i] = cells[i - 1] == cells[i + 1] ? 1 : 0;
+    return ret;
+  }
+
+
+
+  // Given a list of words, find out all the concatenated words (ie. words can be entirely represented by some others in the dictionary)
+  vector<string> concatenatedWords(vector<string>& words) {
+    vector<string> res;
+    if (words.empty()) res;
+    auto wordComp = [&](const string& a, const string& b) { return a.size() < b.size(); };
+    sort(words.begin(), words.end(), wordComp);
+    unordered_set<string> dict;
+    
+    for (auto& word : words) {
+      if (wordBreak(word, dict))
+        res.push_back(word); // no need to insert this word. why? if we have bob+cat=bobcat, "bob" and "cat" will enable "bobcatdog" later on
+      else
+        dict.insert(word);
+    }
+    return res;
+  }
+
+  // A DP helper, ×ó´ó¶ÎÓÒÐ¡¶Î
+  // Use book M, M[i] represents can "the substring from the begining to the i-th character" be composed by words from the dict
+  // Left: check M; Right: manual work
+  bool wordBreak(string& word, unordered_set<string>& dict) {
+    if (word.empty()) return false;
+    vector<bool> M(word.size() + 1, false); // plus 1, because we reserve M[0] for empty string, for convenience
+    M[0] = true;
+
+    for (int i = 1; i <= word.size(); ++i) {
+      for (int j = 0; j < i; ++j) {
+        string right = word.substr(j, i - j);
+        bool rightMatch = dict.count(right) != 0;
+
+        if (M[j] && rightMatch) { // eg. bob | c, left BIG (use M), right SMALL (manual check)
+          M[i] = true;
+          break;
+        }
+      }
+    }
+    return M.back();
+  }
 };

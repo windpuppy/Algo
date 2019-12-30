@@ -611,56 +611,35 @@ public:
 
 
 
-  vector<int> kthClosestPointTo000(vector<int> a, vector<int> b, vector<int> c, int k) {
-    vector<int> pt{ a[0], b[0], c[0] };
+  vector<int> kthClosestPointToOrigin(vector<int> a, vector<int> b, vector<int> c, int kth) {
+    // PQ of indexes
     priority_queue<vector<int>, vector<vector<int>>, Point3DComparatorGreater> pq;
-    pq.push(pt);
+    pq.push({ 0, 0, 0 });
 
-    // need to dedup the same points
-    //unordered_set<vector<int>> visited;
-    //visited.insert(pt);
+    // Set to dedup the coordinates
+    unordered_set<string> visited;
+    visited.insert(to_string(a[0]) + " " + to_string(b[1]) + " " + to_string(c[2]));
 
-    while (k > 1) {
+    while (kth > 1) {
       auto curr = pq.top();
+      int i = curr[0], j = curr[1], k = curr[2];
       pq.pop();
-
-      int i = curr[0];
-      int j = curr[1];
-      int k = curr[2];
-
-      // try a
-      if (i + 1 < a.size()) {
-        vector<int> aa{ i + 1, j, k };
-        //if (visited.find(aa) == visited.end()) {
-        pq.push(aa);
-        //visited.insert(aa);
-      //}
-      }
-
-      // try b
-      if (j + 1 < b.size()) {
-        vector<int> bb{ i, j + 1, k };
-        //if (visited.find(bb) == visited.end()) {
-        pq.push(bb);
-        //visited.insert(bb);
-      //}
-      }
-
-      // try c
-      if (k + 1 < c.size()) {
-        vector<int> cc{ i, j, k + 1 };
-        //if (visited.find(cc) == visited.end()) {
-        pq.push(cc);
-        //visited.insert(cc);
-      //}
-      }
-
-      k--;
+      if (i + 1 < a.size()) point_helper(a, b, c, i+1, j, k, pq, visited); // try a
+      if (j + 1 < b.size()) point_helper(a, b, c, i, j+1, k, pq, visited); // try b
+      if (k + 1 < c.size()) point_helper(a, b, c, i, j, k+1, pq, visited); // try c
+      kth--;
     }
-
     return pq.top();
   }
 
+  void point_helper(vector<int>& a, vector<int>& b, vector<int>& c, int i, int j, int k,
+    priority_queue<vector<int>, vector<vector<int>>, Point3DComparatorGreater>& pq, unordered_set<string>& visited) {
+    string s = to_string(a[i]) + " " + to_string(b[j]) + " " + to_string(c[k]);
+    if (!visited.count(s)) {
+      pq.push({ i, j, k });
+      visited.insert(s);
+    }
+  }
 
 
   // BFS the graph
