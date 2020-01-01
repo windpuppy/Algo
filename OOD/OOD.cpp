@@ -1,6 +1,7 @@
 #include "LRUCache.h"
 #include "LRUCacheInt.h"
 #include "Codec.h"
+#include "AutoComplete.h"
 
 #include <iostream>
 #include <string>
@@ -88,41 +89,56 @@ void func() {
 
 int main()
 {
-  int val = 0;
+  // Auto complete --------------------------------------------------------------
+  {
+    vector<string> sentences{ "i love you", "island", "iroman", "i love leetcode" };
+    vector<int> times{ 5, 3, 2, 2 };
+    AutoComplete ac(sentences, times);
+    auto s1 = ac.input('i');
+    auto s2 = ac.input(' ');
+    auto s3 = ac.input('a');
+    auto s4 = ac.input('#');
+  }
+  
+  // LRU Cache --------------------------------------------------------------
+  {
+    int val = 0;
 
-  LRUCache<int, int> cache(2);
-  cache.get(1, val);
-  cache.set(1, 1);
-  cache.set(2, 2);
-  cache.get(2, val);
-  cache.get(1, val);
-  cache.set(3, 3);
-  cache.get(1, val);
-  cache.get(2, val);
-  cache.get(3, val);
+    LRUCache<int, int> cache(2);
+    cache.get(1, val);
+    cache.set(1, 1);
+    cache.set(2, 2);
+    cache.get(2, val);
+    cache.get(1, val);
+    cache.set(3, 3);
+    cache.get(1, val);
+    cache.get(2, val);
+    cache.get(3, val);
 
-  LRUCacheInt c(2);
-  c.set(1, 1);
-  c.set(2, 2);
-  c.get(1, val);
-  c.set(3, 3);
-  c.get(2, val);
-  c.set(4, 4);
-  c.get(1, val);
-  c.get(3, val);
-  c.get(4, val);
+    LRUCacheInt c(2);
+    c.set(1, 1);
+    c.set(2, 2);
+    c.get(1, val);
+    c.set(3, 3);
+    c.get(2, val);
+    c.set(4, 4);
+    c.get(1, val);
+    c.get(3, val);
+    c.get(4, val);
+  }
 
+  // Threading --------------------------------------------------------------
+  {
+    std::thread t1(func); // t1 starts running
+    cout << "hello 2" << endl;
+    //t1.join(); // main thread waits for t1
+    t1.detach(); // t1 freely runs on its own - deamon
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    cout << "hello 3" << endl;
+  }
 
-  std::thread t1(func); // t1 starts running
-  cout << "hello 2" << endl;
-  //t1.join(); // main thread waits for t1
-  t1.detach(); // t1 freely runs on its own - deamon
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  cout << "hello 3" << endl;
-
-
+  // Inheritence --------------------------------------------------------------
   {
     Parent* parent = new Parent(1, 2);
     parent->print();

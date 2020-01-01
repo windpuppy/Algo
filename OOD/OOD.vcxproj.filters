@@ -9,5 +9,7 @@
     <ClInclude Include="FirstNonRepeating.h" />
     <ClInclude Include="MedianFinder.h" />
     <ClInclude Include="Codec.h" />
+    <ClInclude Include="TicTacToe.h" />
+    <ClInclude Include="AutoComplete.h" />
   </ItemGroup>
 </Project>
