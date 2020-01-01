@@ -30,8 +30,8 @@ int main()
     {2, 1, 3},
     {3, 1, 4, 2},
     {4, 3, 0, 1}};
-    auto graph = Helper::buildGraph(values);
-    auto res = sol.bipartite(graph);
+    vector<GraphNode*> graph = Helper::buildGraph(values);
+    bool res = sol.bipartite(graph);
   }
 
   // Kth Smallest in sorted matrix

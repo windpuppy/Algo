@@ -237,7 +237,7 @@ int main()
     vector<optional<int>> values{ 5, 3, 9, 1, 4, 8, 15, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, 12 };
     auto root = Helper::buildTree(values);
     Helper::printTree(root);
-    auto res = sol.insert(root, 10);
+    auto res = sol.insertInBST(root, 10);
     Helper::printTree(root);
   }
 
@@ -246,7 +246,7 @@ int main()
     vector<optional<int>> values{ 5, 3, 9, 1, 4, 8, 15, nullopt, nullopt, nullopt, nullopt, nullopt, nullopt, 12 };
     auto root = Helper::buildTree(values);
     Helper::printTree(root);
-    auto res = sol.insert_iter(root, 10);
+    auto res = sol.insertInBST_iter(root, 10);
     Helper::printTree(root);
   }
 

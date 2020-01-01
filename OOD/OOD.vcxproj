@@ -154,6 +154,7 @@
     <ClCompile Include="OOD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Codec.h" />
     <ClInclude Include="FirstNonRepeating.h" />
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />

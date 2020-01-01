@@ -8,7 +8,7 @@ int main()
   // Top K frequent words
   {
     vector<string> input{ "d","a","c","b","d","a","b","b","a","d","d","a","d" };
-    auto res = sol.topKFrequent(input, 5);
+    auto res = sol.topKFrequentWords(input, 5);
   }
 
   // Missing number

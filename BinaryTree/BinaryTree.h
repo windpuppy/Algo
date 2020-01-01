@@ -880,7 +880,7 @@ public:
       // left drained? fall back to stack to go back up then right
       else {
         curr = stack.top(); stack.pop();
-        pq.push(make_pair(abs((int)curr->value - target), curr->value));
+        pq.push({ abs(curr->value - target), curr->value });
         if (pq.size() > k)
           pq.pop();
         curr = curr->right;
@@ -899,18 +899,40 @@ public:
 
 
   // Return the largest number < target, or INT_MIN if no such exists
+  // Time: O(h), Space: O(1)
   int largestSmallerInBST(TreeNode* root, int target) {
-    int val = INT_MIN;
+    int res = INT_MIN;
     while (root) {
-      if (root->value >= target) {
+      int val = root->value;
+
+      if (target <= val) {
         root = root->left;
       }
       else {
-        val = root->value;
+        res = val;
         root = root->right;
       }
     }
-    return val;
+    return res;
+  }
+
+
+
+  // Target guaranteed to be in the tree, no dups, return inorder successor of the target (or -1 if no such exist)
+  // Time: O(h), Space: O(1)
+  int smallestLargerInBST(TreeNode* root, int target) {
+    int res = -1;
+    while (root) {
+      int val = root->value;
+
+      if (target < val) {
+        res = val;
+        root = root->left;
+      }
+      else
+        root = root->right;
+    }
+    return res;
   }
 
 
@@ -932,7 +954,7 @@ public:
       curr = curr->right;
     }
 
-    // a) if not left, right parent
+    // a) if no left, right parent
     if (!curr->left) return prev->value;
     // b) otherwise return left subtree's right most
     curr = curr->left;
@@ -943,25 +965,7 @@ public:
 
 
 
-  // Target guaranteed to be in the tree, no dups, return inorder successor of the target (or -1 if no such exist)
-  // Time: O(h), Space: O(h)
-  int inorderSuccessorInBST(TreeNode* root, int p) {
-    int res = -1;
-    while (root) {
-      int val = root->value;
-
-      if (p < val) {
-        res = val;
-        root = root->left;
-      }
-      else
-        root = root->right;
-    }
-    return res;
-  }
-
-
-  // Assumption
+  // Assumptions
   // 1) each node either has 0 or 2 children
   // 2) root equals to its smaller child
   //
@@ -969,18 +973,17 @@ public:
   // At each split, we look for the bigger child
   // At the end, we return the smaller of the two children
   int secondSmallestInBinaryTree(TreeNode* root) {
-    if (!root) return -1;
-    int secondMin = secondSmallest_helper(root, root->value);
-    return secondMin == INT_MAX ? -1 : secondMin;
+    return secondSmallest_helper(root, root->value);
   }
 
-  int secondSmallest_helper(TreeNode* root, int minVal) {
-    if (root->value > minVal)
-      return root->value;
+  int secondSmallest_helper(TreeNode* root, int first) {
+    if (!root) return -1;
+    if (root->value != first) return root->value;
 
-    int left = root->left ? secondSmallest_helper(root->left, minVal) : INT_MAX;
-    int right = root->right ? secondSmallest_helper(root->right, minVal) : INT_MAX;
-
+    int left = secondSmallest_helper(root->left, first);
+    int right = secondSmallest_helper(root->right, first);
+    if (left == -1) return right;
+    if (right == -1) return left;
     return min(left, right);
   }
 
@@ -1005,7 +1008,7 @@ public:
   }
 
 
-  TreeNode* insert_iter(TreeNode* root, int key) {
+  TreeNode* insertInBST_iter(TreeNode* root, int key) {
     if (!root) {
       root = new TreeNode(key);
       return root;
@@ -1035,14 +1038,14 @@ public:
 
   // Time O(h)
   // Note: the order of "add left" and "add right" can swap
-  TreeNode* insert(TreeNode* root, int key) {
+  TreeNode* insertInBST(TreeNode* root, int key) {
     if (!root)
       return new TreeNode(key);
 
     if (key < root->value)
-      root->left = insert(root->left, key); // add to left
+      root->left = insertInBST(root->left, key); // add to left
     else if (key > root->value)
-      root->right = insert(root->right, key); // add to right
+      root->right = insertInBST(root->right, key); // add to right
 
     return root;
   }
@@ -1743,7 +1746,7 @@ public:
 
 
   // Count nodes in complete binary tree
-  int countNodes(TreeNode* root) {
+  int countNodesInCompleteTree(TreeNode* root) {
     if (!root) return 0;
 
     int lh = 0, rh = 0;
@@ -1761,7 +1764,7 @@ public:
 
     if (lh == rh) return pow(2, lh) - 1;
 
-    return 1 + countNodes(root->left) + countNodes(root->right);
+    return 1 + countNodesInCompleteTree(root->left) + countNodesInCompleteTree(root->right);
   }
 };
 

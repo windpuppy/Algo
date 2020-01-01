@@ -8,5 +8,6 @@
     <ClInclude Include="LRUCacheInt.h" />
     <ClInclude Include="FirstNonRepeating.h" />
     <ClInclude Include="MedianFinder.h" />
+    <ClInclude Include="Codec.h" />
   </ItemGroup>
 </Project>

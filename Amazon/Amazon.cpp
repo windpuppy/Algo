@@ -32,6 +32,17 @@ int main()
     auto res = sol.prisonAfterNDays(cells, 1000000000);
   }
 
+  // Merge stones
+  {
+    vector<int> nums{ 3, 2, 4, 1 };
+    auto res = sol.minimumCostMergeStones(nums, 2);
+  }
+
+  // Prime palindrome
+  {
+    auto res = sol.primePalindrome(4);
+    res = sol.primePalindrome(13);
+  }
   cin.get();
   return 0;
 }

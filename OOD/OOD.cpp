@@ -1,5 +1,6 @@
 #include "LRUCache.h"
 #include "LRUCacheInt.h"
+#include "Codec.h"
 
 #include <iostream>
 #include <string>

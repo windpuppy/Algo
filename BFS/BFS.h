@@ -1376,21 +1376,20 @@ public:
     cout << endl;
   }
 
-  static vector<GraphNode*> buildGraph(vector<vector<int>> values) {
+  static vector<GraphNode*> buildGraph(const vector<vector<int>>& values) {
     vector<GraphNode*> nodes;
     if (values.empty()) return nodes;
 
-    for (auto n = 0; n != values.size(); ++n) {
-      if (values[n].empty()) continue;
-      auto node = new GraphNode(values[n][0]);
+    for (auto& v : values) {
+      if (v.empty()) continue;
+      GraphNode* node = new GraphNode(v[0]); // key of the node
       nodes.push_back(node);
     }
 
     for (auto n = 0; n != nodes.size(); ++n) {
       if (values[n].size() == 1) continue; // node has no neighbors
-
-      for (auto k = 1; k != values[n].size(); ++k) {
-        nodes[n]->neighbors.push_back(nodes[values[n][k]]);
+      for (auto& v : values[n]) {
+        nodes[n]->neighbors.push_back(nodes[v]);
       }
     }
 

@@ -24,7 +24,8 @@ class HashString {
   class PairComparatorLess {
   public:
     bool operator()(pair<string, int> p1, pair<string, int> p2) {
-      return p1.second < p2.second;
+      // small improvement: if same frequency, word with lower alphabetical order goes first
+      return p1.second == p2.second ? p1.first > p2.first : p1.second < p2.second;
     }
   };
 
@@ -39,7 +40,7 @@ class HashString {
   
 public:
   // O(n) + O(nlogn) + O(klogn)
-  vector<string> topKFrequent(vector<string> input, int k) {
+  vector<string> topKFrequentWords(vector<string> input, int k) {
     // step 1: build map, O(n)
     unordered_map<string, int> map;
     for (auto const& n : input)

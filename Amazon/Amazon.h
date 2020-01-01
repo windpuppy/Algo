@@ -277,4 +277,177 @@ public:
     }
     return M.back();
   }
+
+
+
+  // Min value on a max path
+  // Travel from top left to bottom right, find the max sum path, return the min value along that path
+  // Assumption: all grid values >= 0
+  // BFS + PQ
+  int minValueOnMaxPath(vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) return -1;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    int res = grid[0][0];
+    priority_queue<pair<int, pair<int, int>>> pq; // <grid[i][j], <i, j>>, max heap
+    pq.push({ grid[0][0], {0, 0} });
+    grid[0][0] = -1;
+
+    auto helper = [&](vector<vector<int>>& g, int i, int j, priority_queue<pair<int, pair<int, int>>>& q) {
+      if (i >= 0 && i < rows && j >= 0 && j < cols && g[i][j] != -1) {
+        q.push({ g[i][j], {i, j} });
+        g[i][j] = -1;
+      }
+    };
+
+    while (!pq.empty()) {
+      auto curr = pq.top(); pq.pop();
+      int i = curr.second.first, j = curr.second.second;
+      res = min(res, curr.first);
+
+      if (i == rows - 1 && j == cols - 1) return res;
+
+      helper(grid, i - 1, j, pq);
+      helper(grid, i + 1, j, pq);
+      helper(grid, i, j - 1, pq);
+      helper(grid, i, j + 1, pq);
+    }
+    return -1; // will not reach here anyway
+  }
+
+
+
+  // Given a set of sticks of different lengths, cost of connecting two sticks = x + y. What's the minimum cost to connect all?
+  // Observation: Earlier participanats will have a bigger influcence on the final cost!
+  //     so we need to join two shorted sticks from the remaining pool at any time.
+  // Solution: BFS + min heap, not just a simple sorting!
+  //     e.g. [3,4,5,6], 3+4 = 7, next step should be 5+6, not 7+5
+  //     intuition: 3+4=7, but 7 need to be pushed back into the PQ
+  int minimumCostConnectSticks(vector<int>& nums) {
+    if (nums.empty()) return 0;
+    priority_queue<int, vector<int>, greater<int>> pq(nums.begin(), nums.end());
+    int cost = 0;
+    while (pq.size() >= 2) {
+      int a = pq.top(); pq.pop();
+      int b = pq.top(); pq.pop();
+      cost += a + b;
+      pq.push(a + b);
+    }
+    return cost;
+  }
+
+
+
+  // Just like the above sticks problem, now we merge k CONSECUTIVE piles of stone at one time.
+  // First we need to think about this, not any number of piles can be merged into 1 by merging k piles at a time.
+  //    After each merge, we will have k-1 less piles, so only if (n-1)%(k-1)==0, we can merge all into one pile.
+  // M[i][j] represents the minimal cost to merge i ~ j piles (not necessarily into 1), until we cannot merge further
+  //    Note, after merging i ~ j, we will have (j-i) % (k-1) + 1 piles
+  //
+  // Time: O(n^3/k), Space: O(n^2)
+  int minimumCostMergeStones(vector<int>& nums, int k) {
+    const int n = nums.size();
+    if (k * n == 0 || (n - 1) % (k - 1) != 0) return -1;
+
+    // build prefix sum
+    vector<int> preSum(n + 1, 0);
+    for (int i = 1; i <= n; ++i)
+      preSum[i] = preSum[i-1] + nums[i-1];
+
+    // M initialization: all M[i][i] = 0, all, M[i][i+k-1] = their sum, rest INT_MAX
+    vector<vector<int>> M(n, vector<int>(n, 0));
+    for (int j = 0; j < n; ++j)
+      for (int i = j - k + 1; i >= 0; --i) {
+        int cost = INT_MAX;
+
+        // 左大段右小段！！
+        // 左大段：查表，不一定最终能merge成一堆
+        // 右小段：查表，肯定能最终merge成一堆
+        for (int m = j; m > i; m -= k - 1) {
+          // Here, we let the right part [mid, j] merge into 1 pile (guaranteed we can!)
+          //       we let the left part [i, mid-1]) merge as further as possible (not guaranteed into 1 pile)
+          // In most situations, we will be left with a few piles on the left, and 1 pile on the left
+          cost = min(cost, M[i][m-1] + M[m][j]);
+          M[i][j] = cost;
+        }
+
+        // For [i,j] in some cases if left and right can further merge into 1 pile, we need to do an additional merge
+        if ((j - i) % (k - 1) == 0)
+          M[i][j] += preSum[j+1] - preSum[i];
+      }
+    return M[0][n-1];
+  }
+
+
+
+  // Smallest prime palindrome >= n
+  int primePalindrome(int n) {
+    int e = 1, o = 1;
+    int curr = 0;
+    string s = "";
+    while (true) {
+      s = generatePalindrome(to_string(e), true);
+      int even = stoi(s);
+      s = generatePalindrome(to_string(o), false);
+      int odd = stoi(s);
+      curr = min(even, odd);
+
+      if (curr >= n && isPrime(curr)) break;
+
+      if (even < odd) e++;
+      else o++;
+    }
+    return curr;
+  }
+
+  bool isPrime(int n) {
+    if (n == 1) return false;
+    for (int i = 2; i*i <= n; ++i)
+      if (n % i == 0) return false;
+    return true;
+  }
+
+  string generatePalindrome(string half, bool even) {
+    if (even) return half + string(half.rbegin(), half.rend());
+    else return half + string(half.rbegin() + 1, half.rend());
+  }
+
+
+
+  // Definition of a critical connection: if we remove that connection, 1 or more server nodes will become unreachable.
+  // Intuition: any connection on a cycle is not a critical connection, because even if we remove it, all nodes are still reachable.
+  //            so, if we find all cycles, remove their connections, the remaining connections are critical connections
+  // So how to find cycles?
+  // Implementation: we record a timestamp for each node we visit. For each node, we then check its neighbors (except for the node's parent) then return the smallest timestamp found
+  //            if the returned timestamp is equal or smaller than the current node's, then the current node is in a cycle
+  //            otherwise the current node is not in a cycle, so current node to that neighbor is a CRITICAL CONNECTION
+  // Note: we do not use the visited vector here, instead we use timestamp[n], because our timer starts at 1, so if a timestamp == 0, it's not visited
+  vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+    vector<vector<int>> graph(n);
+    for (auto c : connections) { // undirectional graph!
+      graph[c[0]].push_back(c[1]);
+      graph[c[1]].push_back(c[0]);
+    }
+
+    int timer = 0;
+    vector<int> time(n, 0);
+    vector<vector<int>> res;
+    critical_dfs(graph, -1, 0, timer, time, res);
+    return res;
+  }
+
+  void critical_dfs(vector<vector<int>>& graph, int prev, int curr, int& timer, vector<int>& time, vector<vector<int>>& res) {
+    time[curr] = ++timer;
+    int currTime = time[curr]; // IMPORTANT! because time[curr] can get modified during dfs recursion
+
+    for (auto n : graph[curr]) {
+      if (n == prev) continue; // skip the node where we "come from"
+
+      if (time[n] == 0) // n is unvisited
+        critical_dfs(graph, curr, n, timer, time, res);
+      time[curr] = min(time[curr], time[n]);
+      if (currTime < time[n])
+        res.push_back({ curr, n });
+    }
+  }
 };
