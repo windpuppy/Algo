@@ -423,6 +423,63 @@ public:
 
 
 
+  // Remove the minimum number of invalid parantheses to make the input a valid string.
+  // Return ALL possible results.
+  // "()())()" -> "()()()", "(())()"
+  // "(a)())()" -> "(a)()()", "(a())()"
+  // ")(" -> ""
+  vector<string> removeInvalidParentheses(string input) {
+    if (input.empty()) return vector<string>{""};
+    int left = 0, right = 0;
+    for (auto c : input) {
+      if (c == '(') left++;
+      else if (c == ')')
+        if (left > 0) left--;
+        else right++;
+    }
+    int count = left + right; // min number of changes needed
+    string out;
+    unordered_set<string> res;
+    remove_dfs(input, 0, count, out, res);
+    return vector<string>(res.begin(), res.end());
+  }
+
+  void remove_dfs(const string& input, int i, int count, string& out, unordered_set<string>& res) {
+    if (count < 0) return;
+
+    if (i == input.length()) {
+      if (count == 0 && isValid(out))
+        res.insert(out);
+      return;
+    }
+
+    char c = input[i];
+    int len = out.length();
+
+    if (c == '(' || c == ')') {
+      remove_dfs(input, i + 1, count - 1, out, res);
+      out += c;
+      remove_dfs(input, i + 1, count, out, res);
+    }
+    else {
+      out += c;
+      remove_dfs(input, i + 1, count, out, res);
+    }
+
+    out.resize(len);
+  }
+
+  bool isValid(const string& s) {
+    int count = 0;
+    for (char c : s) {
+      if (c == '(') count++;
+      if (c == ')' && count-- == 0) return false;
+    }
+    return count == 0;
+  }
+
+
+
   // 4 levels for 4 different type of coins
   // at each level, maximum 99 splits
   // No need to worry about duplications

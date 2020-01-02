@@ -160,6 +160,9 @@
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />
     <ClInclude Include="MedianFinder.h" />
+    <ClInclude Include="NestedIterator.h" />
+    <ClInclude Include="ParkingLot.h" />
+    <ClInclude Include="RandomizedSet.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

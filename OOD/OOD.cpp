@@ -2,6 +2,7 @@
 #include "LRUCacheInt.h"
 #include "Codec.h"
 #include "AutoComplete.h"
+#include "RandomizedSet.h"
 
 #include <iostream>
 #include <string>
@@ -89,7 +90,19 @@ void func() {
 
 int main()
 {
-  // Auto complete --------------------------------------------------------------
+  // Randomized set ---------------------------------------------------------
+  {
+    RandomizedSet set;
+    set.insert(1);
+    set.remove(2);
+    set.insert(2);
+    int v = set.getRandom();
+    set.remove(1);
+    set.insert(2);
+    v = set.getRandom();
+  }
+
+  // Auto complete ----------------------------------------------------------
   {
     vector<string> sentences{ "i love you", "island", "iroman", "i love leetcode" };
     vector<int> times{ 5, 3, 2, 2 };

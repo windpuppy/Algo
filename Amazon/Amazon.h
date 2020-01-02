@@ -97,6 +97,40 @@ public:
 
   
 
+  // Group anagrams
+  // Given a list of strings, group anagrams together
+  // Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+  // Output:
+  // [["ate", "eat", "tea"],
+  //  ["nat", "tan"],
+  //  ["bat"]]
+  // Time: O(m * n)
+  // Space: O(m * n)
+  vector<vector<string>> groupAnagrams(vector<string>& words) {
+    unordered_map<string, vector<string>> map;
+
+    auto countSort = [&](string& w) {
+      vector<int> counter(26, 0);
+      for (char c : w) counter[c - 'a']++;
+      w.clear();
+      for (int i = 0; i < 26; ++i)
+        if (counter[i] != 0)
+          w += string(counter[i], 'a' + i);
+    };
+
+    for (string& w : words) {
+      string tmp = w;
+      //sort(w.begin(), w.end()); // Improvement: use counting sort if input words are all lowercases
+      countSort(w);
+      map[w].push_back(tmp);
+    }
+    vector<vector<string>> res;
+    for (auto& m : map)
+      res.push_back(m.second);
+    return res;
+  }
+
+
   // Search in a 2D matrix that is row & column wise sorted (target might or might not exist)
   // e.g.
   // [1,   3,  5,  7],

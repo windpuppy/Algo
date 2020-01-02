@@ -46,6 +46,13 @@ int main()
     res = sol.validParentheses2(1, 0, 0);
   }
 
+  // Remove invalid parentheses
+  {
+    string input = "((a)(())))";
+    //string input = ")())))))))))";
+    auto res = sol.removeInvalidParentheses(input);
+  }
+
   // Coin combinations
   {
     vector<int> coins{ 25, 10, 5, 1 };

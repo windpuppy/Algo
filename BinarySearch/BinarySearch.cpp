@@ -39,6 +39,7 @@ int main()
   {
     vector<int> array{ 1, 2, 2, 2, 2, 3, 4 };
     auto res = sol.firstOccurrence(array, 2);
+    res = sol.firstOccurrence(vector<int>{1, 2, 3}, 0);
   }
 
   // Last occurrence

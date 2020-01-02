@@ -11,5 +11,8 @@
     <ClInclude Include="Codec.h" />
     <ClInclude Include="TicTacToe.h" />
     <ClInclude Include="AutoComplete.h" />
+    <ClInclude Include="RandomizedSet.h" />
+    <ClInclude Include="NestedIterator.h" />
+    <ClInclude Include="ParkingLot.h" />
   </ItemGroup>
 </Project>
