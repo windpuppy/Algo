@@ -157,6 +157,7 @@
     <ClInclude Include="AutoComplete.h" />
     <ClInclude Include="Codec.h" />
     <ClInclude Include="FirstNonRepeating.h" />
+    <ClInclude Include="LFUCache.h" />
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />
     <ClInclude Include="MedianFinder.h" />

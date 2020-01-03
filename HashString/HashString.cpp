@@ -191,6 +191,12 @@ int main()
     auto res = sol.largestSetOfPointsWithPositiveSlope(points);
   }
 
+  // Rope Cut
+  {
+    vector<vector<int>> ropes{ {1,2,2,1},{3,1,2},{1,3,2},{2,4},{3,1,2},{1,3,1,1} };
+    auto res = sol.ropeCut(ropes);
+  }
+
   cin.get();
   return 0;
 }

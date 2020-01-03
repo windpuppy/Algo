@@ -14,5 +14,6 @@
     <ClInclude Include="RandomizedSet.h" />
     <ClInclude Include="NestedIterator.h" />
     <ClInclude Include="ParkingLot.h" />
+    <ClInclude Include="LFUCache.h" />
   </ItemGroup>
 </Project>

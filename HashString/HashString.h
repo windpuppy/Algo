@@ -1263,6 +1263,7 @@ public:
 
 
 
+  // Integer to english words
   string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
     "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
   string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
@@ -1294,7 +1295,34 @@ public:
 
 
 
+  // Equal length of ropes, lined up together. Each rope is cut into different segments.
+  // Put a vertical line over those ropes, return the minimum number of segments that vertical line goes through
+  // ie. if the line goes through the edges of two segmeents, it's not counted as "go through"
+  int ropeCut(vector<vector<int>> ropes) {
+    // build all edges
+    int sum = 0;
+    unordered_map<int, int> map;
+    for (auto& r : ropes) {
+      sum = 0;
+      for (auto& s : r) {
+        sum += s;
+        map[sum]++;
+      }
+    }
 
+    // edge case: if all ropes have 1 segment, we hav nowhere to place the vertical line (can't be at front, can't be at end)
+    // we have to put it in the middle, which crosses all the ropes
+    if (map.size() == 1)
+      return ropes.size();
+
+    // I want to go through the most edges
+    int res = INT_MIN;
+    for (int i = 1; i <= sum - 1; ++i) {
+      res = max(res, map[i]);
+    }
+    // my answer: I align the vertical line with the most edges
+    return ropes.size() - res;
+  }
 
 
 

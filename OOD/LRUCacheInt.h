@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -31,7 +31,7 @@ public:
   int m_size;
   Node* m_head; // most recent
   Node* m_tail; // least recent
-  map<int, Node*> m_map;
+  unordered_map<int, Node*> m_map;
 
 
   LRUCacheInt(int limit) {
