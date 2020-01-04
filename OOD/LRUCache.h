@@ -42,12 +42,25 @@ public:
   NodeT<K, V>* m_tail; // least recent
   unordered_map<K, NodeT<K, V>*> m_map;
 
-
   LRUCache(int limit) {
     this->m_limit = limit;
     this->m_size = 0;
     this->m_head = NULL;
     this->m_tail = NULL;
+  }
+
+  // Note: even for a get, we still need to move the most recently accessed node to the head
+  bool get(K key, V& val) {
+    if (m_map.find(key) == m_map.end()) {
+      val = -1;
+      return false;
+    }
+
+    NodeT<K, V>* node = m_map[key];
+    remove(node);
+    append(node);
+    val = node->value;
+    return true;
   }
 
   void set(K key, V val) {
@@ -78,21 +91,7 @@ public:
     append(node);
   }
 
-  // Note: even for a get, we still need to move the most recently accessed node to the head
-  bool get(K key, V& val) {
-    if (m_map.find(key) == m_map.end()) {
-      val = -1;
-      return false;
-    }
-
-    NodeT<K, V>* node = m_map[key];
-    remove(node);
-    append(node);
-    val = node->value;
-    return true;
-  }
-
-
+  
 
 private:
   // not actually a remove, but rather a "disconnect and isolate"

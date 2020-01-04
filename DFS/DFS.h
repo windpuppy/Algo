@@ -430,22 +430,28 @@ public:
   // ")(" -> ""
   vector<string> removeInvalidParentheses(string input) {
     if (input.empty()) return vector<string>{""};
-    int left = 0, right = 0;
-    for (auto c : input) {
-      if (c == '(') left++;
-      else if (c == ')')
-        if (left > 0) left--;
-        else right++;
-    }
-    int count = left + right; // min number of changes needed
+    int count = preProcess(input);
     string out;
     unordered_set<string> res;
     remove_dfs(input, 0, count, out, res);
     return vector<string>(res.begin(), res.end());
   }
 
+  int preProcess(const string& str) {
+    int left = 0, right = 0;
+    for (auto c : str) {
+      if (c == '(')
+        left++;
+      else if (c == ')') {
+        if (left > 0) left--;
+        else right++;
+      }
+    }
+    return left + right; // number of changes needed
+  }
+
   void remove_dfs(const string& input, int i, int count, string& out, unordered_set<string>& res) {
-    if (count < 0) return;
+    if (count < 0) return; // are we changing more than we need? no need.
 
     if (i == input.length()) {
       if (count == 0 && isValid(out))
@@ -457,9 +463,9 @@ public:
     int len = out.length();
 
     if (c == '(' || c == ')') {
-      remove_dfs(input, i + 1, count - 1, out, res);
+      remove_dfs(input, i + 1, count - 1, out, res); // add
       out += c;
-      remove_dfs(input, i + 1, count, out, res);
+      remove_dfs(input, i + 1, count, out, res); // no add
     }
     else {
       out += c;

@@ -33,12 +33,22 @@ public:
   Node* m_tail; // least recent
   unordered_map<int, Node*> m_map;
 
-
   LRUCacheInt(int limit) {
     this->m_limit = limit;
     this->m_size = 0;
     this->m_head = NULL;
     this->m_tail = NULL;
+  }
+
+  bool get(int key, int& val) {
+    if (m_map.find(key) == m_map.end())
+      return false;
+
+    Node* node = m_map[key];
+    remove(node);
+    append(node);
+    val = node->value;
+    return true;
   }
 
   void set(int key, int val) {
@@ -67,18 +77,7 @@ public:
     append(node);
   }
 
-  bool get(int key, int& val) {
-    if (m_map.find(key) == m_map.end())
-      return false;
-
-    Node* node = m_map[key];
-    remove(node);
-    append(node);
-    val = node->value;
-    return true;
-  }
-
-
+  
 
 private:
   // remove and isolate
