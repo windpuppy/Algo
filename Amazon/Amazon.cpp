@@ -43,6 +43,16 @@ int main()
     auto res = sol.primePalindrome(4);
     res = sol.primePalindrome(13);
   }
+
+  // Basic calculator
+  {
+    auto res = sol.calculator("1-(2+3)");
+  }
+
+  // Basic calculator 2
+  {
+    auto res = sol.calculator2("3+2*2");
+  }
   cin.get();
   return 0;
 }

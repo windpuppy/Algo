@@ -42,6 +42,8 @@ struct TrieNode {
   TrieNode() : path(""), count(0) {}
 };
 
+typedef pair<string, int> Entry;
+
 class AutoComplete {
   TrieNode* m_root;
   TrieNode* m_curr;
@@ -49,12 +51,12 @@ class AutoComplete {
 
   // max heap on hot degree, with a tie breaker on string
   struct comp {
-    bool operator() (pair<string, int>& a, pair<string, int>& b) {
+    bool operator() (Entry& a, Entry& b) {
       if (a.second != b.second) return a.second < b.second;
       else return a.first > b.first;
     }
   };
-  priority_queue<pair<string, int>, vector<pair<string, int>>, comp> m_maxHeap;
+  priority_queue<Entry, vector<Entry>, comp> m_maxHeap;
 
 public:
   AutoComplete(vector<string>& sentences, vector<int>& times)
@@ -86,7 +88,7 @@ public:
     }
 
     // DFS search all possible nodes below, with the help of PQ to rank the "hot degree"
-    m_maxHeap = priority_queue<pair<string, int>, vector<pair<string, int>>, comp>(); //  IMPORTANT: clear all previous entries
+    m_maxHeap = priority_queue<Entry, vector<Entry>, comp>(); //  IMPORTANT: clear all previous entries
     build_pq_dfs(m_curr);
 
     // gather results

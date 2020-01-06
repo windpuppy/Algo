@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -483,5 +484,94 @@ public:
       if (currTime < time[n])
         res.push_back({ curr, n });
     }
+  }
+
+
+
+  // Basic calculator
+  // Assumptions: input always valid; input only contains: +, -, (, ), space, non-negatives
+  // eg. "1 + 1", " 2-1 + 2 ", "(1+(4+5+2)-3)+(6+8)"
+  int calculator(string s) {
+    int num = 0;  // temp result
+    int prevSign = 1; // sign for the PREVIOUS number
+    int res = 0;  // global result
+    stack<int> nums, ops;
+
+    for (auto c : s) {
+      // 1. hit a number
+      if (isdigit(c)) {
+        num = 10 * num + (c - '0'); // "12" <-- "3"
+      }
+
+      // 2. hit a sign
+      else if (c == '+') {
+        res += num * prevSign;
+        num = 0;
+        prevSign = 1;
+      }
+      else if (c == '-') {
+        res += num * prevSign;
+        num = 0;
+        prevSign = -1;
+      }
+
+      // 3. hit a bracket
+      else if (c == '(') {
+        nums.push(res);
+        ops.push(prevSign);
+        res = 0;
+        prevSign = 1; // note: assumption is all numbers are non-negative, so right after a bracket we won't be seeing a negative number!
+      }
+      else if (c == ')') {
+        res += num * prevSign;
+        num = 0;
+        res = nums.top() + res * ops.top();
+        nums.pop();
+        ops.pop();
+      }
+    }
+    res += num * prevSign; // one last operation
+    return res;
+  }
+
+
+
+  // Basic calculator 2
+  // Assumptions: input always valid; input only contains: +, -, *, /, space, non-negatives. No brackets!
+  // Division truncate to zero, eg. 5/2=2
+  // eg. "3+2*2", " 3+5 / 2 "
+  // Implementation: we scan the input string, only do calculation on the fly when we hit a * or /
+  int calculator2(string s) {
+    stack<int>  nums;
+    stack<char> ops; ops.push('+');
+    s.push_back(')'); // to make sure the last operand will be saved in the stack e.g. 1+2*3), 2*3 will be calculated and push in the stack
+
+    int num = 0, res = 0;
+    for (auto c : s) {
+      // digit, recover the oprand
+      if (isdigit(c)) {
+        num = num * 10 + (c - '0');
+      }
+      // skip spaces
+      else if (!isspace(c)) {
+        char prevOp = ops.top();
+        if (prevOp == '*' || prevOp == '/') {
+          num = prevOp == '*' ? nums.top() * num : nums.top() / num;
+          nums.pop();
+          ops.pop();
+        }
+        nums.push(num);
+        ops.push(c);
+        num = 0;
+      }
+    }
+
+    ops.pop(); // skip the ")"
+    while (!ops.empty()) {
+      res += ops.top() == '-' ? -nums.top() : nums.top();
+      ops.pop();
+      nums.pop();
+    }
+    return res;
   }
 };

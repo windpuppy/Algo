@@ -77,7 +77,7 @@ int main()
     vector<optional<int>> values{ 1, 2, 3, 4, 5, 6, 7, nullopt , nullopt , nullopt , nullopt , nullopt , nullopt , 8 };
     auto root = Helper::buildTree(values);
     Helper::printTree(root);
-    auto res = sol.zigzag(root);
+    auto res = sol.zigzagTraversal(root);
   }
 
   // Vertical order traversal - naive O(n^2)

@@ -317,74 +317,43 @@ public:
 
 
   // flip this at each level
-    // so that at even level, we push from front(R, then L), pop from back
-    //     and at odd level, we push from back(L, then R), pop from front
-  vector<vector<optional<int>>> zigzag(TreeNode* root) {
-    vector<vector<optional<int>>> list;
-    if (!root) return list;
+  // so that at even level, we push from front(R, then L), pop from back
+  //     and at odd level, we push from back(L, then R), pop from front
+  vector<vector<int>> zigzagTraversal(TreeNode* root) {
+    vector<vector<int>> res;
+    if (!root) return res;
+    deque<TreeNode*> dq;
+    dq.push_front(root);
+    bool reverse = false;
 
-    deque<TreeNode*> queue;
-    queue.push_back(root);
+    while (!dq.empty()) {
+      const int size = dq.size();
+      vector<int> level;
 
-    bool reverseOrder = false;
+      for (int i = 0; i < size; ++i) {
+        if (reverse) {
+          auto curr = dq.back(); dq.pop_back();
+          level.push_back(curr->value);
 
-    while (!queue.empty()) {
-
-      // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
-        break;
-
-      // contain all nodes from current level
-      vector<optional<int>> currLevel;
-
-      // size of current level
-      auto size = queue.size();
-
-      // traverse current level, prepare for the next level
-      for (auto n = 0; n != size; ++n) {
-        if (reverseOrder) {
-          auto curr = queue.front();
-          queue.pop_front();
-
-          if (curr) currLevel.push_back(curr->value);
-          else currLevel.push_back(nullopt);
-
-          if (!curr) {
-            queue.push_back(NULL);
-            queue.push_back(NULL);
-          }
-          else {
-            queue.push_back(curr->left);
-            queue.push_back(curr->right);
-          }
+          if (curr->right) dq.push_front(curr->right);
+          if (curr->left) dq.push_front(curr->left);
         }
         else {
-          auto curr = queue.back();
-          queue.pop_back();
+          auto curr = dq.front(); dq.pop_front();
+          level.push_back(curr->value);
 
-          if (curr) currLevel.push_back(curr->value);
-          else currLevel.push_back(nullopt);
-
-          if (!curr) {
-            queue.push_front(NULL);
-            queue.push_front(NULL);
-          }
-          else {
-            queue.push_front(curr->right);
-            queue.push_front(curr->left);
-          }
+          if (curr->left) dq.push_back(curr->left);
+          if (curr->right) dq.push_back(curr->right);
         }
-
       }
 
-      reverseOrder = !reverseOrder;
-
-      list.push_back(currLevel);
+      res.push_back(level);
+      reverse = !reverse;
     }
-
-    return list;
+    return res;
   }
+
+
 
   // Naive solution - two recursive methods
   // First, use recursion to get min max position (relative to the root)
