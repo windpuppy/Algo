@@ -160,6 +160,7 @@
     <ClInclude Include="LFUCache.h" />
     <ClInclude Include="LRUCache.h" />
     <ClInclude Include="LRUCacheInt.h" />
+    <ClInclude Include="MaxFreqStack.h" />
     <ClInclude Include="MedianFinder.h" />
     <ClInclude Include="NestedIterator.h" />
     <ClInclude Include="ParkingLot.h" />

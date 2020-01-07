@@ -18,6 +18,12 @@ public:
   TreeNode(int v) : value(v), left(NULL), right(NULL) {}
 };
 
+class TrieNode {
+public:
+  unordered_map<char, TrieNode*> map;
+  priority_queue<string> suggest; // a reverse lexicographcially sorted PQ (ie. lowest order string on the top)
+};
+
 class Amazon {
 public:
   // An array of logs, string is either "letter log" or "digi log"
@@ -80,8 +86,8 @@ public:
     for (int i = 0; i < p.size();) {
       string word = "";
       while (i < p.size() && isalpha(p[i])) word.push_back(tolower(p[i++]));
-      while (i < p.size() && !isalpha(p[i])) i++;
       map[word]++;
+      while (i < p.size() && !isalpha(p[i])) i++;
     }
 
     for (auto b : banned) map[b] = 0;
@@ -189,6 +195,8 @@ public:
   // 0: empty cell, 1: fresh orange, 2: rotten orange
   // Every minute, any fresh orange adjacent to rotten orange becomes rotten, return the minimum minutes that no fresh oranges are left
   // This is essentially a BFS problem, we first push all rotten oranges into the queue, and "rot" their neighbors
+  // Note: at every level, we must check and only numFreshOranges decreased, then we can do minutes++
+  // Also check at the end if numFreshOranges == 0, it's possible some fresh oranges are unreachable
   // Time: O(mn), Space: O(mn)
   int rottingOranges(vector<vector<int>>& grid) {
     if (grid.empty() || grid[0].empty()) return 0;
@@ -279,7 +287,7 @@ public:
     vector<string> res;
     if (words.empty()) res;
     auto wordComp = [&](const string& a, const string& b) { return a.size() < b.size(); };
-    sort(words.begin(), words.end(), wordComp);
+    sort(words.begin(), words.end(), wordComp); // IMPORTANT! make sure concatenated words appear after their roots
     unordered_set<string> dict;
     
     for (auto& word : words) {
@@ -360,7 +368,7 @@ public:
   //     intuition: 3+4=7, but 7 need to be pushed back into the PQ
   int minimumCostConnectSticks(vector<int>& nums) {
     if (nums.empty()) return 0;
-    priority_queue<int, vector<int>, greater<int>> pq(nums.begin(), nums.end());
+    priority_queue<int, vector<int>, greater<int>> pq(nums.begin(), nums.end()); // min heap
     int cost = 0;
     while (pq.size() >= 2) {
       int a = pq.top(); pq.pop();
@@ -393,8 +401,14 @@ public:
     vector<vector<int>> M(n, vector<int>(n, 0));
     for (int j = 0; j < n; ++j)
       for (int i = j - k + 1; i >= 0; --i) {
-        int cost = INT_MAX;
+        // For [i,j] in some cases if left and right can further merge into 1 pile, we just use prefix sum
+        if ((j - i) % (k - 1) == 0) {
+          M[i][j] += preSum[j + 1] - preSum[i];
+          continue;
+        }
 
+        // Otherwise, we need to merge as further as possible, and fill M[i][j] with that cost
+        int cost = INT_MAX;
         // 左大段右小段！！
         // 左大段：查表，不一定最终能merge成一堆
         // 右小段：查表，肯定能最终merge成一堆
@@ -405,10 +419,6 @@ public:
           cost = min(cost, M[i][m-1] + M[m][j]);
           M[i][j] = cost;
         }
-
-        // For [i,j] in some cases if left and right can further merge into 1 pile, we need to do an additional merge
-        if ((j - i) % (k - 1) == 0)
-          M[i][j] += preSum[j+1] - preSum[i];
       }
     return M[0][n-1];
   }
@@ -435,16 +445,16 @@ public:
     return curr;
   }
 
-  bool isPrime(int n) {
-    if (n == 1) return false;
-    for (int i = 2; i*i <= n; ++i)
-      if (n % i == 0) return false;
-    return true;
-  }
-
   string generatePalindrome(string half, bool even) {
     if (even) return half + string(half.rbegin(), half.rend());
     else return half + string(half.rbegin() + 1, half.rend());
+  }
+
+  bool isPrime(int n) {
+    if (n == 1) return false;
+    for (int i = 2; i * i <= n; ++i)
+      if (n % i == 0) return false;
+    return true;
   }
 
 
@@ -454,8 +464,8 @@ public:
   //            so, if we find all cycles, remove their connections, the remaining connections are critical connections
   // So how to find cycles?
   // Implementation: we record a timestamp for each node we visit. For each node, we then check its neighbors (except for the node's parent) then return the smallest timestamp found
-  //            if the returned timestamp is equal or smaller than the current node's, then the current node is in a cycle
-  //            otherwise the current node is not in a cycle, so current node to that neighbor is a CRITICAL CONNECTION
+  //            if the returned timestamp must be LARGER than the current or otherwise the current node is in a cycle
+  //            then, if not in a cycle, the current node to that neighbor is a CRITICAL CONNECTION
   // Note: we do not use the visited vector here, instead we use timestamp[n], because our timer starts at 1, so if a timestamp == 0, it's not visited
   vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
     vector<vector<int>> graph(n);
@@ -465,7 +475,7 @@ public:
     }
 
     int timer = 0;
-    vector<int> time(n, 0);
+    vector<int> time(n, -1);
     vector<vector<int>> res;
     critical_dfs(graph, -1, 0, timer, time, res);
     return res;
@@ -478,7 +488,7 @@ public:
     for (auto n : graph[curr]) {
       if (n == prev) continue; // skip the node where we "come from"
 
-      if (time[n] == 0) // n is unvisited
+      if (time[n] == -1) // n is unvisited
         critical_dfs(graph, curr, n, timer, time, res);
       time[curr] = min(time[curr], time[n]);
       if (currTime < time[n])
@@ -516,13 +526,13 @@ public:
       }
 
       // 3. hit a bracket
-      else if (c == '(') {
+      else if (c == '(') { // save current num and sign, we start a new equation!
         nums.push(res);
         ops.push(prevSign);
         res = 0;
         prevSign = 1; // note: assumption is all numbers are non-negative, so right after a bracket we won't be seeing a negative number!
       }
-      else if (c == ')') {
+      else if (c == ')') { // we finish current equation, recover previous num and sign.
         res += num * prevSign;
         num = 0;
         res = nums.top() + res * ops.top();
@@ -541,6 +551,7 @@ public:
   // Division truncate to zero, eg. 5/2=2
   // eg. "3+2*2", " 3+5 / 2 "
   // Implementation: we scan the input string, only do calculation on the fly when we hit a * or /
+  // by doing this, we pre-group all mul/div parts into a number, then we just have a list of numbers and oprands that we need to post-process
   int calculator2(string s) {
     stack<int>  nums;
     stack<char> ops; ops.push('+');
@@ -571,6 +582,49 @@ public:
       res += ops.top() == '-' ? -nums.top() : nums.top();
       ops.pop();
       nums.pop();
+    }
+    return res;
+  }
+
+
+
+  // Given a list of words and a search word, return the top 3 suggestions imagine if user 1-by-1 types in the characters of the search word
+  // In case of a 
+  // Input: {"bags","baggage","banner","box","cloths"}, word = "bags"
+  // Output: {"baggage", "bags", "banner"}
+  //         {"baggage", "bags", "banner"}
+  //         {"baggage", "bags"},
+  //         {"bags"}
+  // Assumptions: everything is in lower case,
+  // Implementation: Trie + heap
+  vector<vector<string>> searchSuggestion(vector<string>& wordList, string word) {
+    // Build Trie
+    TrieNode* root = new TrieNode();
+    for (auto& w : wordList) {
+      auto curr = root;
+      for (auto c : w) {
+        if (!curr->map.count(c)) curr->map[c] = new TrieNode();
+        curr = curr->map[c];
+        
+        // On this Trie path, we need to push this same word (w) into every single node
+        curr->suggest.push(w);
+        if (curr->suggest.size() > 3) curr->suggest.pop();
+      }
+    }
+
+    // Traverse Trie and get results
+    vector<vector<string>> res(word.length());
+    for (int i = 0; i < word.size(); ++i) {
+      char c = word[i];
+
+      if (!root->map.count(c)) break; // Can't find the next TridNode to go down further
+      root = root->map[c];
+      vector<string> suggests(root->suggest.size());
+      for (int i = suggests.size() - 1; i >= 0; --i) { // note: reverse order!
+        suggests[i] = root->suggest.top();
+        root->suggest.pop();
+      }
+      res[i] = suggests;
     }
     return res;
   }

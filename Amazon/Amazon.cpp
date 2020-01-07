@@ -53,6 +53,13 @@ int main()
   {
     auto res = sol.calculator2("3+2*2");
   }
+
+  // Search suggestion
+  {
+    vector<string> words{ "bags","baggage","banner","box","cloths" };
+    string search("bags");
+    auto res = sol.searchSuggestion(words, search);
+  }
   cin.get();
   return 0;
 }

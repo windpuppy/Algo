@@ -15,5 +15,6 @@
     <ClInclude Include="NestedIterator.h" />
     <ClInclude Include="ParkingLot.h" />
     <ClInclude Include="LFUCache.h" />
+    <ClInclude Include="MaxFreqStack.h" />
   </ItemGroup>
 </Project>
