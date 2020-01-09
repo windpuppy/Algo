@@ -42,11 +42,11 @@ public:
     return nums;
   }
 
-  //               3157986420
-  //      31579               86420       O(1) time, O(n) if LL
-  //  315      79         864       20    O(2) time, O(n) if LL
-  // 31  5    7 9        8 6  4     2 0   O(4) time, O(n) if LL
-  //3  1  5   7 9        8 6  4     2 0   O(8) time, O(n) if LL
+  //                3157986420
+  //       31579               86420       O(1) time, O(n) if LL
+  //   315      79         864       20    O(2) time, O(n) if LL
+  //  31  5    7 9        8 6  4     2 0   O(4) time, O(n) if LL
+  // 3  1  5   7 9        8 6  4     2 0   O(8) time, O(n) if LL
   // Time spent above: 1 + 2 + 4 + ... + n/2 = O(n)
   // Time above: O(n) / O(nlogn), LL faster
   //===========================================================
@@ -119,19 +119,19 @@ public:
 
   // Partion array: pick a pivot, move smaller values to its left, and bigger values to its right
   int partition(vector<int>& array, int left, int right) {
-    int pivotIndex = (left + right) / 2;
-    int pivotVal = array[pivotIndex];
+    int pIndex = (left + right) / 2;
+    int pVal = array[pIndex];
 
     // First, swap pivot to the right most
-    swap(array[pivotIndex], array[right]);
+    swap(array[pIndex], array[right]);
 
     // Create and move two bounds
     int lb = left;
     int rb = right;
     while (lb <= rb) { // less equal, to cover all elements
-      if (array[lb] < pivotVal) // push left
+      if (array[lb] < pVal) // push left
         lb++;
-      else if (array[rb] >= pivotVal) // push right
+      else if (array[rb] >= pVal) // push right
         rb--;
       else
         swap(array[lb++], array[rb--]); // small trick: if we reach here, rb is already < pivot, so we can do lb++ after the swap to skip it!
@@ -401,7 +401,7 @@ public:
 
   // Sort intervals by start time, O(nlogn)
   // Group all non-conflicting intervals into a same "room", or otherwise open a new "room", O(n^2)
-  // A more efficient solution is to use minHeap of meeting end time
+  // A more efficient solution is to use minHeap of meeting end time: top of the minHeap = earliest end time
   // for each interval, if start > heap top (end time), replace top; otherwise push end time
   int meetingRooms2(vector<vector<int>> intervals) {
     sort(intervals.begin(), intervals.end());
@@ -442,18 +442,16 @@ public:
 
 
 
-
+  // Sleep sort. Just for fun!
   static void wait(int seconds) {
     this_thread::sleep_for(chrono::seconds(seconds));
     cout << seconds << endl;
   }
 
-  void sleepSort(vector<int>& nums)
-  {
+  void sleepSort(vector<int>& nums) {
     vector<thread> threadList;
-    for (auto n : nums) {
+    for (auto n : nums)
       threadList.push_back(std::thread(wait, n));
-    }
 
     for_each(threadList.begin(), threadList.end(), mem_fn(&thread::join));
   }

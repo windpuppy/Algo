@@ -191,7 +191,7 @@ public:
 
   bool bipartitie_bfs(GraphNode* node, unordered_map<GraphNode*, int>& grouped) {
     // Already grouped? no need to check
-    if (grouped.find(node) != grouped.end()) return true;
+    if (grouped.count(node)) return true;
 
     // Only check on new nodes
     queue<GraphNode*> q;
@@ -207,7 +207,7 @@ public:
 
       for (auto n : curr->neighbors) {
         // unvisited ?
-        if (grouped.find(n) == grouped.end()) {
+        if (!grouped.count(n)) {
           grouped[n] = neiGroup;
           q.push(n); // mark this node grouped, won't be processed again in the future
         }
@@ -650,8 +650,7 @@ public:
     q.push(node); // all old nodes
 
     unordered_map<GraphNode*, GraphNode*> map; // old node, its clone
-    GraphNode* newNode = new GraphNode(node->value);
-    map[node] = newNode;
+    map[node] = new GraphNode(node->value);
 
     while (!q.empty()) {
       auto curr = q.front();
@@ -659,16 +658,15 @@ public:
       auto vec = curr->neighbors;
 
       for (int i = 0; i < vec.size(); ++i) {
-        auto oldNode = vec[i];
+        auto old = vec[i];
         
-        if (map[oldNode] == NULL) { // if not created, create it first
-          newNode = new GraphNode(oldNode->value);
-          map[oldNode] = newNode;
-          q.push(oldNode);
+        if (map[old] == NULL) { // if not created, create it first
+          map[old] = new GraphNode(old->value);
+          q.push(old);
         }
 
         // append neighbors
-        map[curr]->neighbors.push_back(newNode);
+        map[curr]->neighbors.push_back(map[old]);
       }
     }
     return map[node];

@@ -761,7 +761,7 @@ public:
     if (root->value <= min || root->value >= max) return false;
 
     return isBST(root->left, min, root->value)
-      && isBST(root->right, root->value, max);
+        && isBST(root->right, root->value, max);
   }
 
 
@@ -785,7 +785,7 @@ public:
       res.push_back(root->value);
 
     if (root->value < max)
-      getRange(root->right, max, root->value, res);
+      getRange(root->right, min, max, res);
   }
 
 
@@ -1701,8 +1701,8 @@ public:
 
   bool pathSum2_helper(TreeNode* root, int currSum, int target, unordered_set<int> prefixSum) {
     currSum += root->value;
-    if (prefixSum.find(currSum - target) != prefixSum.end())
-      return true;
+    if (prefixSum.count(currSum - target)) return true;
+
     prefixSum.insert(currSum);
 
     if (root->left && pathSum2_helper(root->left, currSum, target, prefixSum))

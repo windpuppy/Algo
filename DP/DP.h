@@ -308,7 +308,7 @@ public:
 
 
 
-  // Input: [100, 4, 200, 1, 3, 2], Output: 4, because [4, 1 3 2], yes, output needs to be a consecutive sequence ie. no missing number
+  // Input: [100, 4, 200, 1, 3, 2], Output: 4, because [4 1 3 2], yes, output needs to be a consecutive sequence ie. no missing number
   // The difficulty here is when we see a 4, we don't know what's happening on the right, and if we scan from right to left we face the same issue, so what do we do?
   // Solution 1: sort and count. That's O(nlogn). Can we do it in O(n) time?
   // Solution 2: use hash
@@ -919,6 +919,23 @@ public:
     return M.back();
   }
 
+  // DFS solution - not very efficient
+  bool wordBreak_dfs(string word, vector<string>& dict) {
+    unordered_set<string> set(dict.begin(), dict.end());
+    return wordBreak_helper(word, set);
+  }
+
+  bool wordBreak_helper(const string& word, const unordered_set<string>& set) {
+    const int size = word.size();
+    if (size == 0) return true;
+
+    for (int i = 1; i <= size; ++i)
+      if (set.find(word.substr(0, i)) != set.end())
+        if (wordBreak_helper(word.substr(i, size - i), set))
+          return true;
+    return false;
+  }
+
 
 
   // Workbreak 2
@@ -1344,7 +1361,7 @@ public:
       Point curr = minHeap.top();
       minHeap.pop();
 
-      auto neibs = getNeighbors(grid, curr, visited);
+      auto neibs = getNeighbors(grid, curr, visited); // get all unvisited neighbors
       for (auto n : neibs) {
         res += max(0, curr.height - n.height); // accummulate water
 
@@ -1401,6 +1418,7 @@ public:
   //
   // Time: O(n)
   // Space: O(n)
+  // Question: optimize space to O(1)? two integers for minPrice and maxProfit?
   int buyStock(vector<int> prices) {
     const int n = prices.size();
     if (n <= 1) return 0;
@@ -1416,6 +1434,20 @@ public:
     }
 
     return P[n - 1];
+  }
+  
+  // Optimize space to O(1):
+  int buyStock_b(vector<int> prices) {
+    const int n = prices.size();
+    if (n <= 1) return 0;
+    int minPrice = prices[0]; // min PRICE so far
+    int maxProfit = 0; // max PROFIT so far
+    
+    for (int i = 1; i < n; ++i) {
+      maxProfit = max(maxProfit, prices[i] - minPrice); // minPrice not updated with today's price yet, because you cannot buy and sell on the same day
+      minPrice = min(minPrice, prices[i]);
+    }
+    return maxProfit;
   }
 
 
@@ -1586,7 +1618,7 @@ public:
 
     // build smaller
     int min_i = 0;
-    vector<int> smaller(size);
+    vector<int> smaller(size); // record indexes
     for (int i = 0; i < size; ++i)
       if (nums[i] <= nums[min_i]) {
         min_i = i;
@@ -1598,7 +1630,7 @@ public:
 
     // build larger
     int max_i = size - 1;
-    vector<int> larger(size);
+    vector<int> larger(size); // record indexes
     for (int i = size - 1; i >= 0; --i)
       if (nums[i] >= nums[max_i]) {
         max_i = i;

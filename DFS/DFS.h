@@ -85,10 +85,10 @@ public:
     return res;
   }
 
-  // Iterative solution
+  // Bitwise solution
   // Time: O(2^n * n)
   // Space: O(n)
-  vector<string> subsets_iter(string input) {
+  vector<string> subsets_bitwise(string input) {
     if (input.empty()) return vector<string>{""};
     vector<string> res;
     const int size = input.size();
@@ -262,7 +262,7 @@ public:
       return;
     }
 
-    // 2. do not pick the current char
+    // 1. do not pick the current char
     if (out.size() <= k) // pruning
       subsetsOfK2_dfs(input, index + 1, k, out, res);
 
@@ -271,7 +271,7 @@ public:
       index++;
 
     if (out.size() <= k - 1) { // pruning
-    // 1. do pick the current char
+      // 2. do pick the current char
       out += input[index]; // "eat"
       subsetsOfK2_dfs(input, index + 1, k, out, res);
       out.pop_back(); // "spit"
@@ -1244,17 +1244,23 @@ public:
     return res;
   }
 
-  void restoreIp_dfs(string input, int index, int remainSections, string& out, vector<string>& res) {
+  void restoreIp_dfs(string& input, int index, int remainSections, string& out, vector<string>& res) {
     // base case
+    const int size = input.size();
     if (remainSections == 0) {
-      if (index == input.size())
+      if (index == size)
         res.push_back(out);
       return;
     }
 
+    // Pruning / optimization: if we have more remaining digits than we can consume (remaining parts * 3), prune this branch
+    int remainDigits = size - index;
+    if (remainDigits > remainSections * 3)
+      return;
+
     // for each section, we can have 1/2/3 digits
     for (int i = 1; i <= 3; ++i) {
-      if (index > input.size() - 1) break;  // out of bound
+      if (index > size - 1) break;  // out of bound
       if (i != 1 && input[index] == '0') break; // we allow "0." as a section, but not "01." or "001."
 
       auto substring = input.substr(index, i);
@@ -1383,17 +1389,17 @@ public:
       map[t[0]] -= t[2];
       map[t[1]] += t[2];
     }
-    vector<int> account;
+    vector<int> accounts;
     for (auto a : map)
-      if (a.second != 0) account.push_back(a.second);
+      if (a.second != 0) accounts.push_back(a.second);
 
-    optimal_helper(account, 0, 0, res);
+    optimal_helper(accounts, 0, 0, res);
     return res;
   }
 
-  void optimal_helper(vector<int>& account, int index, int count, int& res) {
-    int n = account.size();
-    while (index < n && account[index] == 0) ++index;
+  void optimal_helper(vector<int>& a, int index, int count, int& res) {
+    const int n = a.size();
+    while (index < n && a[index] == 0) ++index;
     if (index == n) {
       res = min(res, count);
       return;
@@ -1404,10 +1410,10 @@ public:
     // try all combinations!
     // NOTE: only try the combination if both are oppostie signs, why? if both with pos/neg accounts, no point merging them!
     for (int i = index + 1; i < n; ++i) {
-      if ((account[i] < 0 && account[index] > 0) || (account[i] > 0 && account[index] < 0)) {
-        account[i] += account[index];
-        optimal_helper(account, index + 1, count + 1, res);
-        account[i] -= account[index];
+      if (a[i] * a[index] < 0) {
+        a[i] += a[index];
+        optimal_helper(a, index + 1, count + 1, res);
+        a[i] -= a[index];
       }
     }
   }
@@ -1453,7 +1459,7 @@ public:
       }
     }
 
-    // memo
+    // IMPORTANT: memo!
     map[input] = res;
     return res;
   }

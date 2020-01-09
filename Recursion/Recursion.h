@@ -131,8 +131,6 @@ public:
     return res;
   }
 
-  
-  
   void spiral_recur2(const vector<vector<int>>& matrix, int newHeight, int newWidth, vector<int>& res) {
     // cases 1: either dim is zero
     if (newHeight == 0 || newWidth == 0) return;
@@ -141,9 +139,9 @@ public:
 
     // case 2: single row
     if (newHeight == 1) {
-    for (int j = 0; j < newWidth; ++j)
-      res.push_back(matrix[off1][off2 + j]);
-    return;
+      for (int j = 0; j < newWidth; ++j)
+        res.push_back(matrix[off1][off2 + j]);
+      return;
     }
 
    // case 3: single column

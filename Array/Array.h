@@ -23,6 +23,8 @@ public:
 
 class Array {
 public:
+  // Merge two sorted arrays
+  // Time: O(m+n), Space: O(1)
   vector<int> mergeTwoSortedArrays(vector<int> one, vector<int> two) {
     vector<int> res(one.size() + two.size());
     int i = 0, j = 0, k = 0;
@@ -37,6 +39,11 @@ public:
     return res;
   }
 
+
+
+  // Merge two sorted arrays, but only take m elements from one, and n from two
+  // Note, m and n are not the lenghts of those two arrays.
+  // Time: O(m+n), Space: O(1)
   vector<int> mergeTwoSortedArrays2(vector<int> one, int m, vector<int> two, int n) {
     vector<int> res(m + n);
     int i = 0, j = 0, k = 0;
@@ -52,7 +59,10 @@ public:
     return res;
   }
 
+
+
   // no duplicates
+  // push them into two maps
   vector<int> commonNumbersOfTwoArrays(vector<int> a, vector<int> b) {
     map<int, int> map;
     for (auto n : a) map[n]++;
@@ -65,7 +75,10 @@ public:
     return res;
   }
 
+
+
   // with duplicates
+  // push them into two maps
   vector<int> commonNumbersOfTwoArrays2(vector<int> a, vector<int> b) {
     map<int, int> map1;
     for (auto n : a) map1[n]++;
@@ -75,7 +88,7 @@ public:
     for (auto it = map1.cbegin(); it != map1.cend(); ++it) {
       int key = it->first;
       int val = it->second;
-      if (map2.find(key) != map2.end()) {
+      if (map2.count(key)) {
         int val2 = map2[key];
         res.insert(res.end(), min(val, val2), key);
       }
@@ -83,7 +96,10 @@ public:
     return res;
   }
 
+
+
   // with duplicates, output unique elements
+  // push them into two sets
   vector<int> commonNumbersOfTwoArrays3(vector<int>& a, vector<int>& b) {
     unordered_set<int> set1(a.begin(), a.end());
     unordered_set<int> set2(b.begin(), b.end());
@@ -91,12 +107,12 @@ public:
     vector<int> res;
     for (auto it = set1.cbegin(); it != set2.cend(); ++it) {
       int key = *it;
-      if (set2.find(key) != set2.end()) {
+      if (set2.count(key))
         res.push_back(key);
-      }
     }
     return res;
   }
+
 
 
   /// 3 -> III, 4 -> IV, 9 -> IX
@@ -116,10 +132,10 @@ public:
   }
 
 
+
   // Note: scan the string from right to left
   // Hit a smaller numter? sum minus; hit a larger or equal number, sum plus
-  int romanToInt(string s)
-  {
+  int romanToInt(string s) {
     unordered_map<char, int> m = { { 'I' , 1 },
                                    { 'V' , 5 },
                                    { 'X' , 10 },
@@ -139,6 +155,8 @@ public:
     return sum;
   }
 
+
+
   // Naive method: sort the array first, use two pointers from each side
   // Better solution: use hashset
   // Time: O(n)
@@ -155,28 +173,31 @@ public:
     return false;
   }
 
+
+
   // Return one index pair
   vector<int> TwoSum2(vector<int>& nums, int target) {
     unordered_map<int, int> map;
     for (int i = 0; i < nums.size(); ++i) {
       int needed = target - nums[i];
-      if (map.find(needed) == map.end())
-        map.insert(make_pair(nums[i], i));
+      if (!map.count(needed))
+        map.insert({ nums[i], i });
       else
         return vector<int>{map[needed], i};
     }
     return vector<int>();
   }
 
+
+
   // No need to dedup result
   // User a book to record <i, vector<all i's locations>>
-  // key: number, value: its indices (as it can appear multiple times)
   vector<vector<int>> TwoSumAllPairs(vector<int> input, int target) {
     vector<vector<int>> res;
-    unordered_map<int, vector<int>> map;
+    unordered_map<int, vector<int>> map; //<i, vector<all i's locations>>
 
     for (int i = 0; i < input.size(); ++i) {
-      if (map.find(target - input[i]) != map.end()) {
+      if (map.count(target - input[i])) {
         auto indices = map[target - input[i]];
         for (auto j : indices)
           res.push_back(vector<int>{j, i});
@@ -187,6 +208,8 @@ public:
     }
     return res;
   }
+
+
 
   // Need to dedup result
   // Use one set to record i, another to record all visited & qualified pairs so we don't repeat
@@ -199,11 +222,11 @@ public:
     unordered_set<int> visited;
 
     for (auto n : input) {
-      if (visited.find(n) != visited.end())
+      if (visited.count(n))
         continue;
 
       // A qualified pair? Push to result, and mark it "visited"
-      if (set.find(target - n) != set.end()) {
+      if (set.count(target - n)) {
         res.push_back(vector<int>{n, target - n});
         visited.insert(n);
         visited.insert(target - n);
@@ -214,6 +237,8 @@ public:
     }
     return res;
   }
+
+
 
   // Sort + two pointers
   // Time: Sorting O(nlogn), plus O(n) single while loop, so it's O(nlogn)
@@ -247,6 +272,8 @@ public:
     return res;
   }
 
+
+
   // Count 2sum pairs smaller than target
   // For each i,j pair, if sum < target, elements from i to j-1 all form valid pairs
   // Time: O(nlogn) because of sorting, Space: O(1)
@@ -262,11 +289,13 @@ public:
     return count;
   }
 
+
+
   // Return the largest sum smaller than target
   int TwoSumSmaller2(vector<int>& nums, int target) {
     sort(nums.begin(), nums.end());
-    int max = INT_MIN;
-    for (int i = 0, j = nums.size() - 1; i < j; /* Not required*/) {
+    int i = 0, j = nums.size() - 1, max = INT_MIN;
+    while(i < j) {
       int sum = nums[i] + nums[j];
       if (sum < target && sum > max)
         max = sum;
@@ -280,7 +309,7 @@ public:
 
 
   // Two sum, pick one from each array
-  // Hash a, check b against it
+  // Hashset a, check b against it
   bool TwoSumTwoArrays(vector<int> a, vector<int> b, int target) {
     unordered_set<int> set;
     for (auto i : a)
@@ -307,11 +336,12 @@ public:
 
   bool TwoSumBST_helper(TreeNode* root, int target, unordered_set<int>& set) {
     if (!root) return false;
-    if (set.find(root->value) != set.end()) return true;
+    if (set.count(root->value)) return true;
     set.insert(target - root->value);
     return TwoSumBST_helper(root->left, target, set) ||
            TwoSumBST_helper(root->right, target, set);
   }
+
 
 
   // Return 3 Sum, no duplicates
@@ -323,11 +353,11 @@ public:
   vector<vector<int>> ThreeSum(vector<int> nums, int target) {
     vector<vector<int>> res;
     const int size = nums.size();
-    std::sort(nums.begin(), nums.end());
+    sort(nums.begin(), nums.end());
 
-    for (int n = 0; n < size; ++n) {
-      int targetSum = target - nums[n];
-      int i = n + 1;
+    for (int k = 0; k < size; ++k) {
+      int targetSum = target - nums[k];
+      int i = k + 1;
       int j = size - 1;
 
       while (i < j) {
@@ -336,7 +366,7 @@ public:
         else if (nums[i] + nums[j] > targetSum)
           j--;
         else {
-          res.push_back(vector<int>{nums[n], nums[i], nums[j]});
+          res.push_back(vector<int>{nums[k], nums[i], nums[j]});
 
           int front = nums[i++];
           while (i < j && nums[i] == front) i++; // dedup i
@@ -346,11 +376,13 @@ public:
         }
       }
 
-      while (n + 1 < size && nums[n + 1] == nums[n]) n++; // dedup n
+      while (k + 1 < size && nums[k + 1] == nums[k]) k++; // dedup n
     }
 
     return res;
   }
+
+
 
   // Similar to 2 sum 2 arrays
   // Hash a, use double for loop on b and c, check 2 sum against a
@@ -361,10 +393,12 @@ public:
 
     for (auto i : b)
       for (auto j : c)
-        if (set.find(target - i - j) != set.end())
+        if (set.count(target - i - j))
           return true;
     return false;
   }
+
+
 
   // We look pair by pair
   // First we use double i,j for loops to get the first pair
@@ -372,18 +406,18 @@ public:
   // Note: hashmap should only store the left-most pair of the same value, so that we don't wrongly use the same number twice
   // Time: O(n^2)
   bool FourSum(vector<int> nums, int target) {
-    unordered_map<int, pair<int, int>> map;
+    unordered_map<int, int> map; // <2sum, right index of that 2sum pair>
     // pair(j, i) is considered the "right pair", we look to its left to find the other 2sum
     for (int i = 0; i < nums.size(); ++i) {
       for (int j = 0; j < i; ++j) {
         int sum2 = nums[j] + nums[i];
 
-        if (map.find(target - sum2) != map.end() && map[target - sum2].second < j)
+        if (map.count(target - sum2) && map[target - sum2] < j)
           return true;
 
         // for all the pairs with the same value, only store the left most pair
-        else if (map.find(sum2) == map.end())
-          map[sum2] = make_pair(j, i);
+        else if (!map.count(sum2))
+          map[sum2] = i;
       }
     }
     return false;
@@ -435,11 +469,11 @@ public:
       if (sum == k)
         maxLen = i + 1; // 0 ~ i must be the longest so far
 
-      if (map.find(sum) == map.end())
+      if (!map.count(sum))
         map[sum] = i; // only record the first occurence, because we need "longest subarray"
 
       int needed = sum - k;
-      if (map.find(needed) != map.end()) {
+      if (map.count(needed)) {
         int newLen = i - map[needed];
         maxLen = max(maxLen, newLen);
       }
@@ -447,6 +481,8 @@ public:
 
     return maxLen;
   }
+
+
 
   // Solve without division, and in O(n)
   // Build a vector LEFT, records the product of i (not including i)
@@ -468,6 +504,8 @@ public:
       res[i] = left[i] * right[i];
     return res;
   }
+
+
 
   // Celebrity problem
   int celebrity(vector<vector<int>> input) {
@@ -530,12 +568,15 @@ public:
     return vector<int>{large, small};
   }
 
+
+
   // Least times of comparison
   // Implementation: "world cup" knockout stage
   vector<int> largestAndSecondLargest(vector<int> input) {
     int a = 0, b = 0;
     return vector<int>{a, b};
   }
+
 
 
   // Least swaps to make it ascending
@@ -546,7 +587,7 @@ public:
 
     vector<pair<int, int>> vec(size); // value, index
     for (int i = 0; i < size; ++i)
-      vec[i] = make_pair(a[i], i);
+      vec[i] = { a[i], i };
 
     sort(vec.begin(), vec.end());
 
@@ -588,7 +629,7 @@ public:
         swap[i] = fix[i - 1] + 1;
         fix[i] = swap[i - 1];
       }
-      else if (one[i - 1] >= two[i] || two[i - 1] >= one[i]) { // either both swap or both fix
+      else if (one[i - 1] >= two[i] || two[i - 1] >= one[i]) { // either swap prev and swap current, or fix both
         swap[i] = swap[i - 1] + 1;
         fix[i] = fix[i - 1];
       }
@@ -602,8 +643,10 @@ public:
   }
 
 
+
   // Naive solution 1: combine all arrays, and sort one big array, O(nklognk)
-  // Naive solution 2: interate through all arrays, O(nk)
+  // Naive solution 2: Combine 1 and 2, then with 3, etc. iterate through all arrays, O(nk)
+  // Another solution: combine 12, 34, etc. then 1234, 5678, etc.
   // Efficient solution: use heap
   // Push all 1st elements into the heap, extra min, then push one more from the array that extracted element is from
   // Time O(nlogk)
@@ -621,8 +664,8 @@ public:
       minHeap.pop();
       out.push_back(curr.first);
 
-      int i = curr.second.first;
-      int j = curr.second.second + 1;
+      int i = curr.second.first; // i-th array
+      int j = curr.second.second + 1; // j-th element
       if (j < arrays[i].size())
         minHeap.push({ arrays[i][j], {i, j} });
     }
@@ -670,6 +713,8 @@ public:
     return res;
   }
 
+
+
   // Sorted, keep 1 of the dups
   vector<int> arrayDedup(vector<int> nums) {
     int size = nums.size();
@@ -702,7 +747,7 @@ public:
 
   // Sorted, keep 2 of the dups
   // For this solution, our slow and fas are not "conventional" slow faster pointers
-  // Instead of looking for 2+ number of strings, we think reversely: what happens if we have 3-peat chars?
+  // Instead of looking for 2+ number of strings, we use reverse thinking: what happens if we have 3-peat chars?
   // 1 2 2 2 3 3
   //       | |
   //       s f
@@ -752,7 +797,7 @@ public:
 
 
 
-  // Unsorted, dedup
+  // Unsorted, dedup: 12233322 -> 1
   // Use a stack, but implement it as deque so that it's more convenient for output
   // Rules: 1. always push new value regardless
   //        2. if seeing dups (that means the number just pushed into the stack need to be removed), keep skipping dups, then pop the stack
@@ -791,8 +836,8 @@ public:
   // So when we scan from right to left, we throw away the FARTHER greater elements, so we use stack!
   vector<int> nextGreater(vector<int> partial, vector<int> all) {
     const int n = all.size();
-    stack<int> stack;
-    vector<int> nextGreater(n);
+    stack<int> stack; // stack of values
+    vector<int> nextGreater(n); // vector of values
     unordered_map<int, int> map; // simply for book keeping, key: element value, value: index
 
     for (int i = n - 1; i >= 0; --i) {
@@ -855,7 +900,7 @@ public:
   // Given n, find the smallest larger number with the same digits
   // 1 => none, 12 => 21, 21 => none
   // Observations:
-  //   for example 12543, we scan from right to left
+  //   for example 13542, we scan from right to left
   //   we need to find minimum one dip, because if it's always ascending towards left, we will not have a valid solution
   //   once we see a dip, we fill it with the SMALLEST LARGER on the right, then sort the right part
   // 1) 13|542 - detect 5->3 first dip
@@ -905,15 +950,14 @@ public:
   bool subArraySumToTarget(vector<int> a, int k) {
     if (a.empty()) return false;
     else if (a.size() == 1) return a[0] == k;
-    unordered_map<int, int> map;
-    int currSum = 0;
-    for (int i = 0; i < a.size(); ++i) {
-      currSum += a[i];
+    unordered_set<int> set;
+    int sum = 0;
+    for (auto n : a) {
+      sum += n;
+      if (sum == k) return true;
+      if (set.count(sum - k)) return true;
 
-      if (currSum == k) return true;
-      if (map.find(currSum - k) != map.end()) return true;
-
-      map[currSum] = i;
+      set.insert(sum);
     }
     return false;
   }
@@ -921,19 +965,19 @@ public:
 
 
   // Same as above, but return the number of such subarrays
-  // So instead of use the map to track the index, we track its count
+  // So instead of using a set to track each sum's existence, we use a map to track its occurrences
   int subArraySumToTarget2(vector<int> a, int k) {
     if (a.empty()) return false;
     else if (a.size() == 1) return a[0] == k;
     unordered_map<int, int> map;
     int count = 0;
-    int currSum = 0;
-    for (int i = 0; i < a.size(); ++i) {
-      currSum += a[i];
-      if (currSum == k) count++;
-      if (map.find(currSum - k) != map.end()) count += map[currSum - k];
+    int sum = 0;
+    for (auto n : a) {
+      sum += n;
+      if (sum == k) count++;
+      if (map.count(sum - k)) count += map[sum - k];
 
-      map[currSum]++;
+      map[sum]++;
     }
     return count;
   }
@@ -942,7 +986,7 @@ public:
 
   // The smallest subarray with the sum >= k, and return its length
   // Assumption: all nums and k are positive
-  // Solution: we use two pointers and maintain the sliding window float above k
+  // Solution: we use two pointers and maintain a sliding window with its sum floating equal or above k
   int minimumSizeSubarraySum(vector<int> nums, int k) {
     int sum = 0, globalMin = INT_MAX;
     int i = 0, j = 0;
@@ -961,7 +1005,9 @@ public:
 
 
   // Find two disjoint subarrays with the max absolute difference of their sum, return that diff
-  // e.g. {-1, -2, -3, 1, 2, 3}, two subarrays are the left 3 and the right 3
+  // Input: { 1, -3, 1, -4, 3, 4 }
+  // Two subarrays : {-3, 1, -4 }, { 3, 4 }
+  // Maximum difference = 13
   int maxSubarraySumDifference(vector<int> nums) {
     const int n = nums.size();
     vector<int> leftMax(n), rightMax(n), leftMin(n), rightMin(n);
@@ -976,7 +1022,7 @@ public:
     // then for each i, the mmax diff = max(max(leftmax - right min), max(leftmin - rightmax))
     int globalMax = INT_MIN;
     for (int i = 0; i < n - 1; ++i) {
-      int maxDiff = max(abs(leftMax[i] - rightMin[i]), abs(leftMin[i + 1] - rightMax[i] + 1));
+      int maxDiff = max(abs(leftMax[i] - rightMin[i]), abs(leftMin[i + 1] - rightMax[i + 1]));
       globalMax = max(globalMax, maxDiff);
     }
     return globalMax;
@@ -1014,8 +1060,7 @@ public:
     int excl = 0;
     int i;
 
-    for (i = 1; i < nums.size(); i++)
-    {
+    for (i = 1; i < nums.size(); i++) {
       // current max excluding i
       int excl_curr = max(incl, excl);
 
@@ -1025,8 +1070,9 @@ public:
     }
 
     // return max of incl and excl
-    return ((incl > excl) ? incl : excl);
+    return max(incl, excl);
   }
+
 
 
   // Split array into two, two sides equal to the same sum
@@ -1068,7 +1114,7 @@ public:
 
   bool canPartition2(vector<int>& nums, int index, int sum, int total, unordered_map<string, bool>& map) {
     string curr = index + " " + sum; // current state
-    if (map.find(curr) != map.end()) return map[curr]; // already found? return it
+    if (map.count(curr)) return map[curr]; // already found? return it
 
     if (sum * 2 == total)
       return true;
@@ -1087,12 +1133,15 @@ public:
 
 
   // Equal sum partitions
-  // Given an array of numbers, partition it into multiple subarrays, and return the smallest sum (not the fewest partitions!)
+  // Given an array of numbers, partition it into multiple subarrays of equal sum
+  //   return the smallest possible sum (not the fewest partitions!)
   // Here we use DFS
   // Time: O(n^2)
   int minEqualSumPartition(vector<int> nums) {
     const int size = nums.size();
     int partSum = 0;
+    
+    // Because we want smallest possible equal sum, we start trying from 1st element only, then first 2 elements, and so on
     for (int i = 0; i < size; ++i) {
       partSum += nums[i]; // sum of the current partition
       if (i == size - 1)
@@ -1108,21 +1157,23 @@ public:
     const int size = nums.size();
     if (index == size) return true;
 
-    int currSum = 0;
+    int sum = 0;
     while (index < size) {
-      currSum += nums[index++];
-      if (currSum >= partSum)
+      sum += nums[index++];
+      if (sum >= partSum)
         break;
     }
     
-    if (currSum != partSum) return false; // cannot find the solution (note, it's possible currSum < partSum, e.g. final item is not big enough)
+    if (sum != partSum) return false; // cannot find the solution (note, it's possible currSum < partSum, e.g. final item is not big enough)
     return equalSum_helper(nums, index, partSum);
   }
+
+
 
   // Asteroids Collision problem
   // For example: [5, -10, 5] ==> output will be [-5, 5], because -10 moves left, 5 and 5 move right
   //              [5, 5, -10] ==> output will be [-10], because -10 will destroy both 5s
-  // Consider - moving left, + not moving at all
+  // Consider '-' is moving left, '+' is stationary
   // Output will have to be [-, -, -, ..., +, +, +]
   // Solution:
   // For any + value, always put into the stack

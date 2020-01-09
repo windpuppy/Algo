@@ -44,6 +44,12 @@ int main()
     res = sol.primePalindrome(13);
   }
 
+  // Critical connection
+  {
+    vector<vector<int>> connections{ {0, 1}, { 1, 2 }, { 2, 0 }, { 1, 3 } };
+    auto res = sol.criticalConnections(4, connections);
+  }
+
   // Basic calculator
   {
     auto res = sol.calculator("1-(2+3)");
