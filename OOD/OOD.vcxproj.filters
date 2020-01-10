@@ -18,5 +18,6 @@
     <ClInclude Include="MaxFreqStack.h" />
     <ClInclude Include="..\QueueStack\MinStack.h" />
     <ClInclude Include="..\QueueStack\MaxStack.h" />
+    <ClInclude Include="TimeMap.h" />
   </ItemGroup>
 </Project>

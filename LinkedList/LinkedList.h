@@ -75,9 +75,7 @@ public:
     if (!head || !head->next)
       return head;
 
-    auto fast = head;
-    auto slow = head;
-
+    auto fast = head, slow = head;
     while (fast && fast->next) {
       fast = fast->next->next; // fast += 2;
       if (!fast) return slow; // if we remove this line, we return 3 out of [1234], instead of 2.
@@ -92,8 +90,7 @@ public:
     if (!head || !head->next)
       return false;
 
-    auto slow = head;
-    auto fast = head;
+    auto slow = head, fast = head;
     while (fast && fast->next) {
       fast = fast->next->next;
       slow = slow->next;
