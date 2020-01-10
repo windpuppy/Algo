@@ -154,6 +154,8 @@
     <ClCompile Include="OOD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\QueueStack\MaxStack.h" />
+    <ClInclude Include="..\QueueStack\MinStack.h" />
     <ClInclude Include="AutoComplete.h" />
     <ClInclude Include="Codec.h" />
     <ClInclude Include="FirstNonRepeating.h" />

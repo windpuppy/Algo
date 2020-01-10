@@ -16,5 +16,7 @@
     <ClInclude Include="ParkingLot.h" />
     <ClInclude Include="LFUCache.h" />
     <ClInclude Include="MaxFreqStack.h" />
+    <ClInclude Include="..\QueueStack\MinStack.h" />
+    <ClInclude Include="..\QueueStack\MaxStack.h" />
   </ItemGroup>
 </Project>

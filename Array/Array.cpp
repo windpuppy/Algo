@@ -212,11 +212,6 @@ int main()
     res = sol.minEqualSumPartition(nums3); // 10
   }
 
-  // Asteroids collision
-  {
-    auto res = sol.asteroidCollision(vector<int>{ -2, -1, 1, 2 });
-  }
-
   cin.get();
   return 0;
 }

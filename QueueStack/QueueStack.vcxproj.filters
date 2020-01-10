@@ -7,6 +7,5 @@
     <ClInclude Include="SortWith2Stacks.h" />
     <ClInclude Include="StackByLinkedList.h" />
     <ClInclude Include="StackByQueues.h" />
-    <ClInclude Include="StackWithMin.h" />
   </ItemGroup>
 </Project>
