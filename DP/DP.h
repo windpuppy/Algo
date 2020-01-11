@@ -2283,4 +2283,49 @@ public:
       }
     return M[0][size - 1];
   }
+
+
+
+  // Regular expression matching
+  // '.' matches single char, '*' matches 0-n chars
+  // DP solution:
+  // 1, If p[j] == s[i] : M[i][j] = M[i-1][j-1];
+  // 2, If p[j] == '.'  : M[i][j] = M[i-1][j-1];
+  // 3, If p[j] == '*'  : two sub conditions
+  //    a, if p[j-1] != s[i] : M[i][j] = M[i][j-2]  //in this case, a* only counts as empty
+  //    b, if p[i-1] == s[i] or p[i-1] == '.' :
+  //               M[i][j] = M[i-1][j]    //in this case, a* counts as multiple a 
+  //            or M[i][j] = M[i][j-1]   // in this case, a* counts as single a
+  //            or M[i][j] = M[i][j-2]   // in this case, a* counts as empty
+  // Time: O(m * n), Space: O(m * n)
+  bool regularExpression(string str, string pat) {
+    if (pat.empty()) return str.empty(); // IMPORTANT!
+    const int slen = str.length(), plen = pat.length();
+    vector<vector<bool>> M(slen + 1, vector<bool>(plen + 1, false));
+    M[0][0] = true;
+
+    for (int i = 0; i < plen; i++)
+      if (pat[i] == '*' && M[0][i - 1])
+        M[0][i + 1] = true;
+
+    for (int i = 1; i <= str.length(); i++) {
+      for (int j = 1; j <= pat.length(); j++) {
+        char s = str[i-1], p = pat[j-1];
+
+        // case 1, 2
+        if (p == s || p == '.')
+          M[i][j] = M[i-1][j-1];
+
+        // case 3
+        if (p == '*') {
+          p = pat[j - 2];
+          if (p != s && p != '.')
+            M[i][j] = M[i][j-2];
+          else
+            M[i][j] = M[i][j-1] || M[i-1][j] || M[i][j-2];
+        }
+      }
+    }
+    return M.back().back();
+  }
 };

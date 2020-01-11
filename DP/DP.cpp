@@ -107,6 +107,9 @@ int main()
       {1, 1, 1, 1, 1},
       {1, 1, 1, 0, 0} };
     auto res = sol.largestSquareOfOnes(matrix);
+
+    vector<vector<int>> matrix2(5, { 0, 1, 1, 1, 1 });
+    res = sol.largestSquareOfOnes(matrix2);
   }
 
   // Largest rectangle in histogram
