@@ -1165,44 +1165,6 @@ public:
 
 
 
-  // Given a list of words, find closest distance between word a and b (both can appear multiple times)
-  int shortestWordDistance(vector<string> words, string a, string b) {
-    int i = -1, j = -1;
-    int dist = INT_MAX;
-    for (int n = 0; n < words.size(); ++n) {
-      string curr = words[n];
-      if (curr == a) i = n;
-      else if (curr == b)j = n;
-
-      if (i >= 0 && j >= 0)
-        dist = min(dist, abs(i - j));
-    }
-    return dist;
-  }
-
-  // Follow up from above: what if a and b can be the same word?
-  // Solution: add additional check:
-  //           if a == b, always update i, j to be the LARGEST pair!
-  int shortestWordDistance2(vector<string> words, string a, string b) {
-    int i = -1, j = -1;
-    int dist = INT_MAX;
-    for (int n = 0; n < words.size(); ++n) {
-      string curr = words[n];
-
-      if (a == b)
-        if (curr == a)
-          if (i < j) i = n;
-          else j = n;
-      else
-        if (curr == a) i = n;
-        else if (curr == b) j = n;
-
-      if (i >= 0 && j >= 0)
-        dist = min(dist, abs(i - j));
-    }
-    return dist;
-  }
-
   // Yet another follow up to above
   // What if my method will be called millions of times with different parameters? How to optimize it?
   // string distance

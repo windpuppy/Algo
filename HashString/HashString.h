@@ -757,7 +757,9 @@ public:
 
 
   // Minimum length window that contains all chars in template t (chars can be in any order)
-  // e.g. "adobecodebanc", "abc" ==> "banc" is the minimum window
+  // e.g. "adobecodebanc", "abc" ==> "banc" is the minimum window that contains "abc"
+  // Use slow and fast pointers, we traverse all chars at most twice each
+  // Time: O(n), Space: O(1) - the remain vector is fixed size 128
   string minimumWindowSubstring(string s, string t) {
     vector<int> remain(128, 0);
     for (auto c : t) remain[c]++; // remain chars to match in t

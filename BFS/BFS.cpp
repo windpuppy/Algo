@@ -161,13 +161,6 @@ int main()
     auto res = sol.shortestDistanceToChar("geeksforgeeks", 'e');
   }
 
-  // Word distance 1 & 2
-  {
-    vector<string> words{ "practice", "makes", "perfect", "coding", "makes" };
-    auto res = sol.shortestWordDistance(words, "makes", "coding"); // 1
-    res = sol.shortestWordDistance2(words, "makes", "makes"); // 3
-  }
-
   // String distance (input might have dups)
   {
     vector<string> words{ "this", "is", "a", "is", "fox", "happy" };
