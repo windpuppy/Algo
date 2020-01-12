@@ -1,5 +1,7 @@
 #pragma once
 
+#include "NestedInteger.h"
+
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -217,6 +219,48 @@ public:
 
 
 
+
+  // Given a nested list of integers, return the weighted sum (weight is the depth of the integer)
+  // e.g. [1,[4,[6]]] ==> 1 + 4*2 + 6*3 = 27
+  int nestedListWeightSum(const vector<NestedInteger>& nestedList, int depth = 1) {
+    int sum = 0;
+    for (const auto& ni : nestedList) {
+      sum += ni.isInteger()
+        ? ni.getInteger() * depth
+        : nestedListWeightSum(ni.getList(), depth + 1);
+    }
+    return sum;
+  }
+
   
   
+  // Follow up for the previous problem - now the weights are reversed
+  // e.g. [1,[4,[6]]] ==> 1*3 + 4*2 + 6 = 17
+  // Naive solution: run two passes. First pass to record depths for all elements, second pass to do the weighted sum.
+  // Better (one pass) solution:
+  //    Observation: for [a,[b,[c]]]
+  //    weightSum = 1a + 2b + 3c
+  //    reverseSum = 3a + 2b + 1c
+  //    totalSum = 4a + 4b + 4c
+  //    Therefore: reverseSum = totalSum - weightedSum
+  //                          = (maxDepth + 1)*(a+b+c) - weightedSum
+  int nesedListWeightSum2(const vector<NestedInteger>& nestedList) {
+    int depth = 1, maxDepth = 1, singleSum = 0, weightedSum = 0;
+    for (const auto& ni : nestedList)
+      reverseSum(ni, depth, maxDepth, singleSum, weightedSum);
+    return singleSum * (maxDepth + 1) - weightedSum;
+  }
+
+  void reverseSum(const NestedInteger& ni, int depth, int& maxDepth, int& singleSum, int& weightedSum) {
+    maxDepth = max(maxDepth, depth);
+    if (ni.isInteger()) {
+      singleSum += ni.getInteger();
+      weightedSum += ni.getInteger() * depth;
+      return;
+    }
+    else {
+      for (const auto& i : ni.getList())
+        reverseSum(i, depth + 1, maxDepth, singleSum, weightedSum);
+    }
+  }
 };
