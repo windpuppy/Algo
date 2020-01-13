@@ -21,8 +21,14 @@ int main()
   {
     vector<vector<int>> intervals{ {1, 3}, {3, 5 }, {6, 7}, {8, 10}, {12, 16} };
     vector<int> newInterval{ 4, 8 };
-    auto res = sol.insertInterval(intervals, newInterval);
-    res = sol.insertInterval2(intervals, newInterval);
+    //auto res = sol.insertInterval(intervals, newInterval);
+    auto res = sol.insertInterval2(intervals, newInterval);
+  }
+
+  // Paint house 2
+  {
+    vector<vector<int>> costs{ {8} };
+    auto res = sol.paintHouse2(costs);
   }
 
   cin.get();

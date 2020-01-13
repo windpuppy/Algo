@@ -263,4 +263,94 @@ public:
         reverseSum(i, depth + 1, maxDepth, singleSum, weightedSum);
     }
   }
+
+
+
+  // Given a row of houses, paint them with 3 colors so that no adjacent houses have the same color, return the minimum cost.
+  // Cost matrix is given as follows:
+  //  Cost    R   G   B
+  // House 0  7   2   7
+  // House 1  8   4   3
+  // House 2  4   5   12
+  // ...
+  // DFS solution, Time O(2^n)
+  int paintHouse_dfs(vector<vector<int>>& costs) {
+    if (costs.empty()) return 0;
+    return paint_dfs(costs, 0, -1, 0);
+  }
+
+
+  int paint_dfs(vector<vector<int>>& costs, int index, int prevColor, int sum) {
+    if (index == costs.size()) return sum;
+
+    int newSum = INT_MAX;
+    for (int color = 0; color <= 2; color++) {
+      if (color == prevColor) continue;
+      newSum = min(newSum, costs[index][color] + paint_dfs(costs, index + 1, color, sum));
+    }
+    return newSum;
+  }
+
+  // DP solution
+  // We create a n*3 matrix M, where M[i][j] = first i houses ending with color j
+  // Induction rule: M[i][0] = min(M[i-1][1], M[i-1][2]) + costs[i][0]
+  //                 M[i][1] = min(M[i-1][0], M[i-1][2]) + costs[i][1]
+  //                 M[i][2] = min(M[i-1][0], M[i-1][1]) + costs[i][2]
+  // Time O(n), Space O(n) - space can be further optimized to O(1) by overwriting the cost matrix
+  int paintHouse(vector<vector<int>>& costs) {
+    if (costs.empty()) return 0;
+    const int n = costs.size();
+    vector<vector<int>> M(n + 1, vector<int>(3, 0));
+    for (int i = 1; i <= n; ++i) {
+      M[i][0] = min(M[i - 1][1], M[i - 1][2]) + costs[i-1][0];
+      M[i][1] = min(M[i - 1][0], M[i - 1][2]) + costs[i-1][1];
+      M[i][2] = min(M[i - 1][0], M[i - 1][1]) + costs[i-1][2];
+    }
+    return min(M.back()[0], min(M.back()[1], M.back()[2]));
+  }
+
+
+
+  // Instead of 3 colors, we paint n houses with k colors
+  // Time: O(n*m^2), Space: O(nm)
+  int paintHouse2(vector<vector<int>>& costs) {
+    if (costs.empty() || costs[0].empty()) return 0;
+    const int n = costs.size();
+    const int m = costs[0].size();
+    if (n == 1 && m == 1) return costs[0][0];
+    vector<vector<int>> M(n + 1, vector<int>(m, 0));
+    for (int i = 1; i <= n; ++i) {
+      for (int j = 0; j < m; ++j) {
+        M[i][j] = INT_MAX;
+        for (int k = 0; k < m; ++k) {
+          if (k == j) continue;
+          M[i][j] = min(M[i][j], M[i - 1][k] + costs[i - 1][j]);
+        }
+      }
+    }
+    int res = INT_MAX;
+    for (auto k : M.back())
+      res = min(res, k);
+    return res;
+  }
+
+
+
+  // Can Plant Flowers
+  // Given a flower bed in the form of array of 0 and 1s, see if we can plant n more flowers so that no flowers are adjacent
+  // e.g. [1 0 0 0 1], n=1 --> true, n=2 --> false.
+  // Little trick: we can mutate the array by padding two zeros at both ends
+  // Time O(n)
+  bool canPlaceFlowers(vector<int>& bed, int n) {
+    if (n == 0) return true;
+    bed.insert(bed.begin(), 0);
+    bed.push_back(0);
+    for (int i = 1; i < bed.size() - 1; ++i)
+      if (bed[i - 1] + bed[i] + bed[i + 1] == 0) {
+        bed[i] = 1; // plant a flower here
+        if (--n <= 0)
+          return true;
+      }
+    return false;
+  }
 };
