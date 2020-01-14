@@ -7,8 +7,17 @@
 #include <algorithm>
 #include <queue>
 #include <unordered_map>
+#include <algorithm>
+#include <stack>
 
 using namespace std;
+
+struct TreeNode {
+  int value;
+  TreeNode* left;
+  TreeNode* right;
+  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
+};
 
 class LinkedIn {
 
@@ -352,5 +361,136 @@ public:
           return true;
       }
     return false;
+  }
+
+
+
+  // Paint n posts with k colors so that NO MORE THAN TWO adjacent posts have the same color
+  // Note: two adjacent posts CAN have the same color
+  // Note2: k can be larger than n
+  // Return the total number of ways to paint them
+  // DP solution: TIme O(n), Space O(1)
+  int paintFence(int n, int k) {
+    // Edge cases for posts <= 1
+    if (n == 0) return 0;
+    else if (n == 1) return k;
+
+    // Cases for posts >= 2
+    int diff = k * (k - 1); // ways to paint the first 2 posts with different colors
+    int same = k; // ways to paint the first 2 posts with same colors
+    for (int i = 2; i < n; ++i) {
+      int tmp = diff;
+      diff = (diff + same) * (k - 1);
+      same = tmp;
+    }
+    return diff + same;
+  }
+
+
+
+  // Find binary tree leaves layer by layer (from outer layer to inner layer)
+  // Input tree:
+  //     1
+  //    / \
+  //   2   3
+  //  / \
+  // 4   5
+  // Output: [[4, 5, 3], [2], [1]]
+  // Time O(n), Space O(height)
+  vector<vector<int>> findLeaves(TreeNode* root) {
+    if (!root) return {};
+    vector<vector<int>> res;
+    getLevel(root, res);
+    return res;
+  }
+
+  // returns level, eg. bottom level 1, root level height
+  //     1     ---> lv 3
+  //    / \
+  //   2   3   ---> lv 2
+  //  / \
+  // 4   5     ---> lv 1
+  int getLevel(TreeNode* root, vector<vector<int>>& res) {
+    if (!root) return 0;
+    int levelL = getLevel(root->left, res);
+    int levelR = getLevel(root->right, res);
+    int level = max(levelL, levelR) + 1;
+
+    if (level > res.size()) // current level has got a vector created? create one.
+      res.push_back({});
+    res[level - 1].push_back(root->value);
+    return level;
+  }
+
+
+
+  // Closest in BST
+  // Naive: in-order traversal, find closest
+  // Efficient: if equal? return; if not equal? go left / right
+  // Time: O(h)
+  int closestInBST(TreeNode* root, double target) {
+    double minDiff = 1.79769e+308; // "DOUBLE_MAX"
+    int res = root->value;
+
+    while (root) {
+      if ((double)root->value == target) // equal? return.
+        return target;
+
+      else { // not equal ? update minDiff
+        double diff = abs(target - root->value);
+        if (diff < minDiff) {
+          minDiff = diff;
+          res = root->value;
+        }
+
+        // then go left / right
+        if (target < (double)root->value)
+          root = root->left;
+        else
+          root = root->right;
+      }
+    }
+    return res;
+  }
+
+
+
+  // Closest K in BST
+  // Inorder traversal
+  // Optimization 1: use k-size max heap, throw away n-k max, remaining will be out k closest
+  // Optimization 2: pruning. Because of BST, one we have k elements bigger than target, we can stop searching
+  // Time: O(nlogk), Space: O(k)
+  vector<int> closestKInBST(TreeNode* root, double target, int k) {
+    struct PairLess {
+      bool operator()(pair<double, int> p1, pair<double, int> p2) { return p1.first < p2.first; }
+    };
+    // pair: distance, value
+    priority_queue<pair<double, int>, vector<pair<double, int>>, PairLess> pq;
+
+    stack<TreeNode*> stack;
+    auto curr = root;
+
+    while (curr || !stack.empty()) {
+      // keep going left
+      if (curr) {
+        stack.push(curr);
+        curr = curr->left;
+      }
+      // left drained? fall back to stack to go back up then right
+      else {
+        curr = stack.top(); stack.pop();
+        pq.push({ abs((double)curr->value - target), curr->value });
+        if (pq.size() > k) pq.pop();
+        curr = curr->right;
+      }
+    }
+
+    vector<int> res;
+    while (!pq.empty()) {
+      res.push_back(pq.top().second);
+      pq.pop();
+    }
+    sort(res.begin(), res.end());
+    return res;
   }
 };

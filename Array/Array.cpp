@@ -202,6 +202,13 @@ int main()
     res = sol.minimumSizeSubarraySum(vector<int>{ 2, 3, 1, 2, 4, 3 }, 7);
   }
 
+  // Partition to two parts of equal sum
+  {
+    vector<int> nums{ 3, 3, 3, 4, 5 };
+    auto res = sol.canPartition(nums);
+    res = sol.canPartition2(nums);
+    res = sol.canPartition3(nums);
+  }
   // Equal sum partitions (look for the smallest sum, not the fewest partition!)
   {
     vector<int> nums{ 2, 5, 1, 3, 3, 7 };

@@ -19,5 +19,6 @@
     <ClInclude Include="..\QueueStack\MinStack.h" />
     <ClInclude Include="..\QueueStack\MaxStack.h" />
     <ClInclude Include="TimeMap.h" />
+    <ClInclude Include="AllOne.h" />
   </ItemGroup>
 </Project>

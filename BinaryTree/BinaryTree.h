@@ -15,13 +15,6 @@
 
 using namespace std;
 
-class PairComparatorLess {
-public:
-  bool operator()(std::pair<int, int> p1, std::pair<int, int> p2) {
-    return p1.first < p2.first;
-  }
-};
-
 class TreeNode {
 public:
   int value;
@@ -833,9 +826,13 @@ public:
   // Inorder traversal
   // Optimization 1: use k-size max heap, throw away n-k max, remaining will be out k closest
   // Optimization 2: pruning. Because of BST, one we have k elements bigger than target, we can stop searching
+  // Time: O(nlogk), Space: O(k)
   vector<int> closestKInBST(TreeNode* root, int target, int k) {
+    struct PairLess {
+      bool operator()(pair<int, int> p1, pair<int, int> p2) { return p1.first < p2.first; }
+    };
     // pair: distance, value
-    priority_queue<pair<int, int>, vector<pair<int, int>>, PairComparatorLess> pq;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, PairLess> pq; 
 
     stack<TreeNode*> stack;
     auto curr = root;

@@ -1079,40 +1079,34 @@ public:
   // Naive solution: split into two, compare sum, move left / right
   // DFS solution: for each number, we have two choices: we take this number into the current group, or we don't take this number
   //     if we take this number, remember to accmmulate the sum and bring it to the next level
-  bool partitionEqualSubsetSum(vector<int>& nums) {
+  bool canPartition(vector<int>& nums) {
     int total = 0;
-    for (auto n : nums)
-      total += n;
-
+    for (auto n : nums) total += n;
     if (total % 2 != 0) return false; // early termintation
-
-    return canPartition(nums, 0, 0, total);
+    return partition_helper(nums, 0, 0, total);
   }
 
-  bool canPartition(vector<int>& nums, int index, int sum, int total) {
+  bool partition_helper(vector<int>& nums, int index, int sum, int total) {
     if (sum * 2 == total)
       return true;
 
     if (sum > total / 2 || index >= nums.size()) // sum already passed total/2, or numbers are used up? no good.
       return false;
 
-    return canPartition(nums, index + 1, sum, total) ||
-           canPartition(nums, index + 1, sum + nums[index], total);
+    return partition_helper(nums, index + 1, sum, total) ||
+           partition_helper(nums, index + 1, sum + nums[index], total);
   }
 
   // Improvement for above with memo
-  bool partitionEqualSubsetSum2(vector<int>& nums) {
+  bool canPartition2(vector<int>& nums) {
     int total = 0;
-    for (auto n : nums)
-      total += n;
-
+    for (auto n : nums)total += n;
     if (total % 2 != 0) return false; // early termintation
-
     unordered_map<string, bool> map;
-    return canPartition2(nums, 0, 0, total, map);
+    return partition_helper2(nums, 0, 0, total, map);
   }
 
-  bool canPartition2(vector<int>& nums, int index, int sum, int total, unordered_map<string, bool>& map) {
+  bool partition_helper2(vector<int>& nums, int index, int sum, int total, unordered_map<string, bool>& map) {
     string curr = index + " " + sum; // current state
     if (map.count(curr)) return map[curr]; // already found? return it
 
@@ -1122,12 +1116,31 @@ public:
     if (sum > total / 2 || index >= nums.size())
       return false;
 
-    bool foundPartition = canPartition2(nums, index + 1, sum, total, map) ||
-                          canPartition2(nums, index + 1, sum + nums[index], total, map);
+    bool foundPartition = partition_helper2(nums, index + 1, sum, total, map) ||
+                          partition_helper2(nums, index + 1, sum + nums[index], total, map);
 
     // store new entry
     map[curr] = foundPartition;
     return foundPartition;
+  }
+
+  // An even faster implementation (trick: sorting + pruning)
+  // This solution is super fast! 96th percentile on LC!
+  bool canPartition3(vector<int>& nums) {
+    int total = 0;
+    for (auto n : nums) total += n;
+    if (total % 2 != 0) return false; // early termintation
+    total /= 2;
+    sort(nums.rbegin(), nums.rend()); // sorting in descending order
+    return partition_helper3(nums, 0, total);
+  }
+
+  bool partition_helper3(vector<int>& nums, int index, int sum) {
+    if (index >= nums.size()) return false;
+    if (nums[index] == sum) return true;
+    if (nums[index] > sum) return false; // key pruning here!
+    return partition_helper3(nums, index + 1, sum - nums[index]) ||
+           partition_helper3(nums, index + 1, sum);
   }
 
 
