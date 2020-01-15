@@ -209,6 +209,7 @@ int main()
     res = sol.canPartition2(nums);
     res = sol.canPartition3(nums);
   }
+
   // Equal sum partitions (look for the smallest sum, not the fewest partition!)
   {
     vector<int> nums{ 2, 5, 1, 3, 3, 7 };
@@ -217,6 +218,12 @@ int main()
     res = sol.minEqualSumPartition(nums2); // 1
     vector<int> nums3{ 1, 2, 3, 4 };
     res = sol.minEqualSumPartition(nums3); // 10
+  }
+
+  // Partition array for maximum sum
+  {
+    vector<int> nums{ 1, 15, 7, 9, 2, 5, 10 };
+    auto res = sol.maxSumPartition(nums, 3);
   }
 
   cin.get();

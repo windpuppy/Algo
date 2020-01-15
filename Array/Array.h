@@ -10,6 +10,7 @@
 #include <stack>
 #include <unordered_set>
 #include <unordered_map>
+#include <numeric>
 
 using namespace std;
 
@@ -1075,32 +1076,26 @@ public:
 
 
 
-  // Split array into two, two sides equal to the same sum
+  // Partition the array of all POSITIVE integers into two subsets (numbers don't have to be continuous!) of equal sum
   // Naive solution: split into two, compare sum, move left / right
   // DFS solution: for each number, we have two choices: we take this number into the current group, or we don't take this number
   //     if we take this number, remember to accmmulate the sum and bring it to the next level
   bool canPartition(vector<int>& nums) {
-    int total = 0;
-    for (auto n : nums) total += n;
+    int total = accumulate(begin(nums), end(nums), 0);
     if (total % 2 != 0) return false; // early termintation
     return partition_helper(nums, 0, 0, total);
   }
 
   bool partition_helper(vector<int>& nums, int index, int sum, int total) {
-    if (sum * 2 == total)
-      return true;
-
-    if (sum > total / 2 || index >= nums.size()) // sum already passed total/2, or numbers are used up? no good.
-      return false;
-
+    if (sum * 2 == total) return true;
+    if (sum > total / 2 || index >= nums.size()) return false; // sum already passed total/2, or numbers are used up? no good.
     return partition_helper(nums, index + 1, sum, total) ||
            partition_helper(nums, index + 1, sum + nums[index], total);
   }
 
   // Improvement for above with memo
   bool canPartition2(vector<int>& nums) {
-    int total = 0;
-    for (auto n : nums)total += n;
+    int total = accumulate(begin(nums), end(nums), 0);
     if (total % 2 != 0) return false; // early termintation
     unordered_map<string, bool> map;
     return partition_helper2(nums, 0, 0, total, map);
@@ -1110,12 +1105,8 @@ public:
     string curr = index + " " + sum; // current state
     if (map.count(curr)) return map[curr]; // already found? return it
 
-    if (sum * 2 == total)
-      return true;
-
-    if (sum > total / 2 || index >= nums.size())
-      return false;
-
+    if (sum * 2 == total) return true;
+    if (sum > total / 2 || index >= nums.size()) return false;
     bool foundPartition = partition_helper2(nums, index + 1, sum, total, map) ||
                           partition_helper2(nums, index + 1, sum + nums[index], total, map);
 
@@ -1127,8 +1118,7 @@ public:
   // An even faster implementation (trick: sorting + pruning)
   // This solution is super fast! 96th percentile on LC!
   bool canPartition3(vector<int>& nums) {
-    int total = 0;
-    for (auto n : nums) total += n;
+    int total = accumulate(begin(nums), end(nums), 0);
     if (total % 2 != 0) return false; // early termintation
     total /= 2;
     sort(nums.rbegin(), nums.rend()); // sorting in descending order
@@ -1145,8 +1135,57 @@ public:
 
 
 
+  // Partition the array into 3 subarrays (numbers need to be continuous!) of equal sum
+  // Solution: because numbers need to be continuous, ie. we are picking subarrays instead of subsequences
+  //    we can simply get the partSum first, partSum = total / 3
+  //    then we go through the entire array again and see how many times we hit the partsum
+  // Time: O(n), Space: O(1)
+  bool canPartitionThreeWay(vector<int>& nums) {
+    int total = accumulate(begin(nums), end(nums), 0);
+    if (total % 3 != 0) return false;
+    total /= 3;
+    int parts = 0, sum = 0;
+    for (auto n : nums) {
+      sum += n;
+      if (sum == total) {
+        parts++;
+        sum = 0;
+      }
+    }
+    return parts >= 3; // IMPORTANT: >=3 not ==3, because array can have negative numbers so we might hit partSum more than 3 times
+  }
+
+
+
+  // Partition the array into k subsets (numbers don't need to be continuous!) of equal sum
+  bool canPartitionKWay(vector<int>& nums, int k) {
+    int total = accumulate(begin(nums), end(nums), 0);
+    if (total % k != 0) return false;
+    total /= k;
+    vector<bool> visisted(nums.size(), false);
+    return partition_helper4(nums, visisted, 0, k, 0, total);
+  }
+
+  bool partition_helper4(vector<int>& nums, vector<bool>& visited, int index, int k, int currSum, int target) {
+    if (k == 1) return true;
+
+    if (currSum == target) // one of the k partiton is satisfied? move onto the next parition
+      return partition_helper4(nums, visited, 0, k-1, 0, target);
+
+    for (int i = index; i < nums.size(); ++i)
+      if (!visited[i]) {
+        visited[i] = true;
+        if (partition_helper4(nums, visited, index + 1, k, currSum + nums[i], target)) return true;
+        visited[i] = false;
+      }
+    return false;
+  }
+
+
+
+
   // Equal sum partitions
-  // Given an array of numbers, partition it into multiple subarrays of equal sum
+  // Given an array of POSITIVE numbers, partition it into multiple subarrays of equal sum
   //   return the smallest possible sum (not the fewest partitions!)
   // Here we use DFS
   // Time: O(n^2)
@@ -1183,5 +1222,50 @@ public:
 
 
 
+  // Partition an array of integers into (continuous) subarrays of length AT MOST k.
+  // After partitioning, each subarray has their values changed to the max value of that subarray
+  // e.g. nums = [1,  15, 7,  9, 2,  5,  10], k = 3
+  //  turns into [15, 15, 15, 9, 10, 10, 10]
+  // Return the largest possible sum of the output array
+  // DP solution:
+  // M[i] is the max sum we can get between [0, i]
+  // To compute M[i], we try to change the j last numbers separately and find the maximum sum, where j is [1, k]
+  // Time: O(n*k), Space: O(n)
+  int maxSumPartition(vector<int>& nums, int k) {
+    const int n = nums.size();
+    vector<int> M(n);
+    M[0] = nums[0];
+    for (int i = 1; i < n; ++i) {
+      int maxVal = INT_MIN;
+
+      // staring from i, go left [1,k] steps
+      for (int j = 1; j <= k && i - j + 1 >= 0; ++j) {
+        maxVal = max(maxVal, nums[i - j + 1]);   // find the max value inside this window
+        int leftSum = i - j >= 0 ? M[i - j] : 0; // any additional sum to the left?
+        M[i] = max(M[i], leftSum + maxVal * j);  // left sum + maxval-turned window
+      }
+    }
+    return M.back();
+  }
+
+
+
+  // Ways of array partition
+  // Divide a binary array into parts so that each part contains exactly one 1.
+  // Return the number of ways to partition it
+  // Observation: for [1 1] we have 1 way to divide it; for [1 0 0 1] we have 3 ways to divide it.
+  //   So the number of ways to divide two 1s = the number of 0s between them + 1
+  int waysOfPartition(vector<int> nums) {
+    vector<int> ones; // indexes of all ones
+    for (int i = 0; i < nums.size(); ++i)
+      if (nums[i] == 1) ones.push_back(i);
+
+    if (ones.size() <= 1) return ones.size();
+
+    int ways = 0;
+    for (int i = 1; i < ones.size(); ++i)
+      ways *= ones[i] - ones[i - 1];
+    return ways;
+  }
 };
 
