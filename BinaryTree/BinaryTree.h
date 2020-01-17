@@ -853,12 +853,11 @@ public:
       }
     }
 
-    vector<int> res;
-    while (!pq.empty()) {
-      res.push_back(pq.top().second);
+    vector<int> res(pq.size());
+    for (int i = res.size() - 1; i >= 0; --i) {
+      res[i] = pq.top().second;
       pq.pop();
     }
-    sort(res.begin(), res.end());
     return res;
   }
 

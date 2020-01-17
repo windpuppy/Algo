@@ -35,10 +35,10 @@ public:
 
     for (int i = 1; i < intervals.size(); ++i) {
       auto& in = intervals[i];
-      if (res.back()[1] < in[0])
+      if (res.back()[1] < in[0]) // not overlapping? push.
         res.push_back(in);
       else
-        res.back()[1] = max(res.back()[1], in[1]);
+        res.back()[1] = max(res.back()[1], in[1]); // overlapping? merge.
     }
     return res;
   }
@@ -71,7 +71,7 @@ public:
       else // 3. merge
         newInterval = { min(newInterval[0], itv[0]), max(newInterval[1], itv[1]) };
     }
-    res.push_back(newInterval);
+    res.push_back(newInterval); // if we reach here (through either 1. or 3.), newInterval still need to be added to the end
     return res;
   }
 
@@ -150,6 +150,7 @@ public:
   // Given a list of words and two words (both in the list, and not equal to each other), return their minimum distance
   // Note: The list can contain dups
   // e.g. input is {"practice", "makes", "perfect", "coding", "makes"}, distance between "makes" and "coding" is 1, not 3!
+  // Approach: found a? assign i; found b? assign j; keep updating minDist with abs(j-i)
   // Time: O(n), Space: O(1)
   int shortestWordDistance(vector<string>& words, string a, string b) {
     int i = -1, j = -1, dist = INT_MAX;
@@ -171,6 +172,7 @@ public:
   // Shortest word distance 3
   // Follow up from Shortest word distance 1, what if a and b could be the same?
   // e.g. input is {"practice", "makes", "perfect", "coding", "makes"}, distance between "makes" and "makes" is 3, not 0!
+  // Approach: same as above, but add a separate clause for a == b situation: always update the smaller of i and j
   // Time: O(n)
   int shortestWordDistance3(vector<string>& words, string a, string b) {
     int i = -1, j = -1, dist = INT_MAX;
@@ -179,7 +181,7 @@ public:
 
       if (a == b) { // SAME word
         if (w == a)
-          if (i < j) i = n; // always move the further one between i and j, to make it "shortest"
+          if (i < j) i = n; // always move the smaller or i and j, to make it "shortest"
           else j = n;
         else
           continue;
@@ -199,13 +201,14 @@ public:
 
 
   // Shortest word distance 2
-  // Follow up for Shortest word distance 1, what if we need to repeatedly make such query many times? (assume the two target words are always different and both exist in the list)
+  // Follow up for Shortest word distance 1, what if we need to repeatedly make such query many times?
+  //    (assume the two query words are always different and both exist in the list)
   // Naive solution: pre-process all word distance and save them into a hashmap
   //    pre-process: O(n^2), query: O(1)
   // More realistic solution:
   //    pre-process: O(n), query: O(n)
   class WordDistance {
-    unordered_map<string, vector<int>> map; // <word, {its indexes}>
+    unordered_map<string, vector<int>> map; // <word, {its indexes in ascending order}>
   
   public:
     // O(n) pre-process
@@ -253,6 +256,10 @@ public:
   //    totalSum = 4a + 4b + 4c
   //    Therefore: reverseSum = totalSum - weightedSum
   //                          = (maxDepth + 1)*(a+b+c) - weightedSum
+  // Recursion function needs:
+  //    currentDepth
+  //    & maxDepth
+  //    & singleSum, & weightedSum
   int nesedListWeightSum2(const vector<NestedInteger>& nestedList) {
     int depth = 1, maxDepth = 1, singleSum = 0, weightedSum = 0;
     for (const auto& ni : nestedList)
@@ -305,7 +312,7 @@ public:
   // Induction rule: M[i][0] = min(M[i-1][1], M[i-1][2]) + costs[i][0]
   //                 M[i][1] = min(M[i-1][0], M[i-1][2]) + costs[i][1]
   //                 M[i][2] = min(M[i-1][0], M[i-1][1]) + costs[i][2]
-  // Time O(n), Space O(n) - space can be further optimized to O(1) by overwriting the cost matrix
+  // Time O(n), Space O(n) - space can be further optimized to O(1) by using 3 variables
   int paintHouse(vector<vector<int>>& costs) {
     if (costs.empty()) return 0;
     const int n = costs.size();
@@ -318,9 +325,26 @@ public:
     return min(M.back()[0], min(M.back()[1], M.back()[2]));
   }
 
+  int paintHouse_spaceO1(vector<vector<int>>& costs) {
+    if (costs.empty()) return 0;
+    const int n = costs.size();
+    int a_prev = 0, b_prev = 0, c_prev = 0;
+    int a, b, c;
+    for (int i = 1; i <= n; ++i) {
+      a = min(b_prev, c_prev) + costs[i - 1][0];
+      b = min(a_prev, c_prev) + costs[i - 1][1];
+      c = min(a_prev, b_prev) + costs[i - 1][2];
+      a_prev = a; b_prev = b; c_prev = c;
+    }
+    return min(a, min(b, c));
+  }
 
 
-  // Instead of 3 colors, we paint n houses with k colors
+  // Instead of 3 colors, we paint n houses with m colors, m is the width of the given cost matrix
+  // We create a n*3 matrix M, where M[i][j] = first i houses ending with color j
+  // Induction rule:
+  //    M[i][j] = min(M[i-1][k] + cost[i-1][j]), where we search for that k within [0, m)
+  //    physical meaning: what is the minimum cost if we pain the previous house with color k, and current house with color j
   // Time: O(n*m^2), Space: O(nm)
   int paintHouse2(vector<vector<int>>& costs) {
     if (costs.empty() || costs[0].empty()) return 0;
@@ -331,10 +355,11 @@ public:
     for (int i = 1; i <= n; ++i) {
       for (int j = 0; j < m; ++j) {
         M[i][j] = INT_MAX;
-        for (int k = 0; k < m; ++k) {
-          if (k == j) continue;
-          M[i][j] = min(M[i][j], M[i - 1][k] + costs[i - 1][j]);
-        }
+
+        // for each color k between [0,m), we try what is the min cost if previous house is painted with k
+        for (int k = 0; k < m; ++k)
+          if (k != j)
+            M[i][j] = min(M[i][j], M[i - 1][k] + costs[i - 1][j]);
       }
     }
     int res = INT_MAX;
@@ -376,12 +401,13 @@ public:
     else if (n == 1) return k;
 
     // Cases for posts >= 2
-    int diff = k * (k - 1); // ways to paint the first 2 posts with different colors
     int same = k; // ways to paint the first 2 posts with same colors
+    int diff = k * (k - 1); // ways to paint the first 2 posts with different colors
+    
     for (int i = 2; i < n; ++i) {
-      int tmp = diff;
-      diff = (diff + same) * (k - 1);
-      same = tmp;
+      int same_prev = same;
+      same = diff; // paint i same as i-1
+      diff = (diff + same_prev) * (k - 1); // paint i different than i-1
     }
     return diff + same;
   }
@@ -485,12 +511,11 @@ public:
       }
     }
 
-    vector<int> res;
-    while (!pq.empty()) {
-      res.push_back(pq.top().second);
+    vector<int> res(pq.size());
+    for (int i = res.size() - 1; i >= 0; --i) {
+      res[i] = pq.top().second;
       pq.pop();
     }
-    sort(res.begin(), res.end());
     return res;
   }
 };
