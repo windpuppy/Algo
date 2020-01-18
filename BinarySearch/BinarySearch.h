@@ -54,7 +54,7 @@ public:
   // Notes:
   // 1) exit condition: left > right - 1. we need to leave minimum 2 elements here
   // 2) right = mid, left = mid, do not do mid+1 / mid-1 because we do not want to miss out the zero Xs.
-  // O(n), O(1)
+  // O(logn), O(1)
   int findClosest(vector<int> array, int target) {
     if (array.empty()) return -1;
 
@@ -89,14 +89,15 @@ public:
     while (left < right - 1) {
       int mid = left + (right - left) / 2;
       int val = array[mid];
-      if (target <= val) right = mid; // use <= here! because we need the first occurrence!
-      else left = mid; // same reason
+      // use <= here! because we need the first occurrence!
+      if (target <= val)
+        right = mid; // no skip
+      else
+        left = mid + 1; // can skip
     }
 
-    // only two elements left
-    if (array[left] == target) return left;
-    else if (array[right] == target) return right;
-    else return -1;
+    // only two elements left: left takes priority
+    return array[left] == target ? left : array[right] == target ? right : -1;
   }
 
   // Find last occurrence
@@ -270,7 +271,7 @@ public:
 
       // (Right) shift happened, real mid is in the right section
       else if (midVal < leftVal)
-        if (target > midVal&& target <= rightVal)
+        if (target > midVal && target <= rightVal)
           left = mid + 1;
         else
           right = mid - 1;
