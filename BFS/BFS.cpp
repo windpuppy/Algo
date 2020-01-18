@@ -64,7 +64,7 @@ int main()
     vector<int> a{ 1, 2, 3 };
     vector<int> b{ 2, 4 };
     vector<int> c{ 1, 2 };
-    auto res = sol.kthClosestPointToOrigin(a, b, c, 10);
+    //auto res = sol.kthClosestPointToOrigin(a, b, c, 10);
   }
 
   // Minimum distance of three arrays
@@ -148,6 +148,18 @@ int main()
     vector<vector<int>> grid{ {1, 1, 1}, {0, 1, 0}, {0, 0, 0} };
     auto res = sol.closestDistanceToZero(grid);
   }
+
+  // Walls and Gates
+  {
+    vector<vector<int>> grid{
+      {INT_MAX, -1, 0, INT_MAX},
+      {INT_MAX, INT_MAX, INT_MAX, -1},
+      {INT_MAX, -1, INT_MAX, -1},
+      {0, -1, INT_MAX, INT_MAX} };
+    auto res = sol.wallsAndGates(grid);
+    auto res2 = sol.wallsAndGates2(grid);
+  }
+
 
   // Pacific Atlantic flow
   {

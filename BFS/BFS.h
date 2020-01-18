@@ -958,34 +958,62 @@ public:
   // 2. fill empty cells with increasing distance, skip walls
   // 3. if we see a valid cell already filled with a smaller value, skip it
   // Keep doing this until the grid is filled
+  // Time analysis:
+  // This is more than O(mn), because for a grid with k gates, in worst case a cell can be updated by k times with a better distance
+  //    and a grid can have at most 2(m+n) gates
+  //    So time complexity is O(mn*(m+n))
   vector<vector<int>> wallsAndGates(vector<vector<int>> grid) {
     if (grid.empty() || grid[0].empty()) return grid;
     const int rows = grid.size();
     const int cols = grid[0].size();
-    queue<pair<int, int>> distList;
+    queue<pair<int, int>> q; // <i,j> coordinates
     vector<pair<int, int>> dirs = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
     for (int i = 0; i < rows; ++i)
       for (int j = 0; j < cols; ++j)
         if (grid[i][j] == 0)
-          distList.emplace(i, j);
+          q.emplace(i, j);
 
-    while (!distList.empty()) {
-      int ci = distList.front().first;
-      int cj = distList.front().second;
-      int currDist = grid[ci][cj];
-      distList.pop();
+    while (!q.empty()) {
+      int ci = q.front().first;
+      int cj = q.front().second;
+      q.pop();
 
       for (auto dir : dirs) {
         int i = ci + dir.first, j = cj + dir.second;
-        // if the (i, j) we are exploring is in range, AND it has a distance larger than the current + 1, update it.
-        if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] > currDist + 1) {
-          grid[i][j] = currDist + 1;
-          distList.emplace(i, j);
+        // if the (i, j) we are exploring is in range, AND it has a worse distance than my current distance + 1, update it and push it back into the queue
+        if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] > grid[ci][cj] + 1) {
+          grid[i][j] = grid[ci][cj] + 1;
+          q.emplace(i, j);
         }
       }
     }
     return grid;
   }
+
+  // Walls and Gates: DFS solution
+  vector<vector<int>> wallsAndGates2(vector<vector<int>> grid) {
+    if (grid.empty() || grid[0].empty()) return grid;
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    for (int i = 0; i < rows; i++)
+      for (int j = 0; j < cols; j++)
+        if (grid[i][j] == 0)
+          wallsAndGates_dfs(grid, i, j);
+    return grid;
+  }
+
+  void wallsAndGates_dfs(vector<vector<int>>& grid, int ci, int cj) {
+    vector<pair<int, int>> dirs = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+    const int rows = grid.size();
+    const int cols = grid[0].size();
+    for (auto dir : dirs) {
+      int i = ci + dir.first, j = cj + dir.second;
+      if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] > grid[ci][cj] + 1) {
+        grid[i][j] = grid[ci][cj] + 1;
+        wallsAndGates_dfs(grid, i, j);
+      }
+    }
+  };
 
 
 
@@ -1130,6 +1158,8 @@ public:
     }
     return -1; // not found
   }
+
+
 
   // For input string, build the same length output vector to record distance of all chars to the closest c
   // eg. given "geeks" and 'e',  output [1, 0, 0, 1, 2]
