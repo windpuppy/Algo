@@ -1,9 +1,9 @@
-#include "HashString.h"
+#include "String.h"
 #include "HashMap.h"
 
 int main()
 {
-  HashString sol;
+  String sol;
 
   // Top K frequent words
   {
@@ -97,9 +97,6 @@ int main()
   {
     auto res = sol.encodeSpace("ab d");
   }
-
-
-
 
   // Longest no repeat
   {

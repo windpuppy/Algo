@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -15,40 +17,10 @@
 
 using namespace std;
 
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
-
-class TreeNodeP {
-public:
-  int value;
-  TreeNodeP* left;
-  TreeNodeP* right;
-  TreeNodeP* parent;
-  TreeNodeP(int v) : value(v), left(NULL), right(NULL), parent(NULL) {}
-};
-
-class KnaryTreeNode {
-public:
-  int value;
-  vector<KnaryTreeNode*> children;
-  KnaryTreeNode(int v) : value(v) {}
-};
-
-class GraphNode {
-public:
-  int value;
-  vector<GraphNode*> neighbors;
-  GraphNode(int v) : value(v) {}
-};
-
 class BinaryTree
 {
 public:
+  // Pre-order traversal - recursive
   vector<int> preOrder(TreeNode* root) {
     vector<int> res;
     preOrder_recur(root, res);
@@ -62,6 +34,9 @@ public:
     preOrder_recur(root->right, res);
   }
 
+
+
+  // In-order traversal - recursive
   vector<int> inOrder(TreeNode* root) {
     vector<int> res;
     inOrder_recur(root, res);
@@ -75,6 +50,9 @@ public:
     inOrder_recur(root->right, res);
   }
 
+
+
+  // Post-order traversal - recursive
   vector<int> postOrder(TreeNode* root) {
     vector<int> res;
     postOrder_recur(root, res);
@@ -88,25 +66,32 @@ public:
     res.push_back(root->value);
   }
 
+
+
+  // Pre-order traversal - iterative
   // remember to use stack
   // remember to push right first, then left
   vector<int> preOrder_iter(TreeNode* root) {
     vector<int> values;
     if (!root) return values;
 
-    stack<TreeNode*> stack;
-    stack.push(root);
-    while (!stack.empty()) {
-      auto curr = stack.top(); stack.pop();
+    stack<TreeNode*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+      auto curr = s.top(); s.pop();
       values.push_back(curr->value);
 
       // push right first, then left.
-      if (curr->right) stack.push(curr->right);
-      if (curr->left) stack.push(curr->left);
+      if (curr->right) s.push(curr->right);
+      if (curr->left) s.push(curr->left);
     }
     return values;
   }
 
+
+
+  // In-order traversal - iterative
   // remember to use stack
   // remember to keep going left first (that measn we cannot push root in the stack first)
   // in additional to checking stack.empty(), we also check curr != null (for keep going left)
@@ -114,17 +99,17 @@ public:
     vector<int> values;
     if (!root) return values;
 
-    stack<TreeNode*> stack;
+    stack<TreeNode*> s;
     auto curr = root;
 
-    while (curr || !stack.empty()) {
+    while (curr || !s.empty()) {
       if (curr) { // keep going down left and keep pushing
-        stack.push(curr);
+        s.push(curr);
         curr = curr->left;
       }
       else {
         // coming back up from left? pop, print, go right
-        curr = stack.top(); stack.pop();
+        curr = s.top(); s.pop();
         values.push_back(curr->value);
         curr = curr->right;
       }
@@ -133,6 +118,9 @@ public:
     return values;
   }
 
+
+
+  // Post-order traversal - iterative
   // Use Stack
   // Use curr and prev pointers, to decide which direction we go next by checking the relationship between prev and curr
   vector<int> postOrder_iter(TreeNode* root) {
@@ -147,7 +135,7 @@ public:
     while (!s.empty()) {
       curr = s.top(); // peek
 
-      // Scenarion 1: on our way down
+      // Case 1: on our way down
       if (!prev || curr == prev->left || curr == prev->right) {
 
         if (curr->left) s.push(curr->left); // 1.1: go further down, check left first
@@ -155,12 +143,12 @@ public:
         else { s.pop(); values.push_back(curr->value); } // 1.3: I am a leaf?
       }
 
-      // Scenario 2: on our way up , need to visit right - up from left, with right valid
+      // Case 2: on our way up , need to visit right - up from left, with right valid
       else if (prev == curr->left && curr->right) {
         s.push(curr->right);
       }
 
-      // Scenario 3: on our way up, need to go further up - up from right, or up from left with no right
+      // Case 3: on our way up, need to go further up - up from right, or up from left with no right
       else {
         s.pop();
         values.push_back(curr->value);
@@ -193,40 +181,43 @@ public:
     return values;
   }
 
+
+
+  // Level-order traversal
   // Time O(n)
   // Space O(n)
   vector<vector<optional<int>>> levelOrder(TreeNode* root) {
     vector<vector<optional<int>>> res;
     if (!root) return res;
-    deque<TreeNode*> queue;
-    queue.push_back(root);
+    deque<TreeNode*> q;
+    q.push_back(root);
 
-    while (!queue.empty()) {
+    while (!q.empty()) {
       // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
+      auto found = std::find_if(q.begin(), q.end(), [&](const TreeNode* n) {return n != NULL; });
+      if (found == q.end())
         break;
 
       // contain all nodes from current level
       vector<optional<int>> currLevel;
 
       // size of current level
-      auto size = queue.size();
+      auto size = q.size();
 
       // traverse current level, prepare for the next level
       for (auto n = 0; n != size; ++n) {
-        auto curr = queue.front(); queue.pop_front();
+        auto curr = q.front(); q.pop_front();
 
         if (curr) currLevel.push_back(curr->value);
         else currLevel.push_back(nullopt);
 
         if (!curr) {
-          queue.push_back(NULL);
-          queue.push_back(NULL);
+          q.push_back(NULL);
+          q.push_back(NULL);
         }
         else {
-          queue.push_back(curr->left);
-          queue.push_back(curr->right);
+          q.push_back(curr->left);
+          q.push_back(curr->right);
         }
       }
       res.push_back(currLevel);
@@ -236,22 +227,26 @@ public:
 
 
 
-  // Inorder traverse the binary tree.
-  // At each stage, pass on the address of last node in the flattened LL for the caller to connect below its right
-  TreeNode* flattenBinaryTreeToLinkedList(TreeNode* root) {
-    TreeNode* head = NULL;
-    flatten_helper(root, head);
-    return root; // here root, head are the same
+  // Level-order traversal, but only return the last level
+  vector<int> levelOrder2(TreeNode* root) {
+    vector<int> res;
+    if (!root) return res;
+    queue<TreeNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+      res.clear();
+      const int size = q.size();
+      for (int i = 0; i < size; ++i) {
+        auto curr = q.front(); q.pop();
+        res.push_back(curr->value);
+        if (curr->left) q.push(curr->left);
+        if (curr->right) q.push(curr->right);
+      }
+    }
+    return res;
   }
 
-  void flatten_helper(TreeNode* root, TreeNode*& head) {
-    if (!root) return;
-    flatten_helper(root->right, head);
-    flatten_helper(root->left, head);
-    root->left = NULL;
-    root->right = head;
-    head = root;
-  }
 
 
   //     1
@@ -266,7 +261,7 @@ public:
   // 1) if root has left and right, connect its entire right subtree to the last node of the left subtree
   // 2) then move the entire left subtree to root's right
   // 3) root keeps going right, repeat 1) and 2), until it reaches the final right leaf
-  TreeNode* flattenBinaryTreeToLinkedList2(TreeNode* root) {
+  TreeNode* flattenBinaryTreeToLinkedList(TreeNode* root) {
     auto backup = root;
 
     while (root) {
@@ -307,9 +302,28 @@ public:
     return backup;
   }
 
+  // A recursive approach for above
+  // Inorder traverse the binary tree.
+  // At each stage, pass on the address of last node in the flattened LL for the caller to connect below its right
+  TreeNode* flattenBinaryTreeToLinkedList2(TreeNode* root) {
+    TreeNode* head = NULL;
+    flatten_helper(root, head);
+    return root; // here root, head are the same
+  }
+
+  void flatten_helper(TreeNode* root, TreeNode*& head) {
+    if (!root) return;
+    flatten_helper(root->right, head);
+    flatten_helper(root->left, head);
+    root->left = NULL;
+    root->right = head;
+    head = root;
+  }
 
 
-  // flip this at each level
+
+  // Zigzag traversal of a binary tree
+  // The key is to flip the order at each level
   // so that at even level, we push from front(R, then L), pop from back
   //     and at odd level, we push from back(L, then R), pop from front
   vector<vector<int>> zigzagTraversal(TreeNode* root) {
@@ -396,10 +410,9 @@ public:
     traverse(root, 0, 0, values);
     vector<vector<int>> res;
     for (const auto& v : values) {
-      vector<int> tmp;
+      res.push_back({});
       for (auto p : v.second)
-        tmp.push_back(p.second);
-      res.push_back(tmp);
+        res.back().push_back(p.second);
     }
     return res;
   }
@@ -413,6 +426,7 @@ public:
 
 
 
+  // Top view of binary tree
   // Very similar to vertical order, except we take the first element of each vertical scan
   // Time: O(nlogn)
   vector<int> topView(TreeNode* root) {
@@ -451,6 +465,7 @@ public:
 
 
 
+  // Border view of binary tree
   // Border view: left border (top down), leaf nodes, then right border (bottom up, not including root again)
   vector<int> borderView(TreeNode* root) {
     if (!root) return {};
@@ -476,8 +491,7 @@ public:
 
 
 
-
-  // recursive
+  // Get height of binary tree
   // Time O(n), total number of nodes
   // Space O(height), worst case being O(n)
   int height(TreeNode* root) {
@@ -488,7 +502,7 @@ public:
     return max(l, r) + 1;
   }
 
-  // Use deque
+  // Get height of binary tree - iterative
   // level order concept, pop current level nodes, push next level nodes
   // Time O(n)
   int height_iter(TreeNode* root) {
@@ -499,20 +513,42 @@ public:
 
     while (!q.empty()) {
       height++;
-
-      // pop current level nodes, push next level nodes
       int count = q.size();
       while (count > 0) {
         TreeNode* curr = q.front(); q.pop_front();
-
         if (curr->left) q.push_back(curr->left);
         if (curr->right) q.push_back(curr->right);
-
         count--;
       }
     }
-
     return height;
+  }
+
+  
+
+  // naitve solution: recursively find height
+  // Time O(nlogn): height is logn, time spent at each level is O(n)
+  // Worst case can be O(n^2), obviously
+  bool isBalanced(TreeNode* root) {
+    if (!root) return true;
+
+    int leftHeight = height(root->left);
+    int rightHeight = height(root->right);
+    if (abs(leftHeight - rightHeight) > 1) return false;
+
+    return isBalanced(root->left) && isBalanced(root->right);
+  }
+
+
+
+  // A more efficient approach than above
+  // If we find an unbalanced node at any level, bubble up -1 all the way
+  // Time O(n), total number of nodes
+  // Space O(height), worst case being O(n)
+  bool isBalanced2(TreeNode* root) {
+    if (!root) return true;
+
+    return height_with_balance_check(root) != -1;
   }
 
   // If we find an unbalanced node at any level, bubble up -1 all the way
@@ -530,34 +566,12 @@ public:
       : max(leftHeight, rightHeight) + 1;
   }
 
-  // naitve solution: recursively find height
-  // Time O(nlogn): height is logn, time spent at each level is O(n)
-  // Worst case can be O(n^2), obviously
-  bool isBalanced(TreeNode* root) {
-    if (!root) return true;
-
-    int leftHeight = height(root->left);
-    int rightHeight = height(root->right);
-    if (abs(leftHeight - rightHeight) > 1) return false;
-
-    return isBalanced(root->left) && isBalanced(root->right);
-  }
-
-  // If we find an unbalanced node at any level, bubble up -1 all the way
-  // Time O(n), total number of nodes
-  // Space O(height), worst case being O(n)
-  bool isBalanced2(TreeNode* root) {
-    if (!root) return true;
-
-    return height_with_balance_check(root) != -1;
-  }
 
 
-
-  // Use deque, not stack!
-  // We are allowed to push NULL into the queue
+  // Check if a binary tree is completed
+  // NOte: We are allowed to push NULL into the queue
   // First time seeing bubble? Set the flag to true; Then seeing a valid node? Return false;
-  // Otherwise keep pushing (towards the end of the queue)
+  // Otherwise keep pushing children into the queue
   bool isCompleted(TreeNode* root) {
     if (!root) return true;
     queue<TreeNode*> q;
@@ -579,6 +593,7 @@ public:
 
 
 
+  // Check if binary tree is symmetric
   bool isSymmetric(TreeNode* root) {
     if (!root) return true;
     return isSymmetric(root->left, root->right);
@@ -588,30 +603,11 @@ public:
     if (!one && !two) return true;
     else if (!one || !two) return false;
     else if (one->value != two->value) return false;
-
     return isSymmetric(one->left, two->right)
-      && isSymmetric(one->right, two->left);
+        && isSymmetric(one->right, two->left);
   }
 
-
-
-  bool isIdentical(TreeNode* root) {
-    if (!root) return true;
-    return isIdentical(root->left, root->right);
-  }
-
-  bool isIdentical(TreeNode* one, TreeNode* two) {
-    if (!one && !two) return true;
-    else if (!one || !two) return false;
-    else if (one->value != two->value) return false;
-
-    return isIdentical(one->left, two->left)
-      && isIdentical(one->right, two->right);
-  }
-
-
-
-  // Use queue
+  // Iterative approach - use queue
   // First, push root twice to simulate left and right
   // At every level, pop twice, call it one and two
   //    (because left and right doesn't matter here, so we name them one and two to be clear of our intention!)
@@ -623,9 +619,7 @@ public:
     deque<TreeNode*> q;
     q.push_back(root);
     q.push_back(root);
-
-    TreeNode* one;
-    TreeNode* two;
+    TreeNode *one, *two;
 
     // Queue is guaranteed to not have NULLs
     while (!q.empty()) {
@@ -655,6 +649,23 @@ public:
   }
 
 
+  
+  // Check if binary tree is identical
+  bool isIdentical(TreeNode* root) {
+    if (!root) return true;
+    return isIdentical(root->left, root->right);
+  }
+
+  bool isIdentical(TreeNode* one, TreeNode* two) {
+    if (!one && !two) return true;
+    else if (!one || !two) return false;
+    else if (one->value != two->value) return false;
+    return isIdentical(one->left, two->left)
+        && isIdentical(one->right, two->right);
+  }
+
+
+
   // Since the input tree is assumed to be balanced, it has log(n) levels
   // but each node has 4 branches, so the recursion tree is a quadtree
   // so the total number of nodes in the recursion tree is 4*logn = 2*(2logn) = 2(logn^2)
@@ -665,77 +676,9 @@ public:
     else if (one->value != two->value) return false;
 
     return isTweaked(one->left, two->right) && isTweaked(one->right, two->left) // mirror
-      || isTweaked(one->left, two->left) && isTweaked(one->right, two->right); // same
+        || isTweaked(one->left, two->left) && isTweaked(one->right, two->right); // same
   }
 
-  bool isTweaked_iter(TreeNode* root) {
-    if (!root || !root->left && !root->right) return true;
-
-    // Push root twice to simular the "left vs right" behavior in the while loop
-    deque<TreeNode*> q;
-    q.push_back(root);
-    q.push_back(root);
-
-    // Actually which one is left which right doesn't matter here
-    // So we use one and two here to be clear of our intention!
-    TreeNode* one;
-    TreeNode* two;
-    bool isTweaked = false;
-
-    // Queue is guaranteed to not have NULLs
-    while (!q.empty()) {
-
-      // Just pop a pair and check
-      one = q.front(); q.pop_front();
-      two = q.front(); q.pop_front();
-
-      // Not tweaked yet? Need to check the possibility of tweaking
-      if (!isTweaked) {
-        if (one->value != two->value) {
-
-          if (q.size() != 2) {
-          }
-
-          return false;
-        }
-
-        // one.left VS two.right
-        if (one->left && two->right) {
-          q.push_back(one->left);
-          q.push_back(two->right);
-        }
-        else if (!one->left || !two->right)
-          return false;
-        // If both nulls, do nothing
-
-        // Same for one.right VS two.left
-        if (one->right && two->left) {
-          q.push_back(one->right);
-          q.push_back(two->left);
-        }
-        else if (!one->right || !two->left)
-          return false;
-        // If both nulls, do nothing
-      }
-
-      // Already tweaked, should sta tweaked the rest of the way
-      else {
-
-      }
-
-    }
-
-    return true;
-  }
-
-  //bool checkTweaked(TreeNode* a, TreeNode* b) {
-  //  if (!a && !b) return true;
-  //  else if (!a || !b) return false;
-  //  else {
-  //    if ((a->left && b->left && a->left->value == b->left->value)
-  //     && (a->right && b->right && a->right->value == b->right->value)
-  //  }
-  //}
 
 
   // Bad solution 1: in-order traverse, put into array, compare with previous
@@ -747,18 +690,17 @@ public:
     return isBST(root, INT_MIN, INT_MAX);
   }
 
+  // pre-order recursion
   bool isBST(TreeNode* root, int min, int max) {
     if (!root) return true;
-
-    // Outside of the range? return false;
-    if (root->value <= min || root->value >= max) return false;
-
+    if (root->value <= min || root->value >= max) return false; // Outside of the range? return false;
     return isBST(root->left, min, root->value)
         && isBST(root->right, root->value, max);
   }
 
 
 
+  // Get keys in BST in given range
   // Time O(n) worst case, better answer: O(height + # of nods in [min, max])
   // Space O(height), recursion call stack
   vector<int> getRange(TreeNode* root, int min, int max) {
@@ -767,17 +709,18 @@ public:
     return res;
   }
 
-  // Very similar to isBST above
+  // Very similar to isBST above, but in-order recursion here
   void getRange(TreeNode* root, int min, int max, vector<int>& res) {
     if (!root) return;
 
-    if (root->value > min)  // no need for >=, because if current root is min, no need to search its left subtree, this is BST!!!
-      getRange(root->left, min, root->value, res);
+    int val = root->value;
+    if (val > min)  // no need for >=, because if current root is min, no need to search its left subtree, this is BST!!!
+      getRange(root->left, min, max, res);
 
-    if (root->value >= min && root->value <= max) // but here we need to use >= and <= !!!
-      res.push_back(root->value);
+    if (val >= min && val <= max) // but here we need to use >= and <= !!!
+      res.push_back(val);
 
-    if (root->value < max)
+    if (val < max)
       getRange(root->right, min, max, res);
   }
 
@@ -793,6 +736,7 @@ public:
 
 
 
+  // Find value in BST closest to target (no duplicates in BST)
   // Naive: in-order traversal, find closest
   // Efficient: if equal? return; if not equal? go left / right
   // Time: O(h)
@@ -801,28 +745,26 @@ public:
     int res = root->value;
 
     while (root) {
-      if (root->value == target) // equal? return.
-        return target;
+      if (root->value == target) return target;
 
-      else { // not equal ? update minDiff
-        int diff = abs(target - root->value);
-        if (diff < minDiff) {
-          minDiff = diff;
-          res = root->value;
-        }
-
-        // then go left / right
-        if (target < root->value)
-          root = root->left;
-        else
-          root = root->right;
+      int diff = abs(target - root->value);
+      if (diff < minDiff) {
+        minDiff = diff;
+        res = root->value;
       }
+
+      // then go left / right
+      if (target < root->value)
+        root = root->left;
+      else
+        root = root->right;
     }
     return res;
   }
 
 
 
+  // Find k values in BST closest to BST
   // Inorder traversal
   // Optimization 1: use k-size max heap, throw away n-k max, remaining will be out k closest
   // Optimization 2: pruning. Because of BST, one we have k elements bigger than target, we can stop searching
@@ -863,13 +805,37 @@ public:
 
 
 
+  // Find kth smallest in BST
+  // pre-order + check k
+  // Time: O(height + k)
+  int kthSmallestInBST(TreeNode* root, int k) {
+    stack<TreeNode*> stack;
+    auto curr = root;
+    while (curr || !stack.empty()) {
+      if (curr) { // keep going down left and keep pushing
+        stack.push(curr);
+        curr = curr->left;
+      }
+      else {
+        // coming back up from left? pop, print, go right
+        curr = stack.top();
+        if (--k == 0)
+          return curr->value;
+        stack.pop();
+        curr = curr->right;
+      }
+    }
+    return -1;
+  }
+
+
+
   // Return the largest number < target, or INT_MIN if no such exists
   // Time: O(h), Space: O(1)
   int largestSmallerInBST(TreeNode* root, int target) {
     int res = INT_MIN;
     while (root) {
       int val = root->value;
-
       if (target <= val) {
         root = root->left;
       }
@@ -889,7 +855,6 @@ public:
     int res = -1;
     while (root) {
       int val = root->value;
-
       if (target < val) {
         res = val;
         root = root->left;
@@ -919,10 +884,9 @@ public:
       curr = curr->right;
     }
 
-    // a) if no left, right parent
-    if (!curr->left) return prev->value;
-    // b) otherwise return left subtree's right most
-    curr = curr->left;
+    if (!curr->left) return prev->value; // a) if no left, right parent
+
+    curr = curr->left; // b) otherwise return left subtree's right most
     while (curr->right)
       curr = curr->right;
     return curr->value;
@@ -930,10 +894,15 @@ public:
 
 
 
-  // Assumptions
+  // Second smallest in BST
+  // with 2 Assumptions: 
   // 1) each node either has 0 or 2 children
   // 2) root equals to its smaller child
-  //
+  //    1
+  //   / \
+  //  1   3
+  //     / \
+  //    5   3
   // Solution:
   // At each split, we look for the bigger child
   // At the end, we return the smaller of the two children
@@ -941,12 +910,12 @@ public:
     return secondSmallest_helper(root, root->value);
   }
 
-  int secondSmallest_helper(TreeNode* root, int first) {
+  int secondSmallest_helper(TreeNode* root, int prev) {
     if (!root) return -1;
-    if (root->value != first) return root->value;
+    if (root->value != prev) return root->value;
 
-    int left = secondSmallest_helper(root->left, first);
-    int right = secondSmallest_helper(root->right, first);
+    int left = secondSmallest_helper(root->left, prev);
+    int right = secondSmallest_helper(root->right, prev);
     if (left == -1) return right;
     if (right == -1) return left;
     return min(left, right);
@@ -965,13 +934,25 @@ public:
 
   int getLongest(TreeNode* root, int parentVal, int len) {
     if (!root) return len;
-
     len = root->value == parentVal + 1 ? len + 1 : 1; // reset
     int left = getLongest(root->left, root->value, len);
     int right = getLongest(root->right, root->value, len);
     return max(left, right);
   }
 
+
+  
+  // Insert into a BST
+  // Time O(h)
+  // Note: the order of "add left" and "add right" can swap
+  TreeNode* insertInBST(TreeNode* root, int key) {
+    if (!root) return new TreeNode(key);
+    if (key < root->value)
+      root->left = insertInBST(root->left, key); // add to left
+    else if (key > root->value)
+      root->right = insertInBST(root->right, key); // add to right
+    return root;
+  }
 
   TreeNode* insertInBST_iter(TreeNode* root, int key) {
     if (!root) {
@@ -1001,20 +982,8 @@ public:
   }
 
 
-  // Time O(h)
-  // Note: the order of "add left" and "add right" can swap
-  TreeNode* insertInBST(TreeNode* root, int key) {
-    if (!root)
-      return new TreeNode(key);
-
-    if (key < root->value)
-      root->left = insertInBST(root->left, key); // add to left
-    else if (key > root->value)
-      root->right = insertInBST(root->right, key); // add to right
-
-    return root;
-  }
-
+  
+  // Delete in a BST
   // Implementation notes:
   // when returning a node from the recursive call, we are returning either the deleted node, or the root of the subtree we are looking at
   // compare target with root value, go left and right
@@ -1067,18 +1036,16 @@ public:
   // Delete smallest node, but return the node itself
   TreeNode* deleteSmallest(TreeNode* curr) {
     auto prev = curr;
-    // curr = curr->left;
 
-    // Go left all the way
-    while (curr->left) {
+    while (curr->left) { // Go left all the way
       prev = curr;
       curr = curr->left;
     }
 
-    // Curr is your smallest one, extract it
-    prev->left = curr->right;
-    return curr;
+    prev->left = curr->right; // connect
+    return curr;  // but return the curr
   }
+
 
 
   // LCA - guaranteed a and b both exist
@@ -1101,6 +1068,8 @@ public:
       return left ? left : right; // 3
     // It can't be both left and right are nulls
   }
+
+
 
   // LCA with parent pointer
   // Brutal force:
@@ -1205,6 +1174,9 @@ public:
       return root;
   }
 
+
+
+  // LCA in a knary tree
   // Assumption: both nodes are in the tree
   KnaryTreeNode* LCA5(KnaryTreeNode* root, KnaryTreeNode* a, KnaryTreeNode* b) {
     if (!root || root == a || root == b) return root;
@@ -1221,6 +1193,9 @@ public:
     return found;
   }
 
+
+
+  //  LCA of k nodes in a knary tree
   // Assumption: all nodes are in the tree
   KnaryTreeNode* LCA6(KnaryTreeNode* root, vector<KnaryTreeNode*> nodes) {
     if (!root) return root;
@@ -1245,20 +1220,19 @@ public:
   // For Inorder sequence, 2, 5, 7, [10], 12, 15, 20, all values left to 10 are left subtree, all values right to 10 are right subtree
   // Use this rule to recursively build left and right subtrees
   // User a hashmap, so that given a value, we can quickly lookup its index in the inorder sequence
-  TreeNode* reconstructWithPreorderInorder(const vector<int>& preOrder, const vector<int>& inOrder) {
-    int size = preOrder.size();
-
+  TreeNode* reconstructWithPreorderInorder(const vector<int>& pre, const vector<int>& in) {
+    const  int size = pre.size();
     unordered_map<int, int> inMap;
-    for (auto n = 0; n != inOrder.size(); ++n)
-      inMap.insert({ inOrder[n], n });
+    for (auto n = 0; n != in.size(); ++n)
+      inMap.insert({ in[n], n });
 
-    return helper_prein(preOrder, inMap, 0, size - 1, 0, size - 1);
+    return helper_prein(pre, inMap, 0, size - 1, 0, size - 1);
   }
 
-  TreeNode* helper_prein(const vector<int>& preOrder, unordered_map<int, int>& inMap, int inLeft, int inRight, int preLeft, int preRight) {
+  TreeNode* helper_prein(const vector<int>& pre, unordered_map<int, int>& inMap, int inLeft, int inRight, int preLeft, int preRight) {
     if (inLeft > inRight) return NULL;
 
-    int rootVal = preOrder[preLeft];
+    int rootVal = pre[preLeft];
     TreeNode* root = new TreeNode(rootVal);
 
     // The physical meaning of inOrder reaching root? Left subtree all traversed, right subtree not traversed.
@@ -1270,7 +1244,7 @@ public:
     int preStart = preLeft + 1;
     int preEnd = preLeft - inLeft + inRoot;
 
-    root->left = helper_prein(preOrder, inMap, inStart, inEnd, preStart, preEnd);
+    root->left = helper_prein(pre, inMap, inStart, inEnd, preStart, preEnd);
 
     // Boundaries for right subtree
     inStart = inEnd + 2; // +2: skip inRoot, then go next
@@ -1278,7 +1252,7 @@ public:
     preStart = preEnd + 1;
     preEnd = preRight;
 
-    root->right = helper_prein(preOrder, inMap, inStart, inEnd, preStart, preEnd);
+    root->right = helper_prein(pre, inMap, inStart, inEnd, preStart, preEnd);
 
     return root;
   }
@@ -1288,20 +1262,19 @@ public:
   // Similar to above (reconstruct with postorder and inorder)
   // Except now we have post order, where the root is at the end
   // The way we use the inorder sequence remains the same, hashmap!
-  TreeNode* reconstructWithPostorderInorder(const vector<int>& postOrder, const vector<int>& inOrder) {
-    int size = postOrder.size();
-
+  TreeNode* reconstructWithPostorderInorder(const vector<int>& post, const vector<int>& in) {
+    const int size = post.size();
     unordered_map<int, int> inMap;
-    for (auto n = 0; n != inOrder.size(); ++n)
-      inMap.insert({ inOrder[n], n });
+    for (auto n = 0; n != in.size(); ++n)
+      inMap.insert({ in[n], n });
 
-    return helper_postin(postOrder, inMap, 0, size - 1, 0, size - 1);
+    return helper_postin(post, inMap, 0, size - 1, 0, size - 1);
   }
 
-  TreeNode* helper_postin(const vector<int>& postOrder, unordered_map<int, int>& inMap, int inLeft, int inRight, int postLeft, int postRight) {
+  TreeNode* helper_postin(const vector<int>& post, unordered_map<int, int>& inMap, int inLeft, int inRight, int postLeft, int postRight) {
     if (inLeft > inRight) return NULL;
 
-    int rootVal = postOrder[postRight];
+    int rootVal = post[postRight];
     TreeNode* root = new TreeNode(rootVal);
 
     // The physical meaning of inOrder reaching root? Left subtree all traversed, right subtree not traversed.
@@ -1313,7 +1286,7 @@ public:
     int postStart = postLeft;
     int postEnd = postLeft + (inEnd - inStart);
 
-    root->left = helper_postin(postOrder, inMap, inStart, inEnd, postStart, postEnd);
+    root->left = helper_postin(post, inMap, inStart, inEnd, postStart, postEnd);
 
     // Boundaries for right subtree
     inStart = inEnd + 2; // +2: skip inRoot, then go next
@@ -1321,7 +1294,7 @@ public:
     postStart = postRight - (inEnd - inStart) - 1;
     postEnd = postRight - 1;
 
-    root->right = helper_postin(postOrder, inMap, inStart, inEnd, postStart, postEnd);
+    root->right = helper_postin(post, inMap, inStart, inEnd, postStart, postEnd);
 
     return root;
   }
@@ -1331,8 +1304,8 @@ public:
   // Within inorder, recursively find the roots from top to down, and split the remaining array such:
   //    everything left to the root: left subtree; right: right subtree
   // For each subtree, extract its elements in the level order sequence, and use them to build from left to right
-  TreeNode* reconstructWithLevelIn(const vector<int>& levelOrder, const vector<int>& inOrder) {
-    return helper_levelin(levelOrder, inOrder, 0, inOrder.size() - 1);
+  TreeNode* reconstructWithLevelIn(const vector<int>& level, const vector<int>& in) {
+    return helper_levelin(level, in, 0, in.size() - 1);
   }
 
   // build subtree given a NEW section of level order sequence (inorder sequence remains full size all the time but paired with two boundarys)
@@ -1373,15 +1346,15 @@ public:
   // Reconstruct BST with preOrder sequence
   // Recursion, pass in index (reference), key, and min max for bounding purpose; recursion returns root of the subtree
   // index starts from 0, because it's preOrder
-  TreeNode* reconstructBSTWithPreOrder(const vector<int>& preOrder) {
-    if (preOrder.empty()) return NULL;
+  TreeNode* reconstructBSTWithPreOrder(const vector<int>& pre) {
+    if (pre.empty()) return NULL;
     // Physical meaning of preOrder first element? it's the ROOT of the the tree we are building.
     int firstIndex = 0;
-    return helper_pre(preOrder, firstIndex, preOrder[firstIndex], INT_MIN, INT_MAX);
+    return helper_pre(pre, firstIndex, pre[firstIndex], INT_MIN, INT_MAX);
   }
 
-  TreeNode* helper_pre(const vector<int>& preOrder, int& index, int key, int min, int max) {
-    if (index > preOrder.size() - 1) return NULL;
+  TreeNode* helper_pre(const vector<int>& pre, int& index, int key, int min, int max) {
+    if (index > pre.size() - 1) return NULL;
 
     TreeNode* root = NULL;
 
@@ -1389,10 +1362,10 @@ public:
       root = new TreeNode(key);
       index++;
 
-      if (index < preOrder.size())
-        root->left = helper_pre(preOrder, index, preOrder[index], min, key);
-      if (index < preOrder.size())
-        root->right = helper_pre(preOrder, index, preOrder[index], key, max);
+      if (index < pre.size())
+        root->left = helper_pre(pre, index, pre[index], min, key);
+      if (index < pre.size())
+        root->right = helper_pre(pre, index, pre[index], key, max);
     }
     return root;
   }
@@ -1402,11 +1375,11 @@ public:
   // Reconstruct BST with postOrder sequence
   // Recursion, pass in index (reference), key, and min max for bounding purpose; recursion returns root of the subtree
   // index starts from size - 1, because it's postOrder
-  TreeNode* reconstructBSTWithPostOrder(const vector<int>& postOrder) {
-    if (postOrder.empty()) return NULL;
+  TreeNode* reconstructBSTWithPostOrder(const vector<int>& post) {
+    if (post.empty()) return NULL;
     // Physical meaning of the postOrder last element? Yes, it's the ROOT of THE TREE we are building!
-    int lastIndex = postOrder.size() - 1;
-    return helper_post(postOrder, lastIndex, postOrder[lastIndex], INT_MIN, INT_MAX);
+    int lastIndex = post.size() - 1;
+    return helper_post(post, lastIndex, post[lastIndex], INT_MIN, INT_MAX);
   }
 
   TreeNode* helper_post(const vector<int>& postOrder, int& index, int key, int min, int max) {
@@ -1491,7 +1464,7 @@ public:
 
 
   // Diameter of binary tree 2: longest path from LEAF to LEAF
-  // we can ONLY update global max when both leftand right are valid, because 人字形
+  // we can ONLY update global max when both left and right are valid, because 人字形
   int diameterOfBinaryTree2(TreeNode* root) {
     int res = 0;
     diameter2_helper(root, res);
@@ -1512,38 +1485,17 @@ public:
 
 
 
-  // pre-order + check k
-  int kthSmallestInBST(TreeNode* root, int k) {
-    int n = 0;
-
-    stack<TreeNode*> stack;
-    auto curr = root;
-
-    while (curr || !stack.empty()) {
-      if (curr) { // keep going down left and keep pushing
-        stack.push(curr);
-        curr = curr->left;
-      }
-      else {
-        // coming back up from left? pop, print, go right
-        curr = stack.top();
-
-        if (++n == k)
-          return curr->value;
-
-        stack.pop();
-        curr = curr->right;
-      }
-    }
-
-    return -1;
-  }
-
+  // Binary tree paths (ie. all root->leaf paths)
+  //    1
+  //   / \
+  //  2   3
+  //   \
+  //    5
+  // Output: ["1->2->5", "1->3"]
   vector<string> binaryTreePaths(TreeNode* root) {
     if (!root) return vector<string>{""};
 
-    string out;
-    out += to_string(root->value);
+    string out = to_string(root->value);
     vector<string> res;
     binaryTreePath_helper(root, out, res);
     return res;
@@ -1557,12 +1509,12 @@ public:
 
     // we need to move down
     if (root->left) {
-      auto newOut = out + "->" + to_string(root->left->value);
+      string newOut = out + "->" + to_string(root->left->value);
       binaryTreePath_helper(root->left, newOut, res);
     }
 
     if (root->right) {
-      auto newOut = out + "->" + to_string(root->right->value);
+      string newOut = out + "->" + to_string(root->right->value);
       binaryTreePath_helper(root->right, newOut, res);
     }
   }
@@ -1626,7 +1578,7 @@ public:
 
 
 
-  // Max path sum - root to leaf (can be a partial path)
+  // Max path sum - root to leaf, any section
   // Brutal force: get all vertical paths from leaf, compute largest subarray sums, pick max
   //
   // Efficient solution: similar to 1 and 2
@@ -1651,7 +1603,7 @@ public:
 
 
 
-  // Max path sum - root to leaf (has to include both)
+  // Max path sum - root to leaf, end to end
   int maxPathSum4(TreeNode* root) {
     if (!root) return 0;
 
@@ -1667,7 +1619,7 @@ public:
 
 
 
-  // Path sum to target - root to leaf
+  // Path sum to target - root to leaf, end to end
   bool pathSumToTarget(TreeNode* root, int target) {
     if (!root) return false;
     return pathSum_helper(root, target, 0);
@@ -1730,167 +1682,5 @@ public:
     if (lh == rh) return pow(2, lh) - 1;
 
     return 1 + countNodesInCompleteTree(root->left) + countNodesInCompleteTree(root->right);
-  }
-};
-
-
-
-
-
-
-
-class Helper
-{
-public:
-  static TreeNode* buildTree(const vector<optional<int>>& values, int index = 0)
-  {
-    if (!values.size() || index == values.size()) return NULL;
-
-    TreeNode* node = new TreeNode(values[index].value());
-
-    int i = index * 2 + 1; // left index
-    int j = i + 1; // right index
-
-    if (i < values.size() && values[i].has_value())
-      node->left = buildTree(values, i);
-    if (j < values.size() && values[j].has_value())
-      node->right = buildTree(values, j);
-    return node;
-  }
-
-  static TreeNodeP* buildTreeP(const vector<optional<int>>& values, int index = 0)
-  {
-    if (!values.size() || index == values.size()) return NULL;
-
-    TreeNodeP* node = new TreeNodeP(values[index].value());
-    node->parent = NULL;
-
-    int i = index * 2 + 1; // left index
-    int j = i + 1; // right index
-
-    if (i < values.size() && values[i].has_value()) {
-      node->left = buildTreeP(values, i);
-      node->left->parent = node;
-    }
-    if (j < values.size() && values[j].has_value()) {
-      node->right = buildTreeP(values, j);
-      node->right->parent = node;
-    }
-    return node;
-  }
-
-  static void printTree(TreeNode* root) {
-    vector<vector<optional<int>>> list;
-    if (!root) return;
-
-    // LevelOrder traversal
-    deque<TreeNode*> queue;
-    queue.push_back(root);
-
-    while (!queue.empty()) {
-
-      // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
-        break;
-
-      // contain all nodes from current level
-      vector<optional<int>> currLevel;
-
-      // size of current level
-      auto size = queue.size();
-
-      // traverse current level, prepare for the next level
-      for (auto n = 0; n != size; ++n) {
-        auto curr = queue.front();
-        queue.pop_front();
-
-        if (curr) currLevel.push_back(curr->value);
-        else currLevel.push_back(nullopt);
-
-        if (!curr) {
-          queue.push_back(NULL);
-          queue.push_back(NULL);
-        }
-        else {
-          queue.push_back(curr->left);
-          queue.push_back(curr->right);
-        }
-
-      }
-
-      list.push_back(currLevel);
-    }
-
-    // Print:
-    auto width = (int)pow(2, list.size()) + 1;
-    for (auto n = 0; n != list.size(); ++n) {
-      auto numSpacing = (int)pow(2, list.size() - n - 1);
-      string leftSpace(numSpacing, ' ');
-
-      auto numItems = list[n].size();
-      auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
-      string middleSpace(numMiddleSpacing, ' ');
-
-      for (auto m = 0; m != list[n].size(); ++m) {
-        if (m == 0)
-          cout << leftSpace;
-        else
-          cout << middleSpace;
-
-        auto val = list[n][m];
-        if (val.has_value())
-          cout << val.value();
-        else
-          cout << " ";
-      }
-      cout << endl;
-    }
-    cout << endl;
-  }
-
-  static vector<GraphNode*> buildGraph(vector<vector<int>> values) {
-    vector<GraphNode*> nodes;
-    if (values.empty()) return nodes;
-
-    for (auto n = 0; n != values.size(); ++n) {
-      if (values[n].empty()) continue;
-      auto node = new GraphNode(values[n][0]);
-      nodes.push_back(node);
-    }
-
-    for (auto n = 0; n != nodes.size(); ++n) {
-      if (values[n].size() == 1) continue; // node has no neighbors
-
-      for (auto k = 1; k != values[n].size(); ++k) {
-        nodes[n]->neighbors.push_back(nodes[values[n][k]]);
-      }
-    }
-
-    return nodes;
-  }
-
-private:
-
-  static void printPreOrder(TreeNode* root, vector<string>& strs, int level, int height) {
-    auto numSpacing = (int)pow(2, height - level - 1);
-    for (auto n = 0; n != numSpacing; ++n)
-      strs[level] += " ";
-
-    if (!root) {
-      strs[level] += " ";
-      return;
-    }
-    else {
-      strs[level] += to_string(root->value);
-    }
-
-    printPreOrder(root->left, strs, level + 1, height);
-    printPreOrder(root->right, strs, level + 1, height);
-  }
-
-  static int getHeight(TreeNode* root) {
-    if (!root) return 0;
-    return max(getHeight(root->left), getHeight(root->right)) + 1;
   }
 };

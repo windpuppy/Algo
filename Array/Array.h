@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,14 +15,6 @@
 #include <numeric>
 
 using namespace std;
-
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
 
 class Array {
 public:

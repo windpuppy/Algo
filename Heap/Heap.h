@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -9,14 +11,6 @@
 #include <queue>
 
 using namespace std;
-
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
 
 class Heap {
 public:
@@ -252,134 +246,5 @@ private:
       swap(array[parentIndex], array[index]);
       index = parentIndex;
     }
-  }
-};
-
-
-
-
-
-class Helper
-{
-public:
-  static TreeNode* buildTree(const vector<optional<int>>& values, int index = 0)
-  {
-    if (!values.size() || index == values.size()) return NULL;
-
-    TreeNode* node = new TreeNode(values[index].value());
-
-    int i = index * 2 + 1; // left index
-    int j = i + 1; // right index
-
-    if (i < values.size() && values[i].has_value())
-      node->left = buildTree(values, i);
-    if (j < values.size() && values[j].has_value())
-      node->right = buildTree(values, j);
-    return node;
-  }
-
-  //static void printTree(TreeNode* root) {
-  //  auto height = getHeight(root);
-  //  vector<string> strs(height + 1);
-  //  printPreOrder(root, strs, 0, height);
-
-  //  for (auto n = 0; n != strs.size(); ++n)
-  //    if(!all_of(strs[n].begin(), strs[n].end(), isspace))
-  //      cout << strs[n] << endl;
-  //  cout << endl;
-  //}
-
-  static void printTree(TreeNode* root) {
-    vector<vector<optional<int>>> list;
-    if (!root) return;
-
-    // LevelOrder traversal
-    deque<TreeNode*> queue;
-    queue.push_back(root);
-
-    while (!queue.empty()) {
-
-      // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
-        break;
-
-      // contain all nodes from current level
-      vector<optional<int>> currLevel;
-
-      // size of current level
-      auto size = queue.size();
-
-      // traverse current level, prepare for the next level
-      for (auto n = 0; n != size; ++n) {
-        auto curr = queue.front();
-        queue.pop_front();
-
-        if (curr) currLevel.push_back(curr->value);
-        else currLevel.push_back(nullopt);
-
-        if (!curr) {
-          queue.push_back(NULL);
-          queue.push_back(NULL);
-        }
-        else {
-          queue.push_back(curr->left);
-          queue.push_back(curr->right);
-        }
-
-      }
-
-      list.push_back(currLevel);
-    }
-
-    // Print:
-    auto width = (int)pow(2, list.size()) + 1;
-    for (auto n = 0; n != list.size(); ++n) {
-      auto numSpacing = (int)pow(2, list.size() - n - 1);
-      string leftSpace(numSpacing, ' ');
-
-      auto numItems = list[n].size();
-      auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
-      string middleSpace(numMiddleSpacing, ' ');
-
-      for (auto m = 0; m != list[n].size(); ++m) {
-        if (m == 0)
-          cout << leftSpace;
-        else
-          cout << middleSpace;
-
-        auto val = list[n][m];
-        if (val.has_value())
-          cout << val.value();
-        else
-          cout << " ";
-      }
-      cout << endl;
-    }
-    cout << endl;
-  }
-
-private:
-
-  static void printPreOrder(TreeNode* root, vector<string>& strs, int level, int height) {
-    auto numSpacing = (int)pow(2, height - level - 1);
-    for (auto n = 0; n != numSpacing; ++n)
-      strs[level] += " ";
-
-    if (!root) {
-      strs[level] += " ";
-      return;
-    }
-    else {
-      strs[level] += to_string(root->value);
-    }
-
-    printPreOrder(root->left, strs, level + 1, height);
-    printPreOrder(root->right, strs, level + 1, height);
-  }
-
-  static int getHeight(TreeNode* root) {
-    if (!root) return 0;
-    return max(getHeight(root->left), getHeight(root->right)) + 1;
   }
 };

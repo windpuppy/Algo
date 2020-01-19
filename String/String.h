@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
@@ -11,43 +10,26 @@
 
 using namespace std;
 
-const int MAGIC_NUMBER = 26;
-
-bool StringLengthComparator(const string& s1, const string& s2) {
-  return s1.size() < s2.size();
-}
-
-
-class HashString {
-
-  // max heap
-  class PairComparatorLess {
-  public:
-    bool operator()(pair<string, int> p1, pair<string, int> p2) {
-      // small improvement: if same frequency, word with lower alphabetical order goes first
-      return p1.second == p2.second ? p1.first > p2.first : p1.second < p2.second;
-    }
-  };
-
-  // point(x, y), sort the points by x ascending and y descending
-  class SlopeComparator {
-  public:
-    bool operator()(pair<int, int> p1, pair<int, int> p2) {
-      return p1.first != p2.first ? p1.first < p2.first : p2.second < p1.second;
-    }
-  };
-
-  
+class String {
 public:
+
+  // Given a list of non-empty words, return the top k frequent words.
   // O(n) + O(nlogn) + O(klogn)
-  vector<string> topKFrequentWords(vector<string> input, int k) {
+  vector<string> topKFrequentWords(vector<string> words, int k) {
     // step 1: build map, O(n)
-    unordered_map<string, int> map;
-    for (auto const& n : input)
+    unordered_map<string, int> map; // <string, frequency>
+    for (auto const& n : words)
       map[n]++;
 
     // step 2: PQ, O(nlogn)
-    priority_queue<pair<string, int>, vector<pair<string, int>>, PairComparatorLess> pq;
+    // max heap with tie breaker: if same frequency, word with lower alphabetical order goes first
+    struct PairLess {
+      bool operator()(pair<string, int> p1, pair<string, int> p2) {
+        // small improvement: if same frequency, word with lower alphabetical order goes first
+        return p1.second == p2.second ? p1.first > p2.first : p1.second < p2.second;
+      }
+    };
+    priority_queue<pair<string, int>, vector<pair<string, int>>, PairLess> pq;
     for (auto const& n : map)
       pq.push({ n.first, n.second });
 
@@ -170,6 +152,10 @@ public:
     return res;
   }
 
+
+
+  // Check if a string is the substring of another string
+  // Time: O(mn)
   int isSubstring(string large, string small) {
     if (large.size() < small.size()) return -1;
     if (small.empty()) return 0;
@@ -189,8 +175,8 @@ public:
     return true;
   }
 
-
-
+  // The Rabin Karp method for above
+  // Time O(n)
   int isSubstring_RabinKarp(string large, string small) {
     if (large.size() < small.size()) return -1;
     if (small.empty()) return 0;
@@ -1183,7 +1169,10 @@ public:
   // Space: O(1)
   int largestProductOfLength(vector<string> words) {
     if (words.empty()) return 0;
-    sort(words.begin(), words.end(), StringLengthComparator);
+
+    auto lenth_compare = [&](const string& s1, const string& s2) { return s1.size() < s2.size(); };
+    sort(words.begin(), words.end(), lenth_compare);
+
     vector<int> wordBits(words.size(), 0);
     int res = 0;
 
@@ -1248,7 +1237,12 @@ public:
 
   // Similar to longest ascending subsequence
   int largestSetOfPointsWithPositiveSlope(vector<pair<int, int>> points) {
-    sort(points.begin(), points.end(), SlopeComparator());
+    // point(x, y), sort the points by x ascending and y descending
+    auto slope_compare = [&](pair<int, int> p1, pair<int, int> p2) {
+      return p1.first != p2.first ? p1.first < p2.first : p2.second < p1.second;
+    };
+
+    sort(points.begin(), points.end(), slope_compare);
     int res = 0;
     vector<int> M(points.size(), 0);
     for (int i = 0; i < points.size(); ++i) {
@@ -1375,5 +1369,5 @@ private:
     return res;
   }
   
-
+  const int MAGIC_NUMBER = 26;
 };

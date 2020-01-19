@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -17,21 +19,6 @@
 
 using namespace std;
 
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
-
-class GraphNode {
- public:
-  int value;
-  vector<GraphNode*> neighbors;
-  GraphNode(int v) : value(v) {}
-};
-
 struct Cell {
 public:
   int i;
@@ -40,43 +27,18 @@ public:
   Cell(int i, int j, int v) : i(i), j(j), value(v) {}
 };
 
-class CellComparatorGreater {
-public:
+struct CellComparatorGreater {
   bool operator() (Cell p1, Cell p2) {
     return p1.value > p2.value;
   }
 };
 
-class CellComparatorLess {
-public:
+struct CellComparatorLess {
   bool operator() (Cell p1, Cell p2) {
     return p1.value < p2.value;
   }
 };
 
-struct Node {
-public:
-  int value;
-  int listIndex;
-  int nodeIndex;
-  Node(int v, int li, int ni) :
-    value(v), listIndex(li), nodeIndex(ni)
-  {}
-};
-
-class NodeComparatorGreater {
-public:
-  bool operator() (Node n1, Node n2) {
-    return n1.value > n2.value;
-  }
-};
-
-class Point3DComparatorGreater {
-public:
-  bool operator()(vector<int> a, vector<int> b) {
-    return a[0] * a[0] + a[1] * a[1] + a[2] * a[2] > b[0] * b[0] + b[1] * b[1] + b[2] * b[2];
-  }
-};
 
 class BFS
 {
@@ -435,6 +397,22 @@ public:
   //
   // Time: O(nlogk) - k is number of lists, n is length of list
   // Space:  O(k) - heap size of k
+  struct Node {
+  public:
+    int value;
+    int listIndex;
+    int nodeIndex;
+    Node(int v, int li, int ni) :
+      value(v), listIndex(li), nodeIndex(ni)
+    {}
+  };
+
+  struct NodeComparatorGreater {
+    bool operator() (Node n1, Node n2) {
+      return n1.value > n2.value;
+    }
+  };
+
   vector<int> smallestRange(vector<vector<int>> arrays) {
     int minVal = INT_MAX; // lower value of the final range
     int maxVal = INT_MIN; // higher value of the final range
@@ -611,8 +589,15 @@ public:
 
 
 
+  // Kth closeset point to origin
+  struct Point3DComparatorGreater {
+    bool operator()(vector<int> a, vector<int> b) {
+      return a[0] * a[0] + a[1] * a[1] + a[2] * a[2] > b[0] * b[0] + b[1] * b[1] + b[2] * b[2];
+    }
+  };
   vector<int> kthClosestPointToOrigin(vector<int> a, vector<int> b, vector<int> c, int kth) {
     // PQ of indexes
+
     priority_queue<vector<int>, vector<vector<int>>, Point3DComparatorGreater> pq;
     pq.push({ 0, 0, 0 });
 
