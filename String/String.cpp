@@ -34,14 +34,13 @@ int main()
     auto res = sol.removeSpaces("  i love laicode  ");
   }
 
-  // Remove adjacent repeated chars
+  // Remove adjacent repeated chars 1 - 4
   {
-    auto res = sol.removeAdjacentRepeatedChars("aabccd");
-  }
-
-  // Remove adjacent repeated chars IV
-  {
-    auto res = sol.removeAdjacentRepeatedCharsIV("abbbbacd");
+    auto res = sol.removeAdjacentRepeatedChars("aaabbbc"); // abc
+    res = sol.removeAdjacentRepeatedChars2("aaabbbc"); // aabbc
+    res = sol.removeAdjacentRepeatedChars3("aaabbbc"); // c
+    res = sol.removeAdjacentRepeatedChars4("abbbbacd"); // cd
+    res = sol.removeAdjacentRepeatedChars4("aaaaa"); // ""
   }
 
   // Is substring
@@ -100,9 +99,9 @@ int main()
 
   // Longest no repeat
   {
-    auto res = sol.longestNoRepeat("bcdfbd");
-    res = sol.longestNoRepeat("abcdecf");
-    res = sol.longestNoRepeat2("abcdecf");
+    auto res = sol.longestSubstringNoDuplicates("bcdfbd");
+    res = sol.longestSubstringNoDuplicates("abcdecf");
+    res = sol.longestSubstringNoDuplicates2("abcdecf");
   }
 
   // All anagrams
@@ -125,7 +124,7 @@ int main()
   {
     vector<int> a{ 1, 1, 2, 2 };
     vector<int> b{ 1, 2, 2, 3 };
-    auto res = sol.interset(a, b); // 1, 2, 2
+    auto res = sol.intersectOfTwoArrays(a, b); // 1, 2, 2
   }
 
   // Valid palindrome - alphanumeric

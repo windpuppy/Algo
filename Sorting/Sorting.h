@@ -100,7 +100,6 @@ public:
   // O(nlogn) average
   vector<int> quickSort(vector<int> array) {
     if (array.size() <= 1) return array;
-
     quickSort(array, 0, array.size() - 1);
     return array;
   }
@@ -146,25 +145,51 @@ public:
 
 
 
-  // Time O(n)
-  // Space O(1)
-  vector<int> moveZero(vector<int> array) {
-    if (array.size() <= 1) return array;
-
-    // Two bounds
-    int lb = 0;
-    int rb = array.size() - 1;
-
-    while (lb <= rb) {
-      if (array[lb] != 0) // non-zero on left: push lb
-        lb++;
-      else  if (array[rb] == 0) // zero on right: push rb
-        rb--;
+  // Move all zeros to the right
+  // Time O(n), Space O(1)
+  vector<int> moveZero(vector<int> nums) {
+    const int size = nums.size();
+    if (size <= 1) return nums;
+    int left = 0, right = size - 1;
+    while (left <= right) {
+      if (nums[left] != 0) // non-zero on left: push lb
+        left++;
+      else  if (nums[right] == 0) // zero on right: push rb
+        right--;
       else // zero on left
-        swap(array[lb++], array[rb--]);
+        swap(nums[left++], nums[right--]);
+    }
+    return nums;
+  }
+
+  // A more elegant way than the above
+  vector<int> moveZero2(vector<int> nums) {
+    const int size = nums.size();
+    if (size <= 1) return nums;
+    int left = 0, right = size - 1;
+    while (left <= right) {
+      if (nums[left] != 0) // non-zero on left: push lb
+        left++;
+      else
+        swap(nums[left], nums[right--]);
+    }
+    return nums;
+  }
+
+  // Above two methods are not stable, this is a stable version
+  vector<int> moveZeroes_stable(vector<int> nums) {
+    const int size = nums.size();
+    if (size <= 1) return nums;
+    int s = 0, f = 0;
+
+    while (f < size) {
+      if (nums[f] != 0)
+        nums[s++] = nums[f];
+      f++;
     }
 
-    return array;
+    fill(nums.begin() + s, nums.end(), 0);
+    return nums;
   }
 
 

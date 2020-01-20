@@ -100,7 +100,7 @@ public:
   // for 2 122 12 | 12  1
   //              |
   //            dedup "2" at this point
-  // Time: O(n^2)
+  // Time: O(2^n)
   vector<string> subsets2(string input) {
     if (input.empty()) return vector<string>{""};
     string out;

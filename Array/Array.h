@@ -700,10 +700,8 @@ public:
       q.push_back(i);
 
       // start recording when i is beyond k
-      if (i >= k - 1) {
-        int val = a[q.front()];
-        res.push_back(val);
-      }
+      if (i >= k - 1)
+        res.push_back(a[q.front()]);
     }
     return res;
   }
@@ -711,37 +709,49 @@ public:
 
 
   // Sorted, keep 1 of the dups
+  // s
+  // 1 2 2 3
+  //   f
   vector<int> arrayDedup(vector<int> nums) {
-    int size = nums.size();
+    const int size = nums.size();
     if (size <= 1) return nums;
+    int slow = 1;
+    for (int fast = 1; fast < size; ++fast)
+      if (nums[fast] != nums[fast - 1])
+        nums[slow++] = nums[fast];
 
-    // s
-    // 1 2 2 3
-    //   f
-    int slow = 0;
-    for (int fast = 1; fast < size; ++fast) {
-      if (nums[fast] != nums[fast - 1]) {
-        nums[++slow] = nums[fast];
-      }
-    }
-
-    nums.resize(slow + 1);
+    nums.resize(slow);
     return nums;
+  }
 
-    //// Better solution:
-    //int slow = 0;
-    //for (auto n : nums)
-    //  if (slow < 2 || n != nums[slow - 2]) // look back by 2
-    //    nums[slow++] = n;
+  // An alternative approach
+  vector<int> arrayDedupb(vector<int> nums) {
+    int slow = 0;
+    for (auto n : nums)
+      if (slow < 1 || n != nums[slow - 1])
+        nums[slow++] = n;
 
-    //nums.resize(slow);
-    //return nums;
+    nums.resize(slow);
+    return nums;
   }
 
 
 
   // Sorted, keep 2 of the dups
-  // For this solution, our slow and fas are not "conventional" slow faster pointers
+  // Conventional approach:
+  vector<int> arrayDedup2(vector<int> nums) {
+    const int size = nums.size();
+    if (size <= 1) return nums;
+    int slow = 2;
+    for (int fast = 2; fast < size; ++fast)
+      if (nums[fast] != nums[slow - 2])
+        nums[slow++] = nums[fast];
+
+    nums.resize(slow);
+    return nums;
+  }
+  
+  // An altertive approach: our slow and fas are not "conventional" slow faster pointers
   // Instead of looking for 2+ number of strings, we use reverse thinking: what happens if we have 3-peat chars?
   // 1 2 2 2 3 3
   //       | |
@@ -749,26 +759,28 @@ public:
   // In this case, instead of fast looking back, we make slow look back.
   // If (slow sees a same char), slow stays, move fast.
   // Else, overwrite slow
-  vector<int> arrayDedup2(vector<int> nums) {
+  vector<int> arrayDedup2b(vector<int> nums) {
+    const int size = nums.size();
+    if (size <= 1) return nums;
     int slow = 0;
     for (int fast = 0; fast < nums.size(); fast++)
       if (slow < 2 || nums[fast] > nums[slow - 2])
         nums[slow++] = nums[fast];
-    nums.resize(slow);
+
+    nums.resize(slow + 1);
     return nums;
   }
 
 
 
-  // Sorted, remove all duplicates: 122233 -> 1
+  // Sorted, recursively dedup: 122233 -> 1
   // Key: track how many dups we have seen?
   // one 1, three 2s, two 3s -- do something about the 2s and 3s
   vector<int> arrayDedup3(vector<int> nums) {
-    int size = nums.size();
+    const int size = nums.size();
     if (size <= 1) return nums;
 
-    int slow = 0, fast = 0;
-    int count = 0;
+    int slow = 0, fast = 0, count = 0;
     while (fast < size) {
       if (nums[slow] == nums[fast]) {
         fast++;
@@ -797,23 +809,20 @@ public:
   // Rules: 1. always push new value regardless
   //        2. if seeing dups (that means the number just pushed into the stack need to be removed), keep skipping dups, then pop the stack
   vector<int> arrayDedup4(vector<int> nums) {
-    int size = nums.size();
+    const int size = nums.size();
     if (size <= 1) return nums;
-
     deque<int> s;
     s.push_back(nums.front());
 
-    int i = 1;
-    while (i < size) {
-      if (s.empty() || nums[i] != s.back()) { // remember to check for empty stack!
+    for (int i = 1; i < size; ++i) {
+      if (s.empty() || nums[i] != s.back()) { // if not equal, keep pushing
         s.push_back(nums[i]);
       }
       else {
-        while (i + 1 < size && nums[i] == nums[i + 1])
-          i++;
         s.pop_back();
+        while (i + 1 < size && nums[i] == nums[i + 1]) // continue to dedup
+          i++;
       }
-      i++;
     }
 
     return vector<int>(s.begin(), s.end());

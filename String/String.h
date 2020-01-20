@@ -110,46 +110,90 @@ public:
     return input;
   }
 
-  // Simple, one pass dedup
-  string removeAdjacentRepeatedChars(string input) {
-    if (input.empty() || input.size() == 1) return input;
 
+
+  // Dedup, keep 1 of the dups
+  // "aaabbc" -> "abc"
+  // [0, slow): result
+  // [fast, n): to be explored
+  string removeAdjacentRepeatedChars(string input) {
+    const int size = input.size();
+    if (size <= 1) return input;
     int slow = 1;
-    for (int fast = 1; fast < input.size(); ++fast) {
-      if (input[fast] != input[slow - 1])
+    for (int fast = 1; fast < size; ++fast)
+      if (input[fast] != input[fast - 1])
         input[slow++] = input[fast];
-    }
 
     return input.substr(0, slow);
   }
 
-  // Recursive dedup
-  // Use a stack
-  string removeAdjacentRepeatedCharsIV(string input) {
-    if (input.empty() || input.size() == 1) return input;
-    int size = input.size();
-    deque<char> stack;
-    stack.push_back(input.front());
-    for (int n = 1; n < input.size(); ++n) {
-      // if not equal, keep pushing
-      if (stack.empty() || input[n] != stack.back()) {
-        stack.push_back(input[n]);
-      }
-      else if (input[n] == stack.back()) {
-        stack.pop_back();
 
-        // continue to dedup
-        while (n < size - 1 && input[n + 1] == input[n])
-          n++;
+
+  // Dedup, keep 2 of each group
+  // "aaabbbc" -> "aabbc"
+  string removeAdjacentRepeatedChars2(string input) {
+    const int size = input.size();
+    if (size <= 1) return input;
+    int slow = 2;
+    for (int fast = 2; fast < size; ++fast)
+      if (input[fast] != input[slow - 2])
+        input[slow++] = input[fast];
+    return input.substr(0, slow);
+  }
+
+
+
+  // Dedup, keep none (input string is sorted)
+  // "aaabbc" --> "c"
+  string removeAdjacentRepeatedChars3(string input) {
+    const int size = input.size();
+    if (size <= 1) return input;
+
+    int slow = 0, fast = 0, count = 0;
+    while (fast < size) {
+      if (input[slow] == input[fast]) {
+        fast++;
+        count++;
+      }
+      else {
+        if (count == 1)
+          slow++;
+        input[slow] = input[fast];
+        count = 0;
       }
     }
 
-    string res;
-    while (!stack.empty()) {
-      res += stack.front();
-      stack.pop_front();
+    // Edge case: if last char is unique, we need to include it (slow will not reach there)
+    if (count == 1)
+      slow++;
+
+    return input.substr(0, slow);
+  }
+
+
+
+  // Dedup, keep none (input string not sorted)
+  // "abbbaaccz" ¡ú "aaaccz" ¡ú "ccz" ¡ú "z"
+  // "aabccdc" ¡ú "bccdc" ¡ú "bdc"
+  // Use a stack but simulate it by a deque for convenience
+  string removeAdjacentRepeatedChars4(string input) {
+    const int size = input.size();
+    if (size <= 1) return input;
+    deque<char> s;
+    s.push_back(input.front());
+
+    for (int i = 1; i < size; ++i) {
+      if (s.empty() || input[i] != s.back()) { // if not equal, keep pushing
+        s.push_back(input[i]);
+      }
+      else {
+        s.pop_back();
+        while (i < size - 1 && input[i + 1] == input[i]) // continue to dedup
+          i++;
+      }
     }
-    return res;
+
+    return string(s.begin(), s.end());
   }
 
 
@@ -626,25 +670,18 @@ public:
   // Use a set to record everything we've seen so far
   // Incoming char: if new: keep pushing fast (and update global max)
   //                if old: keep pushing slow
-  int longestNoRepeat(string s) {
-    if (s.empty()) return 0;
-    else if (s.size() == 1) return 1;
-
+  int longestSubstringNoDuplicates(string s) {
+    const int size = s.size();
+    if (size <= 1) return size;
     unordered_set<char> set;
     int slow = 0, fast = 0, longest = 0;
 
     while (fast < s.size()) {
-      char curr = s[fast];
+      while (set.count(s[fast])) // keep erasing if we are seeing dups
+        set.erase(s[slow++]);
 
-      if (set.find(curr) != set.end()) {
-        set.erase(s[slow++]); // found? erase
-      }
-      else {
-        set.insert(curr); // not found? insert
-        fast++;
-
-        longest = max(longest, fast - slow); // update longest: slow - fast is our new sliding window
-      }
+      set.insert(s[fast++]); // not found? insert
+      longest = max(longest, fast - slow); // update longest: slow - fast is our new sliding window
     }
 
     return longest;
@@ -655,24 +692,23 @@ public:
   // For each incoming char, if 1) we find it in the map 2) its last occurance is inside the current sliding window (or otherwise we don't care)
   //     then we update the global max
   //     and we also pull current sliding window here
-  int longestNoRepeat2(string s) {
-    if (s.empty()) return 0;
-    else if (s.size() == 1) return 1;
-
+  int longestSubstringNoDuplicates2(string s) {
+    const int size = s.size();
+    if (size <= 1) return size;
     int currStart = 0, maxStart = 0;
     int currlen = 0, maxlen = 0;
 
-    // hash<char, lastOccurance>
-    unordered_map<char, int> map;
+    unordered_map<char, int> map; // hash<char, lastOccurance>
     map[s[0]] = 0;
 
-    int i;
-    for (i = 1; i < s.length(); i++) {
+    int i = 1;
+    for (; i < s.length(); i++) {
       char c = s[i];
 
       // Only do this if:
-      if (map.find(c) != map.end() && // 1) we have seen this before
-          map[c] >= currStart) {      // 2) this happened inside the current substring (or otherwise we don't care)
+      // 1) we have seen this before
+      // 2) this happened inside the current substring (or otherwise we don't care)
+      if (map.count(c) && map[c] >= currStart) {      
         currlen = i - currStart;
         if (currlen > maxlen) { maxStart = currStart; maxlen = currlen; }
 
@@ -689,6 +725,7 @@ public:
 
     return maxlen;
   }
+
 
 
   // Given "cbaebabacd" and "abc", return starting indices of all anagrams of "abc" (0, 6 here)
@@ -787,8 +824,9 @@ public:
   }
 
 
+
   // intersection of two arrays
-  vector<int> interset(vector<int> nums1, vector<int> nums2) {
+  vector<int> intersectOfTwoArrays(vector<int> nums1, vector<int> nums2) {
     unordered_map<int, int> map1;
     for (auto n : nums1)
       map1[n]++;
@@ -855,24 +893,6 @@ public:
   }
 
 
-
-  // Input "abccccdd", output: 7
-  int longestPalindrome(string s) {
-    unordered_set<char> set;
-    for (auto c : s)
-      if (set.find(c) == set.end())
-        set.insert(c);
-      else
-        set.erase(c);
-
-    int setSize = set.size();
-    int size = s.size();
-
-    if (setSize <= 1)
-      return size;
-    else
-      return size - setSize + 1;
-  }
 
   // Solution:
   // a b | c f      e d | b a
