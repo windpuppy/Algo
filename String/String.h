@@ -373,16 +373,13 @@ public:
 
   // compress abbccc -> ab2c3, instead of a1b2c3
   string compress(string input) {
-    if (input.empty() || input.size() == 1) return input;
     const int length = input.size();
-    int newLength = 0;
+    if (length <= 1) return input;
+    int slow = 0, fast = 0, newLength = 0;
 
-    int slow = 0;
-    int fast = 0;
     while (fast < length) {
       // pinpoint first char in each while loop
-      int first = fast;
-      fast++;
+      int first = fast++;
       while (fast < length && input[fast] == input[first])
         fast++;
 
@@ -402,13 +399,12 @@ public:
     return input;
   }
 
-  // copy n chars to slow position
-  int copyDigits(string& input, int index, int count) {
-    if (!count) return 0;
-    auto str = to_string(count);
-    for (int n = 0; n < str.size(); ++n) {
-      input[index++] = str[n];
-    }
+  // copy n in the form of char(s) to index position of input string
+  int copyDigits(string& input, int index, int n) {
+    if (!n) return 0;
+    auto str = to_string(n);
+    for (auto c : str)
+      input[index++] = c;
     return (int)str.size();
   }
 
@@ -419,13 +415,11 @@ public:
   // 1st pass - use slow and fast pointers, compress repeating chars
   // 2nd pass - move slow and fast backwards, append "1"s to unique chars
   string compress2(string input) {
-    if (input.empty() || input.size() == 1) return input;
-    int length = input.size();
-    int newLength = 0; // newLength can be shorter than input length, so we start from zero and build it!
+    const int length = input.size();
+    if (length <= 1) return input;
+    int slow = 0, fast = 0, newLength = 0;
 
     // FIRST PASS ///////////////////////////////////////
-    int slow = 0;
-    int fast = 0;
     while (fast < length) {
       // pinpoint first char in each while loop
       int first = fast++;

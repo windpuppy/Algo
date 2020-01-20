@@ -20,23 +20,16 @@
 using namespace std;
 
 struct Cell {
-public:
-  int i;
-  int j;
-  int value;
+  int i, j, value;
   Cell(int i, int j, int v) : i(i), j(j), value(v) {}
 };
 
 struct CellComparatorGreater {
-  bool operator() (Cell p1, Cell p2) {
-    return p1.value > p2.value;
-  }
+  bool operator() (Cell p1, Cell p2) { return p1.value > p2.value; }
 };
 
 struct CellComparatorLess {
-  bool operator() (Cell p1, Cell p2) {
-    return p1.value < p2.value;
-  }
+  bool operator() (Cell p1, Cell p2) { return p1.value < p2.value; }
 };
 
 
@@ -1258,119 +1251,4 @@ public:
     return set.empty() ? 0 : *set.rbegin(); // tail of the multiset, which is the max
   }
 
-};
-
-
-
-class Helper
-{
-public:
-  static TreeNode* buildTree(const vector<optional<int>>& values, int index = 0)
-  {
-    if (!values.size() || index == values.size()) return NULL;
-
-    TreeNode* node = new TreeNode(values[index].value());
-
-    int i = index * 2 + 1; // left index
-    int j = i + 1; // right index
-
-    if (i < values.size() && values[i].has_value())
-      node->left = buildTree(values, i);
-    if (j < values.size() && values[j].has_value())
-      node->right = buildTree(values, j);
-    return node;
-  }
-
-  static void printTree(TreeNode* root) {
-    vector<vector<optional<int>>> list;
-    if (!root) return;
-
-    // LevelOrder traversal
-    deque<TreeNode*> queue;
-    queue.push_back(root);
-
-    while (!queue.empty()) {
-
-      // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
-        break;
-
-      // contain all nodes from current level
-      vector<optional<int>> currLevel;
-
-      // size of current level
-      auto size = queue.size();
-
-      // traverse current level, prepare for the next level
-      for (auto n = 0; n != size; ++n) {
-        auto curr = queue.front();
-        queue.pop_front();
-
-        if (curr) currLevel.push_back(curr->value);
-        else currLevel.push_back(nullopt);
-
-        if (!curr) {
-          queue.push_back(NULL);
-          queue.push_back(NULL);
-        }
-        else {
-          queue.push_back(curr->left);
-          queue.push_back(curr->right);
-        }
-
-      }
-
-      list.push_back(currLevel);
-    }
-
-    // Print:
-    auto width = (int)pow(2, list.size()) + 1;
-    for (auto n = 0; n != list.size(); ++n) {
-      auto numSpacing = (int)pow(2, list.size() - n - 1);
-      string leftSpace(numSpacing, ' ');
-
-      auto numItems = list[n].size();
-      auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
-      string middleSpace(numMiddleSpacing, ' ');
-
-      for (auto m = 0; m != list[n].size(); ++m) {
-        if (m == 0)
-          cout << leftSpace;
-        else
-          cout << middleSpace;
-
-        auto val = list[n][m];
-        if (val.has_value())
-          cout << val.value();
-        else
-          cout << " ";
-      }
-      cout << endl;
-    }
-    cout << endl;
-  }
-
-  static vector<GraphNode*> buildGraph(const vector<vector<int>>& values) {
-    vector<GraphNode*> nodes;
-    if (values.empty()) return nodes;
-
-    for (auto& v : values) {
-      if (v.empty()) continue;
-      GraphNode* node = new GraphNode(v[0]); // key of the node
-      nodes.push_back(node);
-    }
-
-    for (auto n = 0; n != nodes.size(); ++n) {
-      if (values[n].size() == 1) continue; // node has no neighbors
-      for (auto& v : values[n]) {
-        nodes[n]->neighbors.push_back(nodes[v]);
-      }
-    }
-
-    return nodes;
-  }
-
-private:
- 
 };

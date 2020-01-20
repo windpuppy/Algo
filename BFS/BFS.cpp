@@ -1,4 +1,5 @@
 #include "BFS.h"
+#include "../Common/TreeHelper.h"
 
 int main()
 {
@@ -30,7 +31,7 @@ int main()
     {2, 1, 3},
     {3, 1, 4, 2},
     {4, 3, 0, 1}};
-    vector<GraphNode*> graph = Helper::buildGraph(values);
+    vector<GraphNode*> graph = TreeHelper::buildGraph(values);
     bool res = sol.bipartite(graph);
   }
 

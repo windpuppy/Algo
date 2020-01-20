@@ -128,20 +128,20 @@ int main()
       {'1', '0', '0', '1', '1'},
       {'0', '0', '0', '0', '0'},
       {'1', '0', '1', '1', '0'}};
-    auto g1 = grid;
-    auto res = sol.numIslands(g1); // 4
-    auto g2 = grid;
-    res = sol.numIslands2(g2);
+    auto g = grid;
+    auto res = sol.numIslands(g); // 4
+    g = grid;
+    res = sol.numIslands(g, false);
 
     vector<vector<char>> grid2{
       {'1', '1', '0', '0', '0'},
       {'1', '1', '0', '0', '0'},
       {'0', '0', '1', '0', '0'},
       {'0', '0', '0', '1', '1'}};
-    auto g3 = grid2;
-    res = sol.numIslands(g3); // 3
-    auto g4 = grid2;
-    res = sol.numIslands2(g4);
+    g = grid2;
+    res = sol.numIslands(g); // 3
+    g = grid2;
+    res = sol.numIslands(g, false);
   }
 
   // Cheapest flight with k most stops
@@ -150,14 +150,14 @@ int main()
       {0, 1, 100},
       {0, 2, 1000},
       {1, 2, 200}};
-    auto res = sol.cheapestPrice(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestPrice(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    auto res = sol.cheapestFlightsWithKStops(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = sol.cheapestFlightsWithKStops(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
 
-    res = sol.cheapestPrice_bfs(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestPrice_bfs(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    res = sol.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = sol.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
 
-    res = sol.cheapestPrice_dp(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestPrice_dp(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    res = sol.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = sol.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
   }
 
   // Restore IP address

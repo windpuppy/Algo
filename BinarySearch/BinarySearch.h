@@ -5,7 +5,6 @@
 
 using namespace std;
 
-
 class BinarySearch
 {
 public:
@@ -26,6 +25,8 @@ public:
     }
     return -1;
   }
+
+
 
   // O(logmn), O(1)
   vector<int> binarySearchSortedMatrix(vector<vector<int>> matrix, int target) {
@@ -51,6 +52,8 @@ public:
     return invalid;
   }
 
+
+
   // Notes:
   // 1) exit condition: left > right - 1. we need to leave minimum 2 elements here
   // 2) right = mid, left = mid, do not do mid+1 / mid-1 because we do not want to miss out the zero Xs.
@@ -74,6 +77,8 @@ public:
     int distRight = abs(array[right] - target);
     return distLeft > distRight ? right : left;
   }
+
+
 
   // Find first occurrence
   // So, if (target <= val) right = mid;
@@ -100,6 +105,8 @@ public:
     return array[left] == target ? left : array[right] == target ? right : -1;
   }
 
+
+
   // Find last occurrence
   // So, if (target >= val) left = mid;
   // If first occurrence
@@ -125,6 +132,8 @@ public:
     else if (array[left] == target) return left;
     else return -1;
   }
+
+
 
   // Notes:
   // 1) find the largest "less equal" target, or if the target itself it doesn't matter first/last occurrence
@@ -177,7 +186,7 @@ public:
 
 
 
-  // Note
+  // Notes:
   // Because we are looking for "smallest larger than", we need to do
   //    if (midVal <= target) left = mid + 1;
   // to skip the equal values
@@ -288,7 +297,7 @@ public:
 
 
 
-  // [3,4,5,1,2] given a shifted array, search for the min element
+  // Given a shifted softed array e.g. [3,4,5,1,2], find the index of the min element
   int shiftPosition(vector<int> nums) {
     if (nums.empty()) return -1;
     int left = 0, right = nums.size() - 1;

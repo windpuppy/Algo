@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -13,25 +15,8 @@
 
 using namespace std;
 
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
-
-class GraphNode {
-public:
-  int value;
-  vector<GraphNode*> neighbors;
-  GraphNode(int v) : value(v) {}
-};
-
 class DFS
 {
-  const vector<char> brackets{ '(', ')', '<', '>', '{', '}' };
-
 public:
 
   // DFS solution
@@ -39,7 +24,6 @@ public:
   // Space O(n) - n extra space for result, logn recursion stack can be ignored because O(n) dominates
   vector<string> subsets(string input) {
     if (input.empty()) return vector<string>{""};
-
     string out;
     vector<string> res;
     subsets_dfs(input, 0, out, res);
@@ -74,13 +58,9 @@ public:
       q.pop();
       res.push_back(curr);
 
-      for (int i = 0; i < input.size(); ++i) {
-        if (curr.empty() || curr.back() < input[i]) {
-          string next = curr;
-          next.push_back(input[i]);
-          q.push(next);
-        }
-      }
+      for (auto c : input)
+        if (curr.empty() || curr.back() < c)
+          q.push(curr + c);
     }
     return res;
   }
@@ -122,20 +102,17 @@ public:
   //            dedup "2" at this point
   // Time: O(n^2)
   vector<string> subsets2(string input) {
-    // Pre-sort string for dedup later on during recursion
-    sort(input.begin(), input.end());
-
     if (input.empty()) return vector<string>{""};
-
     string out;
     vector<string> res;
+    sort(input.begin(), input.end()); // Sort for easier dedup later
     subsets2_dfs(input, 0, out, res);
     return res;
   }
 
   void subsets2_dfs(const string& input, int index, string& out, vector<string>& res) {
     // Base case
-    int size = input.length();
+    const int size = input.length();
     if (index == size) {
       res.push_back(out);
       return;
@@ -156,23 +133,20 @@ public:
 
 
 
-  
   // All subsets of k size
   vector<string> subsetsOfK(string input, int k) {
-    int size = input.length();
+    const int size = input.length();
     if (size == 0 && k == 0) return vector<string>{""};
     else if (size == k) return vector<string>{input};
     else if (size < k) return vector<string>();
 
     string out;
     vector<string> res;
-
     subsetsOfK_dfs(input, 0, k, out, res);
     return res;
   }
 
   void subsetsOfK_dfs(const string& input, int index, int k, string& out, vector<string>& res) {
-    // base case:
     if (index == input.length()) {
       if (k == out.length())
         res.push_back(out);
@@ -199,8 +173,7 @@ public:
   // all subsets of size k, for integers 1 ~ n
   vector<vector<int>> subsetsOfK_nums(int n, int k) {
     vector<vector<int>> res;
-    if (n == 0 || k == 0) return res;
-    else if (n < k) return res;
+    if (n == 0 || k == 0 || n < k) return res;
 
     vector<int> nums(n);
     for (int i = 0; i < nums.size(); ++i)
@@ -222,16 +195,16 @@ public:
       return;
     }
 
-    // case 1: not adding the current number
-    if (out.size() <= k) // pruning
-      subsetsOfK_nums_dfs(nums, index + 1, k, out, res);
-
-    // case 2: adding the number
+    // case 1: adding the number
     if (out.size() <= k - 1) { // pruning
       out.push_back(nums[index]);
       subsetsOfK_nums_dfs(nums, index + 1, k, out, res);
       out.pop_back();
     }
+
+    // case 2: not adding the current number
+    if (out.size() <= k) // pruning
+      subsetsOfK_nums_dfs(nums, index + 1, k, out, res);
   }
 
 
@@ -240,10 +213,8 @@ public:
   // Same as subsets2 (dedup)
   // same as subsets of k (k size)
   vector<string> subsetsOfK2(string input, int k) {
-    // Pre-sort string for dedup later on during recursion
-    sort(input.begin(), input.end());
-
-    int size = input.length();
+    sort(input.begin(), input.end()); // sort for easier dedup later
+    const int size = input.length();
     if (size == 0 && k == 0) return vector<string>{""};
     else if (size < k) return vector<string>();
     else if (size == k) return vector<string>{input};
@@ -255,27 +226,26 @@ public:
   }
 
   void subsetsOfK2_dfs(const string& input, int index, int k, string& out, vector<string>& res) {
-    // base case:
     if (index == input.length()) {
       if (k == out.length())
         res.push_back(out);
       return;
     }
 
-    // 1. do not pick the current char
-    if (out.size() <= k) // pruning
+    // 1. do pick the current char
+    if (out.size() <= k - 1) { // pruning
+      out += input[index]; // "eat"
       subsetsOfK2_dfs(input, index + 1, k, out, res);
+      out.pop_back(); // "spit"
+    }
 
     // dedup - skip repeating chars
     while (index + 1 < input.length() && input[index] == input[index + 1])
       index++;
 
-    if (out.size() <= k - 1) { // pruning
-      // 2. do pick the current char
-      out += input[index]; // "eat"
+    // 2. do not pick the current char
+    if (out.size() <= k) // pruning
       subsetsOfK2_dfs(input, index + 1, k, out, res);
-      out.pop_back(); // "spit"
-    }
   }
 
 
@@ -337,7 +307,7 @@ public:
       // even positions
       if (i % 2 == 0) { // (, <, {
         if (remain[i] > 0) { // if we can take it, take it; otherwise do nothing
-          auto c = brackets[i];
+          auto c = brackets_[i];
 
           stack.push(i);
           remain[i]--;
@@ -351,7 +321,7 @@ public:
       // odd positions
       else { // ), >, }
         if (!stack.empty() && stack.top() == i - 1) { // need to match here
-          auto c = brackets[i];
+          auto c = brackets_[i];
 
           stack.pop();
           remain[i]--;
@@ -393,7 +363,7 @@ public:
       // even positions
       if (i % 2 == 0) {
         if (remain[i] > 0 && (stack.empty() || stack.top() > i)) { // if we can take it, take it; otherwise do nothing
-          auto c = brackets[i];
+          auto c = brackets_[i];
 
           stack.push(i);
           remain[i]--;
@@ -407,7 +377,7 @@ public:
       // odd positions
       else {
         if (!stack.empty() && stack.top() == i - 1) { // check for matching
-          auto c = brackets[i];
+          auto c = brackets_[i];
 
           stack.pop();
           remain[i]--;
@@ -425,9 +395,16 @@ public:
 
   // Remove the minimum number of invalid parantheses to make the input a valid string.
   // Return ALL possible results.
-  // "()())()" -> "()()()", "(())()"
-  // "(a)())()" -> "(a)()()", "(a())()"
-  // ")(" -> ""
+  // Example 1: "()())()" -> "()()()", "(())()"
+  // Example 2: "(a)())()" -> "(a)()()", "(a())()"
+  // Example 3: ")(" -> ""
+  // Approach:
+  //   We first pre-procee the entire string to work out how many invalid parentheses that we need to remove (including left and right), say "count"
+  //   Then we use DFS to gradually work our way down until count == 0
+  //   During DFS, we build the string from scratch, and for each char in the input string
+  //     1. if the char is '(' or ')', we can either add it or not add it
+  //     2. if the char is a letter, we have to add it
+  // Time: O(2^n)
   vector<string> removeInvalidParentheses(string input) {
     if (input.empty()) return vector<string>{""};
     int count = preProcess(input);
@@ -463,13 +440,13 @@ public:
     int len = out.length();
 
     if (c == '(' || c == ')') {
-      remove_dfs(input, i + 1, count - 1, out, res); // add
+      remove_dfs(input, i + 1, count - 1, out, res); // no add
       out += c;
-      remove_dfs(input, i + 1, count, out, res); // no add
+      remove_dfs(input, i + 1, count, out, res); // add
     }
     else {
       out += c;
-      remove_dfs(input, i + 1, count, out, res);
+      remove_dfs(input, i + 1, count, out, res); // have to add
     }
 
     out.resize(len);
@@ -500,7 +477,6 @@ public:
   }
 
   void coinCombinations_dfs(vector<int> coins, int moneyLeft, int index, vector<int>& out, vector<vector<int>>& res) {
-    // General base case
     if (index == coins.size() - 1) {
       // Only consider this a valid solution if the remaining money can be represented by the final coin type
       if (moneyLeft % coins.back() == 0) {
@@ -536,8 +512,7 @@ public:
     return res;
   }
 
-  void factorCombinations_dfs(int currFactor, int currProduct, int target, vector<int>& out, vector<vector<int>>& res)
-  {
+  void factorCombinations_dfs(int currFactor, int currProduct, int target, vector<int>& out, vector<vector<int>>& res) {
     if (currFactor > target || currProduct > target) // overflow
       return;
 
@@ -626,17 +601,18 @@ public:
 
     unordered_set<char> set;
     for (int i = index; i < input.size(); ++i) {
-      if (set.count(input[i])) continue;
-      set.insert(input[i]);
-
-      swap(input[i], input[index]);
-      permutations2_dfs(input, index + 1, res);
-      swap(input[i], input[index]);
+      if (!set.count(input[i])) {
+        set.insert(input[i]);
+        swap(input[i], input[index]);
+        permutations2_dfs(input, index + 1, res);
+        swap(input[i], input[index]);
+      }
     }
   }
 
 
 
+  // Given a string with no dups, return a list with all permutations of its subsets
   // Navie solution: get all subsets, get all permutations
   vector<string> permutationOfSubsets_naive(string input) {
     vector<string> res;
@@ -674,7 +650,7 @@ public:
     for (auto c : input)
       if (!set.count(c)) set.insert(c);
       else set.erase(c);
-    return set.empty() || set.size() == 1;
+    return set.size() <= 1;
   }
 
 
@@ -699,12 +675,12 @@ public:
 
     unordered_set<char> set;
     for (int i = level; i < input.size(); ++i) {
-      if (set.count(input[i])) continue;
-      set.insert(input[i]);
-
-      swap(input[level], input[i]);
-      palindrome_helper(input, level + 1, res);
-      swap(input[level], input[i]);
+      if (!set.count(input[i])) {
+        set.insert(input[i]);
+        swap(input[level], input[i]);
+        palindrome_helper(input, level + 1, res);
+        swap(input[level], input[i]);
+      }
     }
   }
 
@@ -718,8 +694,9 @@ public:
 
 
   // Given [2,3,6,7] and 7, return ways of combinations ([7], [2,2,3])
-  // 1) Inupt has no dups
+  // 1) Inupt can have dups
   // 2) Any number can be use multiple times
+  // Return a list of unique combinations, and in each combination the numbers need to be sorted in non-descending order.
   vector<vector<int>> combinationSum(vector<int>& nums, int target) {
     vector<vector<int>> result;
     vector<int> out;
@@ -751,7 +728,9 @@ public:
   }
 
 
+
   // All unique combinations, and each input can only be used once
+  // For each out output combination, numbers need to be sorted in non-descending order
   // e.g. if input is  [1, 1, 2, 3], both 1s can be used, but only once each
   vector<vector<int>> combinationSum2(vector<int>& nums, int target) {
     vector<vector<int>> result;
@@ -777,7 +756,7 @@ public:
       combinationSum2_dfs(nums, i + 1, target - nums[i], out, res); // i+1 instead of i, because we are only allowed to use each number once
       out.pop_back();
 
-      while (i + 1 < size && nums[i] == nums[i + 1]) //dedup
+      while (i + 1 < size && nums[i] == nums[i + 1]) //dedup, IMPORTANT!
         i++;
     }
   }
@@ -822,8 +801,7 @@ public:
     }
   }
 
-
-
+  // BFS solution for above
   vector<string> telephonePad_bfs(int number) {
     unordered_map<char, string> dict;
     dict.insert({ '0', "" });
@@ -838,82 +816,63 @@ public:
     dict.insert({ '9', "wxyz" });
 
     string digits = std::to_string(number);
-    queue<string> q;
-    auto s = dict.at(digits[0]);
+    deque<string> q;
+    string s = dict.at(digits[0]);
     if (s.empty())
-      q.push("");
+      q.push_back(""); // for 0 and 1
     else
-      for (char c : s)
-        q.push(string(1, c));
+      for (char c : s) // for other digits
+        q.push_back(string(1, c));
 
     for (int i = 1; i < digits.size(); ++i) {
+      string curr = dict.at(digits[i]);
       int size = q.size();
       while (size-- > 0) {
         string prev = q.front();
-        q.pop();
+        q.pop_front();
 
-        string curr = dict.at(digits[i]);
-        if (curr.empty())
-          q.push(prev + "");
+        if (curr.empty()) // for 0 and 1
+          q.push_back(prev);
         else
-          for (char c : curr)
-            q.push(prev + c);
+          for (char c : curr) // for other digits
+            q.push_back(prev + c);
       }
     }
-
-    vector<string> res;
-    while (!q.empty()) {
-      res.push_back(q.front());
-      q.pop();
-    }
-    return res;
+    return vector<string>(q.begin(), q.end());
   }
 
 
 
+  // Get ALL valid ways of placing the queens
   // Time: O(n!)
   vector<vector<int>> nQueens(int n) {
-    if (n == 1) return vector<vector<int>>{vector<int>{0}};
-
-    vector<int> tmp(n, 0);
-    vector<vector<int>> board(n, tmp);
+    if (n == 1) return vector<vector<int>>{vector<int>{0}}; // We can place a queen in a 1x1 grid!
+    vector<vector<int>> board(n, vector<int>(n, 0));
     vector<vector<int>> result;
-
     nQueens_dfs(board, 0, result);
     return result;
   }
 
-  // This helper has a boolean return
-  // True: good so far, proceed to place the rest of the queens
-  // False: no need to proceed
-  bool nQueens_dfs(vector<vector<int>>& board, int col, vector<vector<int>>& result) {
-    // base case = if we reach here, we've placed all the queens, success!
-    int n = board.size();
-    if (col >= n) {
+  void nQueens_dfs(vector<vector<int>>& board, int col, vector<vector<int>>& result) {
+    const int n = board.size();
+    if (col >= n) { // base case = if we reach here, we've placed all the queens, success!
       saveQueenResult(board, result);
-      return true;
+      return;
     }
 
     // For current column, try each row one by one
-    for (int i = 0; i < n; ++i) {
-      // can we put a queen here?
+    for (int i = 0; i < n; ++i) { 
       if (isQueenSafe(board, i, col)) {
-        board[i][col] = 1; // EAT
-
-        // if success, no need to spit; go place the next queen
-        if (!nQueens_dfs(board, col + 1, result))
-          board[i][col] = 0; //SPIT
+        board[i][col] = 1; // place
+        nQueens_dfs(board, col + 1, result);
+        board[i][col] = 0; // backtrack
       }
     }
-
-    // Current queen cannot be placed, return FALSE!
-    return false;
   }
 
-  // Because we are placing the queens col by col from left to right,
-  //     this function only checks attacking queesn from the left
+  // Because we are placing the queens col by col from left to right, this function only checks threats from the left
   bool isQueenSafe(const vector<vector<int>>& board, int row, int col) {
-    int n = board.size();
+    const int n = board.size();
     for (int i = 0; i < col; ++i) if (board[row][i]) return false; // look left
     // no need to look up: current column is always safe (bc. it's a new column)
     for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) if (board[i][j]) return false; // upper left diagonal
@@ -922,12 +881,11 @@ public:
   }
 
   void saveQueenResult(const vector<vector<int>>& board, vector<vector<int>>& result) {
-    int size = board.size();
-    vector<int> tmp;
+    const int size = board.size();
+    result.push_back({});
     for (int i = 0; i < size; ++i)
       for (int j = 0; j < size; ++j)
-        if (board[i][j] == 1) { tmp.push_back(j); break; }
-    result.push_back(tmp);
+        if (board[i][j] == 1) { result.back().push_back(j); break; }
   }
 
 
@@ -939,25 +897,28 @@ public:
   //
   // Time: O(m x n) - now this is special, because we only visit each cell once
   // Space: O(1) - because we operate on the original grid
-  int numIslands(vector<vector<char>> grid) {
+  int numIslands(vector<vector<char>> grid, bool dfs = true) {
     if (grid.empty() || grid[0].empty()) return 0;
-    int rows = grid.size();
-    int cols = grid[0].size();
+    const int rows = grid.size();
+    const int cols = grid[0].size();
 
     int count = 0;
     for (int i = 0; i < rows; ++i)
       for (int j = 0; j < cols; ++j)
         if (grid[i][j] == '1') {
           count++;
-          numIslands_dfs(grid, i, j);
+          if (dfs)
+            numIslands_dfs(grid, i, j);
+          else
+            numIslands_bfs(grid, i, j);
         }
     return count;
   }
 
   // The DFS recursive function
   void numIslands_dfs(vector<vector<char>>& grid, int i, int j) {
-    int rows = grid.size();
-    int cols = grid[0].size();
+    const int rows = grid.size();
+    const int cols = grid[0].size();
     if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] == '0')
       return;
 
@@ -969,32 +930,17 @@ public:
     numIslands_dfs(grid, i + 1, j);
   }
 
-  
-  // BFS solution:
-  // We iterate the entire grid while updating the visited map on the go
-  // For each new (unvisited) land ('1'), we use BFS to exhaust all its neighbors
-  //   use a queue, start from the seed, keep generating and expanding
-  // The number of BFS calls is the number of islands
-  int numIslands2(vector<vector<char>> grid) {
-    if (grid.empty() || grid[0].empty()) return 0;
-    int rows = grid.size();
-    int cols = grid[0].size();
-
-    int count = 0;
-    for (int i = 0; i < rows; ++i)
-      for (int j = 0; j < cols; ++j)
-        if (grid[i][j] == '1') {
-          count++;
-          numIslands2_bfs(grid, i, j);
-        }
-    return count;
-  }
-
-  void numIslands2_bfs(vector<vector<char>>& grid, int i, int j) {
-    int rows = grid.size();
-    int cols = grid[0].size();
+  // BFS method: use (i,j) as a seed and exhaust all its neighbors
+  void numIslands_bfs(vector<vector<char>>& grid, int i, int j) {
     queue<pair<int, int>> q;
     q.push({ i, j });
+
+    auto explore = [&](vector<vector<char>>& grid, int i, int j, queue<pair<int, int>>& q) {
+      if (i >= 0 && i < grid.size() && j >= 0 && j < grid[0].size() && grid[i][j] == '1') {
+        q.push({ i, j });
+        grid[i][j] = '0';
+      }
+    };
 
     while (!q.empty()) {
       i = q.front().first;
@@ -1008,30 +954,24 @@ public:
     }
   }
 
-  void explore(vector<vector<char>>& grid, int i, int j, queue<pair<int, int>>& q) {
-    if (i >= 0 && i < grid.size() && j >= 0 && j < grid[0].size() && grid[i][j] == '1') {
-      q.push({ i, j });
-      grid[i][j] = '0';
-    }
-  }
 
 
   // DFS solution
   // Each level is one stop, we have k level (k + 1 flights)
   // Time: O(n^(k+1))
   // Space: O(k+1), the recursion stack
-  int cheapestPrice(int n, vector<vector<int>> flights, int src, int dst, int k) {
+  int cheapestFlightsWithKStops(int n, vector<vector<int>> flights, int src, int dst, int k) {
     unordered_map<int, vector<pair<int, int>>> map; // src, (dst, price): a map contains all flights out of current city
     for (auto f : flights)
       map[f[0]].push_back({ f[1], f[2] });
     vector<int> visited(n, 0);
     visited[src] = 1;
     int res = INT_MAX;
-    cheapestPrice_dfs(src, dst, k + 1, 0, map, visited, res);
+    cheapest_dfs(src, dst, k + 1, 0, map, visited, res);
     return res == INT_MAX ? -1 : res;
   }
 
-  void cheapestPrice_dfs(int src, int dst, int kMoreFlights, int cost, unordered_map<int, vector<pair<int, int>>> map, vector<int>& visited, int& res) {
+  void cheapest_dfs(int src, int dst, int kMoreFlights, int cost, unordered_map<int, vector<pair<int, int>>> map, vector<int>& visited, int& res) {
     if (src == dst) { res = cost; return; }
     if (kMoreFlights == 0) return;
 
@@ -1041,7 +981,7 @@ public:
       if (visited[curr]) continue; // pruning: do not visit the same city twice
       if (cost + price > res) continue; // pruning: do not continue if cost is already overboard
       visited[curr] = 1;
-      cheapestPrice_dfs(curr, dst, kMoreFlights - 1, cost + price, map, visited, res);
+      cheapest_dfs(curr, dst, kMoreFlights - 1, cost + price, map, visited, res);
       visited[curr] = 0;
     }
   }
@@ -1049,7 +989,7 @@ public:
   // BFS solution
   // Time: O(n^(k+1))
   // Space: O(n^(k+1))
-  int cheapestPrice_bfs(int n, vector<vector<int>> flights, int src, int dst, int k) {
+  int cheapestFlightsWithKStops_bfs(int n, vector<vector<int>> flights, int src, int dst, int k) {
     unordered_map<int, vector<pair<int, int>>> map; // src, (dst, price): a map contians all flights out of current city
     for (auto f : flights)
       map[f[0]].push_back({ f[1], f[2] });
@@ -1066,12 +1006,12 @@ public:
         q.pop();
 
         // if reached dst, done; else, explore neighbors
-        if (curr == dst) res = min(res, cost);
+        if (curr == dst)
+          res = min(res, cost);
         else
-          for (auto f : map[curr]) {
-            if (cost + f.second > res) continue; // pruning by cost
-            q.push({ f.first, cost + f.second });
-          }
+          for (auto f : map[curr])
+            if (cost + f.second < res) // pruning by cost
+              q.push({ f.first, cost + f.second });
       }
       
       if (steps++ > k) break; // IMPORTANT
@@ -1079,7 +1019,7 @@ public:
     return res == INT_MAX ? -1 : res;
   }
 
-  // DP solution
+  // DP solution (Bellman-Ford algorithm)
   //         dst
   //  k   0   1   2
   //  0   0  inf inf
@@ -1091,7 +1031,7 @@ public:
   // Induction rule: M[k][d] = min(M[k-1][d], {M[k-1][x] + cost[x][d]}
   //                 meaning, do we just use the price to city d with k-1 stops,
   //                          or it's cheaper to reach city x with k-1 stops first, then from x to d
-  int cheapestPrice_dp(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+  int cheapestFlightsWithKStops_dp(int n, vector<vector<int>>& flights, int src, int dst, int k) {
     vector<int> tmp(n, 1e9);
     vector<vector<int>> M(k + 2, tmp);
     M[0][src] = 0;
@@ -1226,7 +1166,7 @@ public:
 
 
 
-  // DFS solution
+  // Given a string of digits, return all possible IP addresses. (note, we will need to insert dots)
   // 4 levels in this DFS recursion tree - 4 sections of the IP address, so in this solution, remainSections is our "level"
   // At each level, we try 1 ~ 3 digits per section, and we need to do pruning for
   //   1) any section of '0X' or '0XX' (but just '0' is okay)
@@ -1245,7 +1185,6 @@ public:
   }
 
   void restoreIp_dfs(string& input, int index, int remainSections, string& out, vector<string>& res) {
-    // base case
     const int size = input.size();
     if (remainSections == 0) {
       if (index == size)
@@ -1371,7 +1310,6 @@ public:
 
 
 
-
   // Optimal account balancing - minimum transfer to sort out the inter-debts within a group of people
   //
   // DFS solution:
@@ -1381,7 +1319,7 @@ public:
   //    if start == account length, all accounts used up, update res with count
   //    if not, then we iterate all REMAINING accounts
   //        remember to only compare two accounts of opposite signs
-  //        remember to "SPIT" during backtracking - ie. recover the current account     
+  //        remember to backtrack - ie. recover the current account     
   int optimalAccountBalancing(vector<vector<int>>& transactions) {
     int res = INT_MAX;
     unordered_map<int, int> map;
@@ -1413,7 +1351,7 @@ public:
       if (a[i] * a[index] < 0) {
         a[i] += a[index];
         optimal_helper(a, index + 1, count + 1, res);
-        a[i] -= a[index];
+        a[i] -= a[index]; // backtrack
       }
     }
   }
@@ -1473,124 +1411,7 @@ public:
       return a * b;
   }
 
-};
-
-
-
-
-
-
-
-class Helper
-{
-public:
-  static TreeNode* buildTree(const vector<optional<int>>& values, int index = 0)
-  {
-    if (!values.size() || index == values.size()) return NULL;
-
-    TreeNode* node = new TreeNode(values[index].value());
-
-    int i = index * 2 + 1; // left index
-    int j = i + 1; // right index
-
-    if (i < values.size() && values[i].has_value())
-      node->left = buildTree(values, i);
-    if (j < values.size() && values[j].has_value())
-      node->right = buildTree(values, j);
-    return node;
-  }
-
-  static void printTree(TreeNode* root) {
-    vector<vector<optional<int>>> list;
-    if (!root) return;
-
-    // LevelOrder traversal
-    deque<TreeNode*> queue;
-    queue.push_back(root);
-
-    while (!queue.empty()) {
-
-      // if all NULL, we're done with the last level
-      auto found = std::find_if(queue.begin(), queue.end(), [&](const TreeNode* n) {return n != NULL; });
-      if (found == queue.end())
-        break;
-
-      // contain all nodes from current level
-      vector<optional<int>> currLevel;
-
-      // size of current level
-      auto size = queue.size();
-
-      // traverse current level, prepare for the next level
-      for (auto n = 0; n != size; ++n) {
-        auto curr = queue.front();
-        queue.pop_front();
-
-        if (curr) currLevel.push_back(curr->value);
-        else currLevel.push_back(nullopt);
-
-        if (!curr) {
-          queue.push_back(NULL);
-          queue.push_back(NULL);
-        }
-        else {
-          queue.push_back(curr->left);
-          queue.push_back(curr->right);
-        }
-
-      }
-
-      list.push_back(currLevel);
-    }
-
-    // Print:
-    auto width = (int)pow(2, list.size()) + 1;
-    for (auto n = 0; n != list.size(); ++n) {
-      auto numSpacing = (int)pow(2, list.size() - n - 1);
-      string leftSpace(numSpacing, ' ');
-
-      auto numItems = list[n].size();
-      auto numMiddleSpacing = n != 0 ? (width - numItems - numSpacing * 2) / (numItems - 1) : 0;
-      string middleSpace(numMiddleSpacing, ' ');
-
-      for (auto m = 0; m != list[n].size(); ++m) {
-        if (m == 0)
-          cout << leftSpace;
-        else
-          cout << middleSpace;
-
-        auto val = list[n][m];
-        if (val.has_value())
-          cout << val.value();
-        else
-          cout << " ";
-      }
-      cout << endl;
-    }
-    cout << endl;
-  }
-
-  static vector<GraphNode*> buildGraph(vector<vector<int>> values) {
-    vector<GraphNode*> nodes;
-    if (values.empty()) return nodes;
-
-    for (auto n = 0; n != values.size(); ++n) {
-      if (values[n].empty()) continue;
-      auto node = new GraphNode(values[n][0]);
-      nodes.push_back(node);
-    }
-
-    for (auto n = 0; n != nodes.size(); ++n) {
-      if (values[n].size() == 1) continue; // node has no neighbors
-
-      for (auto k = 1; k != values[n].size(); ++k) {
-        nodes[n]->neighbors.push_back(nodes[values[n][k]]);
-      }
-    }
-
-    return nodes;
-  }
-
 private:
+  const vector<char> brackets_{ '(', ')', '<', '>', '{', '}' };
 
 };

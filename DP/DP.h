@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Common/Common.h"
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -12,29 +14,6 @@
 #include <map>
 
 using namespace std;
-
-class TreeNode {
-public:
-  int value;
-  TreeNode* left;
-  TreeNode* right;
-  TreeNode(int v) : value(v), left(NULL), right(NULL) {}
-};
-
-
-struct Point {
-  int i;
-  int j;
-  int height;
-  Point(int i, int j, int h) : i(i), j(j), height(h) {}
-};
-
-class PointComparatorGreater {
-public:
-  bool operator()(Point a, Point b) {
-    return a.height > b.height;
-  }
-};
 
 class DynamicProgramming {
 
@@ -1294,6 +1273,7 @@ public:
   bool hasBoth(int value) { return value == 3; }
 
 
+
   // Brutal force solution:
   // For each position, find its left highest bar and right highest bar, the amount of water it can trap is min(left, right) - bar[i]
   // This will be O(n^2)
@@ -1332,8 +1312,6 @@ public:
 
 
 
-
-
   // Max water trapped 2 - a BFS problem
   // 99599
   // 9 8 9
@@ -1346,6 +1324,15 @@ public:
   // Physnical meaning of what's being maintained in the min heap: all the border points bounding the inner area
   // Time: O(mn)
   // Space: O(mn)
+  struct Point {
+    int i, j, height;
+    Point(int i, int j, int h) : i(i), j(j), height(h) {}
+  };
+
+  struct PointComparatorGreater {
+    bool operator()(Point a, Point b) { return a.height > b.height; }
+  };
+
   int maxWaterTrapped2(vector<vector<int>> grid) {
     if (grid.empty() || grid[0].empty()) return 0;
     const int rows = grid.size();
@@ -1400,6 +1387,7 @@ public:
     if (j < grid[0].size() && !visited[i][j]) { points.push_back(Point(i, j, grid[i][j])); visited[i][j] = true; }
     return points;
   }
+
 
 
   // 1 transaction!
