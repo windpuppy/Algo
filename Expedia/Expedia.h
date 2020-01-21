@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <stack>
+#include <unordered_map>
 #include <algorithm> // min_element, max_element
 #include <numeric> // accummulate
 
@@ -173,6 +174,36 @@ public:
         res[i] = s.top().second - i;
       s.push({ curr, i });
     }
+    return res;
+  }
+
+
+
+  // Frequency Sort: given a string, sort the chars by frequency in decreasing order
+  // For tie breakers, return any valid answers
+  // "tree" -> "eert" or "eetr"
+  // "Aabb" -> "bbAa"
+  // Time O(n), which is better than O(nlogn)
+  string frequencySort(string s) {
+    const int size = s.size();
+    if (size <= 1) return s;
+    unordered_map<char, int> freq;
+    vector<string> bucket(size + 1, ""); // 0 slot is never used because it indicates 0 freq, but still allocate size + 1 for convenience
+    string res;
+
+    for (char c : s) //count frequency of each character
+      freq[c]++;
+    
+    for (auto& f : freq) { //put character into frequency bucket
+      int count = f.second;
+      char c = f.first;
+      bucket[count].append(count, c);
+    }
+    
+    for (int i = size; i > 0; i--) // decreasing freq
+      if (!bucket[i].empty())
+        res.append(bucket[i]);
+
     return res;
   }
 };
