@@ -28,7 +28,11 @@ int main()
     auto res = sol.compress(s); // "ab12"
   }
 
-
+  // Gas station
+  {
+    vector<int> gas{ 3, 1, 1 }, cost{ 1,2,2 };
+    auto res = sol.gasStation(gas, cost);
+  }
 
   std::cout << "Hello World!\n";
   return 0;

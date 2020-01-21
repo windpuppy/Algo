@@ -830,19 +830,22 @@ public:
 
 
 
-  // Main logic is to compute the "all" array - find all its element's next great to the right
-  // We scan from right to left, and use a stack to save the "next greater" element so far on the right
-  // For each curr element, we compare it against stack top;
-  // 1. if curr is greater? pop everything smaller, and push curr into the stack top
-  // 2. then the stack top is the "next great", or no "next great" if stack is empty
-  //
-  // Why stack??? because next greater means we look towards the right, and we only care about the CLOSEST greater element
-  // So when we scan from right to left, we throw away the FARTHER greater elements, so we use stack!
+  // Given two arrays, "partial" and "all" ("partial" is a subarray of "all")
+  //   for each numnber in "partial", find the index of its "next greater" element in the "all" array
+  // Observation:
+  //   Next Greater means for each element we only look towards the right, and we only care about the CLOSEST of such elements.
+  //   Therefore we can scan from right to left, and we throw away the further greater elements. Use Stack!
+  // Approach:
+  //   Scan from right to left, use a stack to save the "next greater" elements
+  //   For each element "curr", we compare curr vs stack top
+  //     1. if curr > stack top ? keep popping smaller elements from the stack, then push curr back
+  //     2. then the stack top is "next greater", or -1 if stack is empty
+  // Time O(n), Space O(n)
   vector<int> nextGreater(vector<int> partial, vector<int> all) {
     const int n = all.size();
     stack<int> stack; // stack of values
     vector<int> nextGreater(n); // vector of values
-    unordered_map<int, int> map; // simply for book keeping, key: element value, value: index
+    unordered_map<int, int> map; // <value, its index>
 
     for (int i = n - 1; i >= 0; --i) {
       int curr = all[i];

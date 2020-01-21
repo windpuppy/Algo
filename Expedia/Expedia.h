@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <string>
-#include <algorithm>
+#include <stack>
+#include <algorithm> // min_element, max_element
+#include <numeric> // accummulate
 
 using namespace std;
 
@@ -98,4 +100,79 @@ public:
     return (int)str.size();
   }
 
+
+
+  // Find the pivot index of an array and return that index (not value!)
+  // Definition of pivot index: sum of its left == sum of its right.
+  // For multiple pivot indexes, return the left-most one; if none exists, return -1.
+  // Time O(n), Space O(1)
+  int findPivotIndex(vector<int>& nums) {
+    const int size = nums.size();
+    if (size == 0) return -1; // no pivot
+    if (size == 1) return 0;  // lone element itself is a pivot
+    int total = accumulate(nums.begin(), nums.end(), 0);
+    int prefixSum = 0;
+    for (int i = 0; i < size; ++i) {
+      if (prefixSum * 2 + nums[i] == total)
+        return i;
+      prefixSum += nums[i];
+    }
+    return -1;
+  }
+
+
+
+  // An array of gas stations forming a CIRCLE, gas[i] is the gas amount, cost[i] is the cost from station i to i + 1.
+  // Find the clockwise route and return the starting station index
+  // Note: there is only one possible such route, or there is no such route in which case we return -1
+  // Observation:
+  //   instead of O(n^2) to try all route, we use one pass O(n)
+  //   for each station, we use a variable "carry" to indicate the amount of gas to carry to the next station
+  //   we also track the minimum carry amount and that gives us the starting station of the route, reason? There won't be
+  //      a smaller carry amount the rest of the route
+  // Time O(n), Space O(1)
+  int gasStation(vector<int>& gas, vector<int>& cost) {
+    gas.push_back(gas.front()); cost.push_back(cost.front()); // Small trick: pad 1st gas & cost to end to make it circular
+    const int n = gas.size();
+    int carry = 0, minCarry = INT_MAX, index = 0;
+    for (int i = 1; i < n; ++i) {
+      carry += gas[i - 1] - cost[i - 1]; // Note: this can be negative, but it's okay.
+      if (carry < minCarry) {
+        minCarry = carry;
+        index = i;
+      }
+    }
+    if (carry < 0) return -1; // total gas < total cost, no solution
+    return index % (n - 1);
+  }
+
+
+
+  // Given a list of daily temperatures, return a list of "how many days until a warmer temperature"
+  // e.g. given: [73, 74, 75, 71, 69, 72, 76, 73]
+  //      return:[1,  1,  4,  2,  1,  1,  0,  0]
+  // This is essentially the Next Greater problem.
+  // Observation:
+  //   Next Greater means for each element we only look towards the right, and we only care about the CLOSEST of such elements.
+  //   Therefore we can scan from right to left, and we throw away the further greater elements. Use Stack!
+  // Approach:
+  //   Scan from right to left, use a stack to save the "next greater" elements
+  //   For each element "curr", we compare curr vs stack top
+  //     1. if curr > stack top ? keep popping smaller elements from the stack, then push curr back
+  //     2. then the "next greater" is stack top, or 0 if stack is empty
+  // Time O(n), Space O(n)
+  vector<int> dailyTemperatures(vector<int>& temps) {
+    stack<pair<int, int>> s; // <value, index>
+    const int n = temps.size();
+    vector<int> res(n, -1);
+    for (int i = n - 1; i >= 0; --i) {
+      int curr = temps[i];
+      while (!s.empty() && s.top().first <= curr) // pop stack top if it's smaller than curr
+        s.pop();
+      if (!s.empty())
+        res[i] = s.top().second - i;
+      s.push({ curr, i });
+    }
+    return res;
+  }
 };
