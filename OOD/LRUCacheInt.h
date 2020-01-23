@@ -3,111 +3,54 @@
 
 using namespace std;
 
-// doubly linked list
-struct Node {
-  int key;
-  int value;
-  Node* next;
-  Node* prev;
-
-  Node(int key, int value) {
-    this->key = key;
-    this->value = value;
-    this->next = NULL;
-    this->prev = NULL;
-  }
-
-  void update(int key, int value) {
-    this->key = key;
-    this->value = value;
-  }
-};
-
-
-
 class LRUCacheInt {
 public:
-  int m_limit; // capacity of the cache
-  int m_size;
-  Node* m_head; // most recent
-  Node* m_tail; // least recent
-  unordered_map<int, Node*> m_map;
 
   LRUCacheInt(int limit) {
-    this->m_limit = limit;
-    this->m_size = 0;
-    this->m_head = NULL;
-    this->m_tail = NULL;
+    this->limit_ = limit;
   }
 
   bool get(int key, int& val) {
-    if (m_map.find(key) == m_map.end())
+    if (!map_.count(key))
       return false;
 
-    Node* node = m_map[key];
-    remove(node);
-    append(node);
-    val = node->value;
+    It it = map_[key];
+    promote(it);
+    val = nodes_.begin()->second;
     return true;
   }
 
   void set(int key, int val) {
-    Node* node = NULL;
-
-    // 1. if key is in the cache, update and move it to the head
-    if (m_map.find(key) != m_map.end()) {
-      node = m_map[key];
-      node->update(key, val);
-      remove(node);
+    // if key is in the cache, just update and promote to head
+    if (map_.count(key)) {
+      It it = map_[key];
+      it->second = val;
+      promote(it);
+      return;
     }
 
-    // 2. if key is not in the cache
-    // 2a. if cache not full? just create the node
-    else if (m_size < m_limit) {
-      node = new Node(key, val);
+    // if cache is full, we need to evict one from the tail
+    if (nodes_.size() == limit_) {
+      int evictKey = nodes_.back().first;
+      nodes_.pop_back();
+      map_.erase(evictKey);
     }
-
-    // 2b. if cache is full? need to erase the tail and replace it with the new node
-    else {
-      node = m_tail; // find the oldest node (tail) to replace with
-      remove(node); // isolate it FIRST
-      node->update(key, val); // then update its value
-    }
-
-    append(node);
+    nodes_.insert(nodes_.begin(), { key, val });
+    map_[key] = nodes_.begin();
   }
-
-  
 
 private:
-  // remove and isolate
-  void remove(Node* node) {
-    m_map.erase(node->key);
-    m_size--;
 
-    if (node->prev)
-      node->prev->next = node->next;
-    if (node->next)
-      node->next->prev = node->prev;
-    if (node == m_head)
-      m_head = m_head->next;
-    if (node == m_tail)
-      m_tail = m_tail->prev;
+  int limit_; // capacity of the cache
+  list<pair<int, int>> nodes_; // nodes of <key, value> pair
+  typedef list<pair<int, int> >::iterator It;
+  unordered_map<int, It> map_;
 
-    node->next = node->prev = NULL; // isolate it
-  }
-
-  // append to head
-  void append(Node* node) {
-    m_map[node->key] = node;
-    m_size++;
-
-    if (!m_head)
-      m_head = m_tail = node;
-    else {
-      node->next = m_head;
-      m_head->prev = node;
-      m_head = node;
-    }
+  void promote(It it) {
+    int key = it->first;
+    int val = it->second;
+    nodes_.erase(it);
+    nodes_.insert(nodes_.begin(), { key, val }); // promote it to the head
+    map_[key] = nodes_.begin();
   }
 };
