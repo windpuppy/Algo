@@ -200,6 +200,12 @@ int main()
     res = sol.oneEditDistance("", "");
   }
 
+  // One edit palindrome
+  {
+    auto res = sol.oneEditPalindrome("ricecar");
+    res = sol.oneEditPalindrome("raceacar");
+  }
+
   // Word break
   {
     vector<string> dict{ "bob", "cat", "rob" };

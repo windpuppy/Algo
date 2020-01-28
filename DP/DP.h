@@ -1102,6 +1102,32 @@ public:
 
 
 
+  // If we can perform one edit (add/remove/replacement) to make a word palindrome, we call the word near-palindrome
+  // e.g. ricecar is near-palindrome r[i]cec[a]r
+  //      raceacar is near-palindrom racea(e)car
+  bool oneEditPalindrome(string word) {
+    bool nearPalindrome = palindrome_helper(word, 0, word.size() - 1, false);
+    return nearPalindrome;
+  }
+
+  bool palindrome_helper(const string& word, int i, int j, bool editUsed) {
+    if (i >= j)
+      return editUsed;
+    char a = word[i], b = word[j];
+    if (editUsed && a != b)
+      return false;
+    else if (a == b)
+      return palindrome_helper(word, i + 1, j - 1, editUsed);
+    else {
+      bool rep = palindrome_helper(word, i + 1, j - 1, true);
+      bool ins = palindrome_helper(word, i + 1, j, true);
+      bool del = palindrome_helper(word, i, j - 1, true);
+      return rep || ins || del;
+    }
+  }
+
+
+
   // DP solution
   // M[i][j] meaning: the largest square that can be formed till point (i,j) where (i,j) is the right bottom corner
   // Induction rule:

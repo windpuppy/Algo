@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <list>
 
 using namespace std;
 
@@ -31,10 +32,10 @@ struct NodeT {
   }
 };
 
-
-
 template<class K, class V>
 class LRUCache {
+  using KvPair = list<pair<K, V>>;
+
 public:
   int m_limit; // capacity of the cache
   int m_size;
@@ -125,5 +126,19 @@ private:
       m_head->prev = node;
       m_head = node;
     }
+  }
+
+private:
+
+  int limit_;
+  list<pair<K, V>> nodes_;
+  unordered_map<int, It> map_;
+
+  void promote(list<pair<K, V>>::iterator it) {
+    auto key = it->first;
+    auto val = it->second;
+    nodes_.erase(it);
+    nodes_insert(nodes_.begin(), { key, val });
+    map_[key] = nodes_.begin();
   }
 };
