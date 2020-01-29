@@ -135,18 +135,7 @@ int main()
   {
     int val = 0;
 
-    LRUCache<int, int> cache(2);
-    cache.get(1, val);
-    cache.set(1, 1);
-    cache.set(2, 2);
-    cache.get(2, val);
-    cache.get(1, val);
-    cache.set(3, 3);
-    cache.get(1, val);
-    cache.get(2, val);
-    cache.get(3, val);
-
-    LRUCacheInt c(2);
+    LRUCache<int, int> c(2);
     c.set(1, 1);   // [1]
     c.set(2, 2);   // [2 1]
     c.get(1, val); // [1 2] val = 1
@@ -156,6 +145,17 @@ int main()
     c.get(1, val); // false
     c.get(3, val); // [3 4] val = 3
     c.get(4, val); // [4 3] val = 4
+
+    LRUCacheInt c2(2);
+    c2.set(1, 1);   // [1]
+    c2.set(2, 2);   // [2 1]
+    c2.get(1, val); // [1 2] val = 1
+    c2.set(3, 3);   // [3 1]
+    c2.get(2, val); // false
+    c2.set(4, 4);   // [4 3]
+    c2.get(1, val); // false
+    c2.get(3, val); // [3 4] val = 3
+    c2.get(4, val); // [4 3] val = 4
   }
 
   // Threading --------------------------------------------------------------

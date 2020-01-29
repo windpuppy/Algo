@@ -3,6 +3,13 @@
 
 using namespace std;
 
+// Implementation ideas:
+// 1. Lots of insert and delete, what data structure? Vector not good, queue not good, LL not powerful enough, yes, doubly LL!
+// 2. Need to have control of the head and tail of the list: head for most recent, tail for least recent
+//    head: most recent, tail: least recent
+// 3. Need to have an overview of all the nodes: map, for O(1) look up!
+//    map<key, Node<Key, value>>
+
 class LRUCacheInt {
 public:
 
@@ -43,7 +50,7 @@ private:
 
   int limit_; // capacity of the cache
   list<pair<int, int>> nodes_; // nodes of <key, value> pair
-  typedef list<pair<int, int> >::iterator It;
+  typedef list<pair<int, int>>::iterator It;
   unordered_map<int, It> map_;
 
   void promote(It it) {
