@@ -5,7 +5,7 @@
 #include <stack>
 #include <unordered_map>
 #include <algorithm> // min_element, max_element
-#include <numeric> // accummulate
+#include <numeric> // accumulate
 
 using namespace std;
 

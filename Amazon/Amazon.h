@@ -476,7 +476,7 @@ public:
 
     int timer = 0;
     vector<int> time(n, -1);
-    vector<vector<int>> res;
+    vector<vector<int>> res; 
     critical_dfs(graph, -1, 0, timer, time, res);
     return res;
   }

@@ -124,7 +124,7 @@ public:
     out.pop_back(); // "spit"
 
     // dedup - skip repeating chars
-    while (index + 1 < size && input[index] == input[index + 1])
+    while (index < size - 1 && input[index] == input[index + 1])
       index++;
 
     // We don't pick 'a'
@@ -226,7 +226,8 @@ public:
   }
 
   void subsetsOfK2_dfs(const string& input, int index, int k, string& out, vector<string>& res) {
-    if (index == input.length()) {
+    const int size = input.size();
+    if (index == size) {
       if (k == out.length())
         res.push_back(out);
       return;
@@ -240,7 +241,7 @@ public:
     }
 
     // dedup - skip repeating chars
-    while (index + 1 < input.length() && input[index] == input[index + 1])
+    while (index < size - 1 && input[index] == input[index + 1])
       index++;
 
     // 2. do not pick the current char
@@ -467,8 +468,8 @@ public:
   // at each level, maximum 99 splits
   // No need to worry about duplications
   // Small trick: check if money left < 0, break the for loop as pruning
-  // Time O(99^4)
-  // Space O(4)
+  // Time O(k^n) - k is target, n is the type of coins
+  // Space O(n)
   vector<vector<int>> coinCombinations(vector<int> coins, int target) {
     vector<int> out(coins.size());
     vector<vector<int>> res;
@@ -476,7 +477,7 @@ public:
     return res;
   }
 
-  void coinCombinations_dfs(vector<int> coins, int moneyLeft, int index, vector<int>& out, vector<vector<int>>& res) {
+  void coinCombinations_dfs(const vector<int>& coins, int moneyLeft, int index, vector<int>& out, vector<vector<int>>& res) {
     if (index == coins.size() - 1) {
       // Only consider this a valid solution if the remaining money can be represented by the final coin type
       if (moneyLeft % coins.back() == 0) {

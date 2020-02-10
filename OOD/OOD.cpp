@@ -85,7 +85,7 @@ enum Day {
 
 
 
-void func() {
+void print_hello_1() {
   cout << "hello 1" << endl;
 }
 
@@ -160,7 +160,7 @@ int main()
 
   // Threading --------------------------------------------------------------
   {
-    std::thread t1(func); // t1 starts running
+    std::thread t1(print_hello_1); // t1 starts running
     cout << "hello 2" << endl;
     //t1.join(); // main thread waits for t1
     t1.detach(); // t1 freely runs on its own - deamon
@@ -186,6 +186,17 @@ int main()
     Child* child = new Child(1, 2);
     child->print();
     delete child;
+  }
+
+  {
+    try {
+      IPrintable* parent = new Parent(1, 2);
+      parent->print();
+      //delete parent; // runtime error
+    }
+    catch (exception & e) {
+      cout << "Exception: " << e.what() << endl;
+    }
   }
 
   {

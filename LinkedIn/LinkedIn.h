@@ -26,7 +26,7 @@ public:
   // Input : [[1,3], [2,6], [8,10], [15,18]]
   // Output : [[1,6], [8,10], [15,18]]
   // Method: sort all intervals by start times, then merge by end times
-  // Time: O(n), Space: O(1)
+  // Time: O(nlogn), Space: O(1)
   vector<vector<int>> mergeIntervals(vector<vector<int>>& intervals) {
     if (intervals.size() <= 1) return intervals;
     vector<vector<int>> res;

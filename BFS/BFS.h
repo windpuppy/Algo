@@ -1194,7 +1194,7 @@ public:
   // For every building enters (left edge), we push the height into the max heap.
   //    if heap top changes, we have a new key point which will be part of the output
   // For every building exits (right edge), we pop the height out of the max heap.
-  //    if hep top changes, we have a new key point as well.
+  //    if heap top changes, we have a new key point as well.
   //      -------
   // 3    |     |
   // 2 -------  |

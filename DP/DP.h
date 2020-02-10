@@ -449,11 +449,11 @@ public:
   //     curr left "reset" to i when negative contribution is detected, otherwise it doesn't change
   //   When to update global left/right:
   //     whenever global max is updated
-  vector<int> largestSubArraySum2(vector<int> input) {
-    if (input.empty()) return vector<int>();
-    const int n = input.size();
-    vector<int> M(input);
-    int globalMax = input[0];
+  vector<int> largestSubArraySum2(vector<int> nums) {
+    if (nums.empty()) return vector<int>();
+    const int n = nums.size();
+    vector<int> M(nums);
+    int globalMax = nums[0];
 
     int ci = 0, cj = 0, gi = 0, gj = 0;
 
@@ -464,7 +464,7 @@ public:
         contrib = 0;
         ci = i;
       }
-      M[i] = contrib + input[i];
+      M[i] = contrib + nums[i];
 
       if (M[i] > globalMax) {
         globalMax = M[i];
@@ -478,6 +478,31 @@ public:
 
 
 
+  // Largest subarray sum, circular array
+  // Split into two cases:
+  //   1. ---xxxxx--- : largest subarray sum
+  //   2. xxx-----xxx : total - smallest subarray sum
+  // Corner case:
+  //   If all numbers are negative, e.g. [-1,-2,-3], total is -6, minSum is -6, which means res2 will be 0 (empty array) and this solution is not qualified
+  //   So the special case is: if all numbers are negative, we take the max element of the array
+  // Time: O(n)
+  int largestSubArraySum3(vector<int> nums) {
+    int maxSum = largestSubArraySum(nums); // continuous largest sum in the middle
+    
+    int total = 0, maxVal = INT_MIN;
+    for (auto& n : nums) {
+      maxVal = max(maxVal, n);
+      total += n;
+      n *= -1; // use this for loop to flip the original array into negative, to calculate minSum later
+    }
+    if (maxVal <= 0) return maxVal;
+
+    int minSum = -largestSubArraySum(nums); // continuous smallest sum in the middle
+    return max(maxSum, total - minSum);
+  }
+
+
+ 
   // O(n^6) solution: 2 for loops for top left corner, 2 for loops for bottom right corner, 2 for loops to sum the square - 6 in total
   // O(n^5) solution: build 1D prefix book: sum of everything to its left:
   //                  prefix[i][j] = prefix[i][j-1] + a[i][j]
@@ -1193,7 +1218,7 @@ public:
 
 
   // This is TOTALLY different than largest SQUARE of ones
-  // We stack row by row: accummulate if 1, reset to 0 if 0
+  // We stack row by row: accumulate if 1, reset to 0 if 0
   // Then for each row, we do "max area of histogram"
   // Time: O(n^3), Space: O(n)
   int largestRectangleOfOnes(vector<vector<int>> matrix) {
@@ -1376,7 +1401,7 @@ public:
 
       auto neibs = getNeighbors(grid, curr, visited); // get all unvisited neighbors
       for (auto n : neibs) {
-        res += max(0, curr.height - n.height); // accummulate water
+        res += max(0, curr.height - n.height); // accumulate water
 
         n.height = max(curr.height, n.height); // IMPORTANT: if the (inner neighbor) has a higher bar, don't ignore it, but use it as the new bounardy point instead
         minHeap.push(n);

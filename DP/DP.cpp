@@ -65,18 +65,28 @@ int main()
 
   // Largest subarray sum
   {
-    vector<int> input{ 1, 2, 4, -1, -2, 10, -1, -100, -1, 10, 20 };
-    auto res = sol.largestSubArraySum(input); // 30
-    vector<int> input2{ 1, 4, -2, -8, 10, 3, 2, 9, -5 };
-    res = sol.largestSubArraySum(input2);
+    vector<int> nums{ 1, 2, 4, -1, -2, 10, -1, -100, -1, 10, 20 };
+    auto res = sol.largestSubArraySum(nums); // 30
+    nums = vector<int>{ 1, 4, -2, -8, 10, 3, 2, 9, -5 };
+    res = sol.largestSubArraySum(nums);
   }
 
   // Largest subarray sum - return[sum, left, right]
   {
-    vector<int> input{ 1, 2, 4, -1, -2, 10, -1, -100, -1, 10, 20 };
-    auto res = sol.largestSubArraySum2(input); // 30, 9, 10
-    vector<int> input2{ 1, 4, -2, -8, 10, 3, 2, 9, -5 };
-    res = sol.largestSubArraySum2(input2);
+    vector<int> nums{ 1, 2, 4, -1, -2, 10, -1, -100, -1, 10, 20 };
+    auto res = sol.largestSubArraySum2(nums); // 30, 9, 10
+    nums = vector<int>{ 1, 4, -2, -8, 10, 3, 2, 9, -5 };
+    res = sol.largestSubArraySum2(nums);
+  }
+
+  // Largest subarray sum - circular array
+  {
+    vector<int> nums{ -1, -2, 10, 11, 12, -2, -1 };
+    auto res = sol.largestSubArraySum3(nums);
+    nums = vector<int>{ 10, -1, -2, -3, 10 };
+    res = sol.largestSubArraySum3(nums);
+    nums = vector<int>{ -1, -2, -3 };
+    res = sol.largestSubArraySum3(nums);
   }
 
   // Largest submatrix sum
