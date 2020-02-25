@@ -4,6 +4,7 @@
 #include "Codec.h"
 #include "AutoComplete.h"
 #include "RandomizedSet.h"
+#include "FirstNonRepeating.h"
 
 #include <iostream>
 #include <string>
@@ -101,6 +102,25 @@ int main()
     set.remove(1);
     set.insert(2);
     v = set.getRandom();
+  }
+
+  // First non-repeating ----------------------------------------------------
+  {
+    FirstNonRepeating fnr;
+    fnr.read('a');
+    char c = fnr.firstNonRepeating();
+    fnr.read('b');
+    c = fnr.firstNonRepeating();
+    fnr.read('c');
+    c = fnr.firstNonRepeating();
+    fnr.read('a');
+    c = fnr.firstNonRepeating();
+    fnr.read('c');
+    c = fnr.firstNonRepeating();
+    fnr.read('c');
+    c = fnr.firstNonRepeating();
+    fnr.read('b');
+    c = fnr.firstNonRepeating();
   }
 
   // Auto complete ----------------------------------------------------------

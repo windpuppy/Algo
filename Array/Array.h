@@ -1273,5 +1273,26 @@ public:
       ways *= ones[i] - ones[i - 1];
     return ways;
   }
+
+
+
+  // Square of a sorted array
+  // Given a non-decreasing sorted array, return its square version
+  // Input [-4 -1 0 3 10]
+  // Output [0 1 9 16 100]
+  // Naive solution O(nlogn): use binary search to locate the first non negative element then use two pointers to go inside-out
+  // Better solution O(n): user two pointers to go outside-in
+  vector<int> squaresOfSortedArray(vector<int>& nums) {
+    const int size = nums.size();
+    vector<int> res(size);
+    int l = 0, r = size - 1;
+    for (int i = r; i >= 0; --i) {
+      if (-nums[l] > nums[r])
+        res[i] = nums[l] * nums[l++];
+      else
+        res[i] = nums[r] * nums[r--];
+    }
+    return res;
+  }
 };
 

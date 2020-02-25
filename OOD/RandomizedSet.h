@@ -14,8 +14,8 @@
 using namespace std;
 
 class RandomizedSet {
-  vector<int> m_data;
-  unordered_map<int, int> m_map;
+  vector<int> data_;
+  unordered_map<int, int> map_;
 
 public:
   RandomizedSet() {
@@ -25,31 +25,33 @@ public:
   // O(1) insert
   // Return false if val already exists, otherwise insert and return true
   bool insert(int val) {
-    if (m_map.count(val)) return false;
+    if (map_.count(val)) return false;
 
-    m_data.push_back(val);
-    m_map[val] = m_data.size() - 1;
+    data_.push_back(val);
+    map_[val] = data_.size() - 1;
     return true;
   }
 
   // O(1) delete
   // Return false if val doesn't exist, otherwise remove it and return true
   bool remove(int val) {
-    auto it = m_map.find(val);
-    if (it == m_map.end()) return false;
+    auto it = map_.find(val);
+    if (it == map_.end()) return false;
 
-    int pos = it->second;
-    m_data[pos] = m_data.back();
-    m_data.pop_back();
+    // grab the tail item to current index, and update map
+    int index = it->second;
+    int tail = data_.back();
+    data_[index] = tail;
+    map_[tail] = index;
+    data_.pop_back();
 
-    m_map[m_data[pos]] = pos; // update map
-    m_map.erase(it);
+    map_.erase(it); // clean up
     return true;
   }
 
   // O(1) rand
   int getRandom() {
-    int pos = rand() % m_data.size();
-    return m_data[pos];
+    int pos = rand() % data_.size();
+    return data_[pos];
   }
 };

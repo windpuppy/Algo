@@ -7,7 +7,12 @@
 
 using namespace std;
 
-// Design a class that supports all following 4 operations with O(1) time
+// Implement a data structure supporting the following operations with O(1) time:
+// Inc(Key) - Inserts a new key with value 1. Or increments an existing key by 1. Key is guaranteed to be a non-empty string.
+// Dec(Key) - If Key's value is 1, remove it from the data structure. Otherwise decrements an existing key by 1.
+//   If the key does not exist, this function does nothing. Key is guaranteed to be a non-empty string.
+// GetMaxKey() - Returns one of the keys with maximal value. If no element exists, return an empty string "".
+// GetMinKey() - Returns one of the keys with minimal value. If no element exists, return an empty string "".
 
 // Implementation:
 // For each value, create a bucket that contains all the keys of that value (using a hashset for those keys, to support O(1) add/delete/find)
@@ -16,12 +21,12 @@ class AllOne {
 
   struct Bucket {
     int value;
-    unordered_set<string> keys;
+    unordered_set<string> keys; // we do not care about the order of those keys
   };
 
 private:
-  list<Bucket> buckets;
-  unordered_map<string, list<Bucket>::iterator> map;
+  list<Bucket> buckets_;
+  unordered_map<string, list<Bucket>::iterator> map_; // given a key, O(1) locate its containing bucket
 
 public:
 
@@ -30,58 +35,58 @@ public:
   // Insert if new, plus one if existing
   void inc(string key) {
     // A new key? Create it with value 0, add to map
-    if (!map.count(key)) {
-      auto it = buckets.insert(buckets.begin(), { 0, {key} });
-      map[key] = it;
+    if (!map_.count(key)) {
+      auto it = buckets_.insert(buckets_.begin(), { 0, {key} });
+      map_[key] = it;
     }
 
-    // (Optional) insert the key in the next bucket, update map
-    auto curr = map[key], next = curr;
+    // Insert the key in the next bucket (create one if it does not exist), update map
+    auto curr = map_[key], next = curr;
     next++;
     int newVal = curr->value + 1;
-    if (next == buckets.end() || next->value > newVal) // (bucket value + 1) does not exist
-      next = buckets.insert(next, { newVal, {} });
+    if (next == buckets_.end() || next->value > newVal) // (bucket value + 1) does not exist
+      next = buckets_.insert(next, { newVal, {} });
     next->keys.insert(key);
-    map[key] = next;
+    map_[key] = next;
 
     // Erase the key from the old bucket
     curr->keys.erase(key);
     if (curr->keys.empty())
-      buckets.erase(curr);
+      buckets_.erase(curr);
   }
 
   // Delete if value is 1, decrease one otherwise
   // Do nothing if key does not exist
   void dec(string key) {
     // If key doesn't exist, do nothing
-    if (!map.count(key)) return;
+    if (!map_.count(key)) return;
 
-    // (Optional) insert the key in the previous bucket, update map
-    auto curr = map[key], prev = curr;
+    // Insert the key in the previous bucket (create one if it does not exist), update map
+    auto curr = map_[key], prev = curr;
     prev--;
-    map.erase(key);
+    map_.erase(key);
     if (curr->value > 1) {
       int newVal = curr->value - 1;
-      if (curr == buckets.begin() || prev->value < newVal) // (bucket value - 1) does not exist
-        prev = buckets.insert(curr, { newVal, {} });
+      if (curr == buckets_.begin() || prev->value < newVal) // (bucket value - 1) does not exist
+        prev = buckets_.insert(curr, { newVal, {} });
       prev->keys.insert(key);
-      map[key] = prev;
+      map_[key] = prev;
     }
 
     // Erase the key from the old bucket
     curr->keys.erase(key);
     if (curr->keys.empty())
-      buckets.erase(curr);
+      buckets_.erase(curr);
   }
 
   // Get key of the max value
   string getMaxKey() {
-    return buckets.empty() ? "" : *(buckets.rbegin()->keys.begin());
+    return buckets_.empty() ? "" : *(buckets_.rbegin()->keys.begin());
   }
 
   // Get key of the min value
   string getMinKey() {
-    return buckets.empty() ? "" : *(buckets.begin()->keys.begin());
+    return buckets_.empty() ? "" : *(buckets_.begin()->keys.begin());
   }
 
 };
