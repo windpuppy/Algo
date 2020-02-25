@@ -21,22 +21,24 @@ using namespace std;
 // pop() will pop from the map[maxfreq]
 
 class MaxFreqStack {
-  unordered_map<int, int> m_freq; // <val, freq>
-  unordered_map<int, stack<int>> m_map; // <freq, elements with that freq>
-  int m_maxFreq = 0;
+  unordered_map<int, int> values_; // <value, freqency of that value>
+  unordered_map<int, stack<int>> freqs_; // <freq, values with that freq>
+  int maxFreq_ = 0;
 
 public:
   void push(int x) {
-    int f = ++m_freq[x];
-    m_map[f].push(x);
-    m_maxFreq = max(m_maxFreq, f);
+    int f = ++values_[x];
+    freqs_[f].push(x);
+    maxFreq_ = max(maxFreq_, f);
   }
 
   int pop() {
-    int x = m_map[m_maxFreq].top();
-    m_map[m_maxFreq].pop();
+    int x = freqs_[maxFreq_].top();
+    freqs_[maxFreq_].pop();
 
-    if (m_map[m_freq[x]--].empty()) m_maxFreq--;
+    int f = values_[x]--; // assign first, then --
+    if (freqs_[f].empty())
+      maxFreq_--;
     return x;
   }
 };
