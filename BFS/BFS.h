@@ -409,20 +409,21 @@ public:
   vector<int> smallestRange(vector<vector<int>> arrays) {
     int minVal = INT_MAX; // lower value of the final range
     int maxVal = INT_MIN; // higher value of the final range
-    priority_queue<Node, vector<Node>, NodeComparatorGreater> pq;
+    priority_queue<Node, vector<Node>, NodeComparatorGreater> minHeap;
     vector<int> res{ 0, INT_MAX };
 
     // push head element from all arrays,
     for (int n = 0; n < arrays.size(); ++n) {
       auto val = arrays[n].front();
-      pq.push(Node(val, n, 0));
+      minHeap.push(Node(val, n, 0));
       maxVal = max(maxVal, val);
     }
 
     while (true) {
-      minVal = pq.top().value;
-      auto i = pq.top().listIndex;
-      auto j = pq.top().nodeIndex;
+      minVal = minHeap.top().value;
+      auto i = minHeap.top().listIndex;
+      auto j = minHeap.top().nodeIndex;
+      minHeap.pop();
 
       // update result first
       if (maxVal - minVal < res[1] - res[0]) res = vector<int>{ minVal, maxVal };
@@ -434,8 +435,7 @@ public:
       j++;
       int nextVal = arrays[i][j];
       maxVal = max(maxVal, nextVal);
-      pq.pop();
-      pq.push(Node(nextVal, i, j));
+      minHeap.push(Node(nextVal, i, j));
     }
   }
 

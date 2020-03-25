@@ -127,7 +127,7 @@ public:
       int pos = -1;
       int len = 0;
       for (int j = 0; j < i; ++j)
-        if (M[j] > len&& nums[j] < nums[i]) {
+        if (M[j] > len && nums[j] < nums[i]) {
           len = M[j];
           pos = j;
         }
