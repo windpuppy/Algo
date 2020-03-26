@@ -19,10 +19,10 @@ using namespace std;
 //
 // Data structures used:
 // doubly LL: to contain all UNIQUE chars
-// hashmap<char, node>: eg. <a,null> <b,null> <c,null> <d,N4> d is the first non-repeating
-// case 1: if a char doesn't exist in map? new char
-// case 2: if a char exists in map, and its value is not null? it has appeared ONCE, so this new incoming one is a repeating, make it null
-// case 3: if a char exists in map, and its value is null? it has appeared more than once
+// hashmap<unique char, node>: for O(1) access to all unique chars
+// case 1: if a historically repeated char comes in, do nothing
+// case 2: if a unique char comes in, append it to the nodes
+// case 3: if a re-appearing char comes in, remove it from the node and node dictionary, add to the historical repeated char set
 
 class FirstNonRepeating {
 public:
@@ -34,13 +34,13 @@ public:
     if (repeated_.count(ch)) // repeating char, do nothing
       return;
 
-    if (!singled_.count(ch)) {
+    if (!nodesDict_.count(ch)) {
       nodes_.push_back(ch);
-      singled_[ch] = --nodes_.end();
+      nodesDict_[ch] = --nodes_.end();
     }
     else {
-      nodes_.erase(singled_[ch]);
-      singled_.erase(ch);
+      nodes_.erase(nodesDict_[ch]);
+      nodesDict_.erase(ch);
       repeated_.insert(ch);
     }
   }
@@ -55,7 +55,7 @@ public:
 
 private:
   list<char> nodes_;
-  unordered_map<char, list<char>::iterator> singled_;
+  unordered_map<char, list<char>::iterator> nodesDict_;
   unordered_set<char> repeated_;
 };
 

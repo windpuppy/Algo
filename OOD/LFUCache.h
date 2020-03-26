@@ -22,7 +22,7 @@ using namespace std;
 // Then we use a global unordered_map<int, pair<Iit, Jit>> to gain O(1) access of all nodes.
 //    where int is key, Iit and Jit are iterators along both directions
 
-typedef pair<int, int> Node;
+typedef pair<int, int> Node; // <key, value>
 
 struct Bucket {
   int freq;

@@ -11,6 +11,8 @@ public:
   virtual void HandleNotification() = 0;
 };
 
+
+
 class Observer : public IObserver {
 public:
   Observer() :number_(0) {};

@@ -150,9 +150,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Notifier.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="Sender.h" />
+    <ClInclude Include="Observer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

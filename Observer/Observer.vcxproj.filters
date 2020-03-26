@@ -23,9 +23,6 @@
     <ClInclude Include="Observer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Notifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
