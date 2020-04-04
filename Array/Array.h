@@ -1294,5 +1294,36 @@ public:
     }
     return res;
   }
+
+
+
+  // Happy number
+  // e.g. 19 is a happy number because 1^2 + 9^2 = 82, 8^2 + 2^2 = 68, etc etc it loops back to 1
+  // if it loops back to any number other than 1, it's not a happy number
+  bool HappyNumber(int n) {
+      unordered_set<int> s;
+      s.insert(n);
+
+      auto getNext = [&](int n) {
+          int next = 0;
+          while (n != 0) {
+              int d = n % 10; // last digit
+              n /= 10;
+              next += d * d;
+          }
+          return next;
+      };
+
+      while (true) {
+          n = getNext(n);
+          if (n == 1)
+              return true;
+          else if (s.count(n))
+              return false;
+          else
+              s.insert(n);
+      }
+      return false; // won't reach here
+  }
 };
 

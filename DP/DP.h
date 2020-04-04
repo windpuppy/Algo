@@ -429,7 +429,7 @@ public:
     if (nums.empty()) return 0;
     const int n = nums.size();
     vector<int> M(nums);
-    int globalMax = nums[0];
+    int globalMax = nums[0]; // Not zero!!
 
     for (int i = 1; i < n; ++i) {
       int contrib = max(M[i - 1], 0);

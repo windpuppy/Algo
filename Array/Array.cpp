@@ -226,6 +226,12 @@ int main()
     auto res = sol.maxSumPartition(nums, 3);
   }
 
+  // Happy number
+  {
+      auto res = sol.HappyNumber(19); // true
+      res = sol.HappyNumber(2); // false
+  }
+
   cin.get();
   return 0;
 }
