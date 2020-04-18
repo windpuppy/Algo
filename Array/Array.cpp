@@ -2,237 +2,252 @@
 
 int main()
 {
-  Array sol;
+    Array sol;
 
-  // Merge two sorted arrays
-  {
-    vector<int> one{ 1,3,5,10,100,2000};
-    vector<int> two{ 50,99,1999,5000 };
-    auto res = sol.mergeTwoSortedArrays(one, two);
-  }
+    // Merge two sorted arrays
+    {
+        vector<int> one{ 1,3,5,10,100,2000};
+        vector<int> two{ 50,99,1999,5000 };
+        auto res = sol.mergeTwoSortedArrays(one, two);
+    }
 
-  // Merge two sorted arrays
-  {
-    vector<int> one{ 1,3,5,10,100,2000,-1,-1,-1,-1 };
-    vector<int> two{ 50,99,1999,5000 };
+    {
+        vector<int> one{ 1, 2, 3, 0, 0, 0 };
+        vector<int> two{ 2, 5, 6 };
+        sol.mergeTwoSortedArrays2(one, 3, two, 3);
+    }
 
-    auto res = sol.mergeTwoSortedArrays2(one, 6, two, 4);
-  }
+    // Merge two sorted arrays
+    {
+        vector<int> one{ 1,3,5,10,100,2000,-1,-1,-1,-1 };
+        vector<int> two{ 50,99,1999,5000 };
 
-  // Common numbers of arrays
-  {
-    vector<int> one{ 1, 2, 3 };
-    vector<int> two{ 3, 1, 4 };
-    auto res = sol.commonNumbersOfTwoArrays(one, two);
-  }
+        sol.mergeTwoSortedArrays3(one, 6, two, 4);
+    }
 
-  // Common numbers of arrays 2 (with duplicates)
-  {
-    vector<int> one{ 1, 2, 3, 2 };
-    vector<int> two{ 3, 4, 2, 2, 2 };
-    auto res = sol.commonNumbersOfTwoArrays2(one, two);
-  }
+    // Common numbers of arrays
+    {
+        vector<int> one{ 1, 2, 3 };
+        vector<int> two{ 3, 1, 4 };
+        auto res = sol.commonNumbersOfTwoArrays(one, two);
+        res = sol.commonNumbersOfTwoArrays2(one, two);
+    }
 
-  // Integer to roman
-  {
-    auto res = sol.intToRoman(3999);
-  }
+    // Common numbers of arrays 3 (with duplicates)
+    {
+        vector<int> one{ 1, 2, 3, 2 };
+        vector<int> two{ 3, 4, 2, 2, 2 };
+        auto res = sol.commonNumbersOfTwoArrays3(one, two);
+    }
 
-  // 2 Sum
-  {
-    auto res = sol.TwoSum(vector<int>{2, 4, 2, 1}, 4);
-    res = sol.TwoSum(vector<int>{2, 4, 1}, 4);
-  }
+    // Integer to roman
+    {
+        auto res = sol.intToRoman(4);
+        res = sol.intToRoman(9);
+        res = sol.intToRoman(58);
+        res = sol.intToRoman(3999);
+    }
 
-  // 2 Sum all pairs
-  {
-    auto res = sol.TwoSumAllPairs(vector<int>{1, 3, 2, 4}, 5);
-  }
+    // Roman to integer
+    {
+        auto res = sol.romanToInt("IX");
+    }
 
-  // 2 Sum all pairs 2
-  {
-    auto res = sol.TwoSumAllPairs2(vector<int>{1, 2, 3, 1, 2, 3, 2, 2, 2}, 4);
-  }
+    // 2 Sum
+    {
+        auto res = sol.TwoSum(vector<int>{2, 4, 2, 1}, 4);
+        res = sol.TwoSum(vector<int>{2, 4, 1}, 4);
+    }
 
-  // 2 Sum closest
-  {
-    auto res = sol.TwoSumClosest(vector<int>{1, 4, 7, 13}, 7); // 1, 7
-    res = sol.TwoSumClosest(vector<int>{1, 2, 3}, -100);
-  }
+    // 2 Sum all pairs
+    {
+        auto res = sol.TwoSumAllPairs(vector<int>{1, 3, 2, 4}, 5);
+    }
 
-  // 2 Sum smaller
-  {
-    auto res = sol.TwoSumSmaller(vector<int>{1, 2, 3, 4, 5, 6}, 8);
-  }
+    // 2 Sum all pairs 2
+    {
+        auto res = sol.TwoSumAllPairs2(vector<int>{1, 2, 3, 1, 2, 3, 2, 2, 2}, 4);
+    }
 
-  // 2 Sum 2 arrays
-  {
-    auto res = sol.TwoSumTwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 7);
-  }
+    // 2 Sum closest
+    {
+        auto res = sol.TwoSumClosest(vector<int>{1, 4, 7, 13}, 7); // 1, 7
+        res = sol.TwoSumClosest(vector<int>{1, 2, 3}, -100);
+    }
 
-  // 3 Sum
-  {
-    auto res = sol.ThreeSum(vector<int>{1, 2, 2, 3, 2, 4}, 8);
-  }
+    // 2 Sum smaller
+    {
+        auto res = sol.TwoSumSmaller(vector<int>{1, 2, 3, 4, 5, 6}, 8);
+    }
 
-  // 3 Sum 3 arrays
-  {
-    auto res = sol.ThreeSumThreeArrays(vector<int>{1, 3, 5}, vector<int>{8, 2}, vector<int>{3}, 14);
-  }
+    // 2 Sum 2 arrays
+    {
+        auto res = sol.TwoSumTwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 7);
+    }
 
-  // 4 Sum
-  {
-    auto res = sol.FourSum(vector<int>{1, 2, 2, 3, 4}, 9);
-  }
+    // 3 Sum
+    {
+        auto res = sol.ThreeSum(vector<int>{1, 2, 2, 3, 2, 4}, 8);
+    }
 
-  // 2 Diff
-  {
-    auto res = sol.TwoDiff(vector<int>{1, 2}, -1);
-    res = sol.TwoDiff(vector<int>{1, 2, 3, 4}, -3);
-    res = sol.TwoDiff(vector<int>{1, 2, 3, 4, 5}, 0);
-    res = sol.TwoDiff(vector<int>{1, 4, 4, 8, 14}, 0);
-  }
+    // 3 Sum 3 arrays
+    {
+        auto res = sol.ThreeSumThreeArrays(vector<int>{1, 3, 5}, vector<int>{8, 2}, vector<int>{3}, 14);
+    }
 
-  // Longest subarray sum K
-  {
-    auto res = sol.longestSubArraySumK(vector<int>{1, -1, 5, -2, 3}, 3); // 4
-  }
+    // 4 Sum
+    {
+        auto res = sol.FourSum(vector<int>{1, 2, 2, 3, 4}, 9);
+    }
 
-  // Product except itself
-  {
-    auto res = sol.productExceptSelf(vector<int>{1, 2, 3, 4});
-  }
+    // 2 Diff
+    {
+        auto res = sol.TwoDiff(vector<int>{1, 2}, -1);
+        res = sol.TwoDiff(vector<int>{1, 2, 3, 4}, -3);
+        res = sol.TwoDiff(vector<int>{1, 2, 3, 4, 5}, 0);
+        res = sol.TwoDiff(vector<int>{1, 4, 4, 8, 14}, 0);
+    }
 
-  // Celebrity problem
-  {
-    vector<vector<int>> matrix{ { 0, 1, 1 },{ 0, 0, 0 },{ 1, 1, 0 } };
-    auto res = sol.celebrity(matrix); // 1
-  }
+    // Longest subarray sum K
+    {
+        auto res = sol.longestSubArraySumK(vector<int>{1, -1, 5, -2, 3}, 3); // 4
+    }
 
-  // Get count array
-  {
-    vector<int> input{ 4, 1, 3, 2 };
-    auto res = sol.getCountArray(input);
-  }
+    // Product except itself
+    {
+        auto res = sol.productExceptSelf(vector<int>{1, 2, 3, 4});
+    }
 
-  // Largest and second largest
-  {
-    vector<int> input{ 2, 1, 3, 4 };
-    auto res = sol.largestAndSecondLargest(input);
-    vector<int> input2{ 2, 1, 5, 3, 4 };
-    res = sol.largestAndSecondLargest(input2);
-    res = sol.largestAndSecondLargest(vector<int>{5, 4, 2, 1, 3, 6});
-  }
+    // Celebrity problem
+    {
+        vector<vector<int>> matrix{ { 0, 1, 1 },{ 0, 0, 0 },{ 1, 1, 0 } };
+        auto res = sol.celebrity(matrix); // 1
+    }
 
-  // Least swaps
-  {
-    vector<int> input{ 5, 2, 3, 1, 4 };
-    auto res = sol.leastSwaps(input);
+    // Get count array
+    {
+        vector<int> input{ 4, 1, 3, 2 };
+        auto res = sol.getCountArray(input);
+    }
 
-    vector<int> input2{-282, -69, 421, 270, -236, -180, -267, -486, 147, 235, 108, -415, -258, 477, 0, -304, -191, -206, -173, -229, 362, -280, 68, 473, -339, 143, 384, -332, -231, -320, 212, -9, -78, -116, -447, 7, -261, -79, -211, 340, -252, -209, 481, -234, 67, -411, 223, -166, -430, -41, -178, -310, -133, -365, -205, -269, -172, 318, -109, -349, -72, -449, -41, -112, 439, -472, 166, 433, 322, 159, -155, 463, 473, -376, -89, -472, 31, -159, -386, 95, -295, 141, -63, 341, -146};
-    res = sol.leastSwaps(input2);
-  }
+    // Largest and second largest
+    {
+        vector<int> input{ 2, 1, 3, 4 };
+        auto res = sol.largestAndSecondLargest(input);
+        vector<int> input2{ 2, 1, 5, 3, 4 };
+        res = sol.largestAndSecondLargest(input2);
+        res = sol.largestAndSecondLargest(vector<int>{5, 4, 2, 1, 3, 6});
+    }
 
-  // Merge k sorted arrays
-  {
-    vector<vector<int>> arrays{ {3}, {1, 2, 3, 4, 5} };
-    auto res = sol.mergeKSortedArrays(arrays);
-  }
+    // Least swaps
+    {
+        vector<int> input{ 5, 2, 3, 1, 4 };
+        auto res = sol.leastSwaps(input);
 
-  // Max values of size K sliding windows
-  {
-    vector<int> input{ 1, 2, 3, 2, 4, 2, 1 };
-    auto res = sol.maxValueOfSizeKSlidingWindows(input, 3);
-    vector<int> input2{ 3, 2, 1, 2, 4, 2, 1 };
-    res = sol.maxValueOfSizeKSlidingWindows(input2, 3);
-  }
+        vector<int> input2{-282, -69, 421, 270, -236, -180, -267, -486, 147, 235, 108, -415, -258, 477, 0, -304, -191, -206, -173, -229, 362, -280, 68, 473, -339, 143, 384, -332, -231, -320, 212, -9, -78, -116, -447, 7, -261, -79, -211, 340, -252, -209, 481, -234, 67, -411, 223, -166, -430, -41, -178, -310, -133, -365, -205, -269, -172, 318, -109, -349, -72, -449, -41, -112, 439, -472, 166, 433, 322, 159, -155, 463, 473, -376, -89, -472, 31, -159, -386, 95, -295, 141, -63, 341, -146};
+        res = sol.leastSwaps(input2);
+    }
 
-  // Array dedup - sorted
-  {
-    vector<int> input{ 1, 2, 2, 3 };
-    auto res = sol.arrayDedup(input);
-  }
+    // Merge k sorted arrays
+    {
+        vector<vector<int>> arrays{ {3}, {1, 2, 3, 4, 5} };
+        auto res = sol.mergeKSortedArrays(arrays);
+    }
 
-  // Array dedup 2 - sorted, keep 2 of the dups
-  {
-    vector<int> input{ 1, 2, 2, 2, 3, 3 };
-    auto res = sol.arrayDedup2(input);
-    vector<int> input2{ 1, 1, 1 };
-    res = sol.arrayDedup2(input2);
-  }
+    // Max values of size K sliding windows
+    {
+        vector<int> input{ 1, 2, 3, 2, 4, 2, 1 };
+        auto res = sol.maxValueOfSizeKSlidingWindows(input, 3);
+        vector<int> input2{ 3, 2, 1, 2, 4, 2, 1 };
+        res = sol.maxValueOfSizeKSlidingWindows(input2, 3);
+    }
 
-  // Array dedup 3 - sorted, remove all dups
-  {
-    vector<int> input{ 1, 2, 2, 3, 3, 3 };
-    auto res = sol.arrayDedup3(input); // { 1 }
-    vector<int> input2{ 1, 1, 1 };
-    res = sol.arrayDedup3(input2); // { }
-    vector<int> input3{ 1, 2, 3 };
-    res = sol.arrayDedup3(input3); // { }
-  }
+    // Array dedup - sorted
+    {
+        vector<int> input{ 1, 2, 2, 3 };
+        auto res = sol.arrayDedup(input);
+    }
 
-  // Array dedup 4 - unsored, remove all dups
-  {
-    vector<int> input{ 1, 2, 3, 3, 3, 2, 2 };
-    auto res = sol.arrayDedup4(input); // { 1 c
-    vector<int> input2{ 1, 1, 2, 3, 3, 3, 2, 1, 6 };
-    res = sol.arrayDedup4(input2); // { 1 }
-  }
+    // Array dedup 2 - sorted, keep 2 of the dups
+    {
+        vector<int> input{ 1, 2, 2, 2, 3, 3 };
+        auto res = sol.arrayDedup2(input);
+        vector<int> input2{ 1, 1, 1 };
+        res = sol.arrayDedup2(input2);
+    }
 
-  // Next greater 2
-  {
-    auto res = sol.nextGreater2(vector<int>{1, 1, 1, 1, 1});
-  }
+    // Array dedup 3 - sorted, remove all dups
+    {
+        vector<int> input{ 1, 2, 2, 3, 3, 3 };
+        auto res = sol.arrayDedup3(input); // { 1 }
+        vector<int> input2{ 1, 1, 1 };
+        res = sol.arrayDedup3(input2); // { }
+        vector<int> input3{ 1, 2, 3 };
+        res = sol.arrayDedup3(input3); // { }
+    }
 
-  // Next greater 3
-  {
-    auto res = sol.nextGreater3(13542); // 14235
-    res = sol.nextGreater3(19999999999); // -1
-    res = sol.nextGreater3(11111);
-  }
+    // Array dedup 4 - unsored, remove all dups
+    {
+        vector<int> input{ 1, 2, 3, 3, 3, 2, 2 };
+        auto res = sol.arrayDedup4(input); // { 1 c
+        vector<int> input2{ 1, 1, 2, 3, 3, 3, 2, 1, 6 };
+        res = sol.arrayDedup4(input2); // { 1 }
+    }
 
-  // Subarray sum to target
-  {
-    auto res = sol.subArraySumToTarget(vector<int>{1, 5, 2, 4}, 7);
-  }
+    // Next greater 2
+    {
+        auto res = sol.nextGreater2(vector<int>{1, 1, 1, 1, 1});
+    }
 
-  // Minimum size subarray sum
-  {
-    auto res = sol.minimumSizeSubarraySum(vector<int>{ 1, 1 }, 3);
-    res = sol.minimumSizeSubarraySum(vector<int>{ 2, 3, 1, 2, 4, 3 }, 7);
-  }
+    // Next greater 3
+    {
+        auto res = sol.nextGreater3(13542); // 14235
+        res = sol.nextGreater3(19999999999); // -1
+        res = sol.nextGreater3(11111);
+    }
 
-  // Partition to two parts of equal sum
-  {
-    vector<int> nums{ 3, 3, 3, 4, 5 };
-    auto res = sol.canPartition(nums);
-    res = sol.canPartition2(nums);
-    res = sol.canPartition3(nums);
-  }
+    // Subarray sum to target
+    {
+        auto res = sol.subArraySumToTarget(vector<int>{1, 5, 2, 4}, 7);
+    }
 
-  // Equal sum partitions (look for the smallest sum, not the fewest partition!)
-  {
-    vector<int> nums{ 2, 5, 1, 3, 3, 7 };
-    auto res = sol.minEqualSumPartition(nums); // 7
-    vector<int> nums2{ 1, 1, 1, 1, 1 };
-    res = sol.minEqualSumPartition(nums2); // 1
-    vector<int> nums3{ 1, 2, 3, 4 };
-    res = sol.minEqualSumPartition(nums3); // 10
-  }
+    // Minimum size subarray sum
+    {
+        auto res = sol.minimumSizeSubarraySum(vector<int>{ 1, 1 }, 3);
+        res = sol.minimumSizeSubarraySum(vector<int>{ 2, 3, 1, 2, 4, 3 }, 7);
+    }
 
-  // Partition array for maximum sum
-  {
-    vector<int> nums{ 1, 15, 7, 9, 2, 5, 10 };
-    auto res = sol.maxSumPartition(nums, 3);
-  }
+    // Partition to two parts of equal sum
+    {
+        vector<int> nums{ 3, 3, 3, 4, 5 };
+        auto res = sol.canPartition(nums);
+        res = sol.canPartition2(nums);
+        res = sol.canPartition3(nums);
+    }
 
-  // Happy number
-  {
-      auto res = sol.HappyNumber(19); // true
-      res = sol.HappyNumber(2); // false
-  }
+    // Equal sum partitions (look for the smallest sum, not the fewest partition!)
+    {
+        vector<int> nums{ 2, 5, 1, 3, 3, 7 };
+        auto res = sol.minEqualSumPartition(nums); // 7
+        vector<int> nums2{ 1, 1, 1, 1, 1 };
+        res = sol.minEqualSumPartition(nums2); // 1
+        vector<int> nums3{ 1, 2, 3, 4 };
+        res = sol.minEqualSumPartition(nums3); // 10
+    }
 
-  cin.get();
-  return 0;
+    // Partition array for maximum sum
+    {
+        vector<int> nums{ 1, 15, 7, 9, 2, 5, 10 };
+        auto res = sol.maxSumPartition(nums, 3);
+    }
+
+    // Happy number
+    {
+            auto res = sol.HappyNumber(19); // true
+            res = sol.HappyNumber(2); // false
+    }
+
+    cin.get();
+    return 0;
 }
 
