@@ -11,6 +11,10 @@ int main()
     res = sol.ninetyFivePercentile_cheat(values);
   }
 
+  {
+      sol.samplingTest();
+  }
+
   cin.get();
   return 0;
 }

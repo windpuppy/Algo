@@ -24,6 +24,11 @@ public:
     return rand() % 5;
   }
 
+  int rand6() {
+      //srand(time(0));
+      return rand() % 6 + 1;
+  }
+
   int rand7byRand5() {
     srand(time(0));
     while (true) {
@@ -59,6 +64,26 @@ public:
     }
 
     return minHeap.top();
+  }
+
+  void samplingTest()
+  {
+      int step = 0, loop = 0;
+      std::vector<int> count(24, 0);
+      srand(time(0));
+
+      while (loop < 1000000) {
+          step += rand6();
+          if (step >= 24) {
+              loop++;
+              step -= 24;
+          }
+          count[step]++;
+      }
+
+      for (int n = 0; n < 24; ++n) {
+          cout << n << ": " << count[n] / 100 << "%" << endl;
+      }
   }
 };
 
