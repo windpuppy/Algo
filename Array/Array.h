@@ -20,58 +20,69 @@ class Array {
 public:
     // Merge one and two into three
     // Time: O(m+n), Space: O(1)
-    vector<int> mergeTwoSortedArrays(vector<int>& one, vector<int>& two) {
-        vector<int> res(one.size() + two.size());
+    vector<int> mergeTwoSortedArrays(vector<int>& a, vector<int>& b) {
+        vector<int> c(a.size() + b.size());
         size_t i = 0, j = 0, k = 0;
-
-        while (k != res.size()) {
-            if (i == one.size())
-                res[k++] = two[j++];
-            else if (j == two.size())
-                res[k++] = one[i++];
+        while (k != c.size()) {
+            if (i != a.size() && j != b.size())
+                c[k++] = a[i] <= b[j] ? a[i++] : b[j++];
+            else if (i != a.size())
+                c[k++] = a[i++];
             else
-                res[k++] = one[i] <= two[j] ? one[i++] : two[j++];
+                c[k++] = b[j++];
         }
-        return res;
+        return c;
+    }
+
+    // The iterator version of the above
+    vector<int> mergeTwoSortedArraysIter(vector<int> a, vector<int> b) {
+        vector<int> c(a.size() + b.size());
+
+        auto i = a.begin(), j = b.begin();
+        for (auto k = 0; k != c.size(); ++k) {
+            if (i != a.end() && j != b.end())
+                c[k] = *i <= *j ? *i++ : *j++;
+            else if (i != a.end())
+                c[k] = *i++;
+            else
+                c[k] = *j++;  
+        }
+        return c;
     }
     
 
 
     // Merge two into one
-    // Note: m and n are not exactly the sizes of input array
+    // Note: m and n are not exactly the sizes of input array, but the number of elements to take
     // Time: O(m+n), Space: O(1)
-    void mergeTwoSortedArrays2(vector<int>& one, int m, vector<int>& two, int n) {
-        vector<int> res(one.size());
-        int i = 0, j = 0, k = 0;
-        
-        while (k != res.size()) {
-            if (i < m && j < n)
-                res[k++] = one[i] <= two[j] ? one[i++] : two[j++];
+    void mergeTwoSortedArrays2(vector<int>& a, int m, vector<int>& b, int n) {
+        vector<int> c(a.size());
+        size_t i = 0, j = 0, k = 0;
+
+        while (k != c.size()) {
+            if (i != m && j != n)
+                c[k++] = a[i] <= b[j] ? a[i++] : b[j++];
+            else if (i != m)
+                c[k++] = a[i++];
             else
-                res[k++] = i == m ? two[j++] : one[i++];
+                c[k++] = b[j++];
         }
-        
-        one = res;
+        a = c;
     }
 
     // Slightly more efficient solution here
-    // as we don't have to go through all the trailing zeros in one
-    // e.g.
-    // one = [1, 2, 3, 0, 0, 0, 0, 0, 0], m = 3
-    // two = [2, 5], n = 3
-    // Output: [1, 2, 2, 3, 5, 0, 0, 0, 0]
-    void mergeTwoSortedArrays3(vector<int>& one, int m, vector<int>& two, int n) {
-        vector<int> res(one.size());
-        int i = 0, j = 0, k = 0;
+    void mergeTwoSortedArrays3(vector<int>& a, int m, vector<int>& b, int n) {
+        vector<int> c(a.size());
+        size_t i = 0, j = 0, k = 0;
 
-        while (i < m && j < n)
-            res[k++] = one[i] <= two[j] ? one[i++] : two[j++];
-        while (i < m)
-            res[k++] = one[i++];
-        while (j < n)
-            res[k++] = two[j++];
+        while (i != m && j != n)
+            c[k++] = a[i] <= b[j] ? a[i++] : b[j++];
+        while (i != m)
+            c[k++] = a[i++];
+        while (j != n)
+            c[k++] = b[j++];
 
-        one = res;
+        a = c;
     }
 
 

@@ -4,27 +4,6 @@ int main()
 {
     Array sol;
 
-    // Merge two sorted arrays
-    {
-        vector<int> one{ 1,3,5,10,100,2000};
-        vector<int> two{ 50,99,1999,5000 };
-        auto res = sol.mergeTwoSortedArrays(one, two);
-    }
-
-    {
-        vector<int> one{ 1, 2, 3, 0, 0, 0 };
-        vector<int> two{ 2, 5, 6 };
-        sol.mergeTwoSortedArrays2(one, 3, two, 3);
-    }
-
-    // Merge two sorted arrays
-    {
-        vector<int> one{ 1,3,5,10,100,2000,-1,-1,-1,-1 };
-        vector<int> two{ 50,99,1999,5000 };
-
-        sol.mergeTwoSortedArrays3(one, 6, two, 4);
-    }
-
     // Common numbers of arrays
     {
         vector<int> one{ 1, 2, 3 };
