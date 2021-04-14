@@ -32,4 +32,16 @@ namespace ArrayTests {
         vector<int> c{ 1, 2, 2, 3, 5, 6 };
         EXPECT_EQ(c, a);
     }
+
+    TEST(ArrayTests, CommonElements)
+    {
+        vector<int> a{ 1, 2, 3 };
+        vector<int> b{ 3, 1, 4 };
+        auto res = obj.commonNumbersOfTwoArrays(a, b);
+        vector<int> c{ 1, 3 };
+        EXPECT_EQ(c, res);
+
+        res = obj.commonNumbersOfTwoArrays2(a, b);
+        EXPECT_EQ(c, res);
+    }
 }

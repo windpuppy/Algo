@@ -87,29 +87,30 @@ public:
 
 
 
-    // Find common elements from two arrays (no duplicates)
+    // Find common elements from two arrays (both of which contain no duplicates)
     // [1,2,3], [3,1,4] => [1,3]
     // Use one map
     vector<int> commonNumbersOfTwoArrays(vector<int>& a, vector<int>& b) {
-        unordered_map<int, int> map;
-        for (auto n : a) map[n]++;
-        for (auto n : b) map[n]++;
-
+        unordered_map<int, int> m;
+        for (auto i : a) m[i]++;
+        for (auto i : b) m[i]++;
         vector<int> res;
-        for (auto it = map.cbegin(); it != map.cend(); ++it)
-            if (it->second > 1)
-                res.push_back(it->first);
+        for (auto i = m.begin(); i != m.end(); ++i) {
+            if (i->second > 1)
+                res.push_back(i->first);
+        }
         return res;
     }
 
     // Alternatively, use two sets
     vector<int> commonNumbersOfTwoArrays2(vector<int>& a, vector<int>& b) {
-        unordered_set<int> set(a.begin(), a.end());
-        unordered_set<int> set2(b.begin(), b.end());
-        for (auto n : b)
-            if (!set.count(n))
-                set2.erase(n);
-        return vector<int>(set2.begin(), set2.end());
+        unordered_set<int> s1(a.begin(), a.end());
+        unordered_set<int> s2(b.begin(), b.end());
+        for (auto n : a) {
+            if (s2.count(n) == 0)
+                s1.erase(n);
+        }
+        return vector<int>(s1.begin(), s1.end());
     }
 
 

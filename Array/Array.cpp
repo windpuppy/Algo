@@ -4,14 +4,6 @@ int main()
 {
     Array sol;
 
-    // Common numbers of arrays
-    {
-        vector<int> one{ 1, 2, 3 };
-        vector<int> two{ 3, 1, 4 };
-        auto res = sol.commonNumbersOfTwoArrays(one, two);
-        res = sol.commonNumbersOfTwoArrays2(one, two);
-    }
-
     // Common numbers of arrays 3 (with duplicates)
     {
         vector<int> one{ 1, 2, 3, 2 };
