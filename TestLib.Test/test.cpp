@@ -44,4 +44,11 @@ namespace ArrayTests {
         res = obj.commonNumbersOfTwoArrays2(a, b);
         EXPECT_EQ(c, res);
     }
+
+    TEST(ArrayTests, CommonElementsDuplicate)
+    {
+        vector<int> a{ 1, 2, 3, 2 };
+        vector<int> b{ 3, 4, 2, 2, 2 };
+        auto res = obj.commonNumbersOfTwoArrays3(a, b);
+    }
 }

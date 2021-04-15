@@ -118,17 +118,17 @@ public:
     // Common elements with duplicates
     // [1,2,3,2], [3,4,2,2,2] => [2,2,3]
     vector<int> commonNumbersOfTwoArrays3(vector<int> a, vector<int> b) {
-        unordered_map<int, int> map1, map2;
-        for (auto n : a) map1[n]++;
-        for (auto n : b) map2[n]++;
+        unordered_map<int, int> m1, m2;
+        for (auto n : a) m1[n]++;
+        for (auto n : b) m2[n]++;
 
         vector<int> res;
-        for (auto it = map1.cbegin(); it != map1.cend(); ++it) {
-            int key = it->first;
-            int val = it->second;
-            if (map2.count(key)) {
-                int val2 = map2[key];
-                int n = min(val, val2);
+        for (auto i = m1.begin(); i != m1.end(); ++i) {
+            int key = i->first;
+            int val = i->second;
+            
+            if (m2.count(key) != 0) {
+                int n = min(val, m2[key]);
                 res.insert(res.end(), n, key); // insert key for n times
             }
         }
