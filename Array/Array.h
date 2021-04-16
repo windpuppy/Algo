@@ -147,21 +147,33 @@ public:
     // M             1000
     // e.g.
     // 3 -> III, 4 -> IV, 9 -> IX, 58 -> LVIII, 1994 -> MCMXCIV
-    // Note: start trying from the largest number: 1000
+    // Key: pre-build dictionary, and start trying from the largest number: 1000
     string intToRoman(int number) {
-        // Trick: pre-build 4, 9, 40, 90, 400, 900 into a fixed dictionary
-        vector<int> nums = { 1,4,5,9,10,40,50,90,100,400,500,900,1000 };
-        vector<string> symbols = { "I","IV","V","IX","X","XL","L","XC","C","CD","D","CM","M" };
-        const int size = 13;
+        // pre-build 4, 9, 40, 90, 400, 900 into a fixed dictionary
+        map<int, string> m{
+            {1, "I"},
+            {4, "IV"},
+            {5, "V"},
+            {9, "IX"},
+            {10, "X"},
+            {40, "XL"},
+            {50, "L"},
+            {90, "XC"},
+            {100, "C"},
+            {400, "CD"},
+            {500, "D"},
+            {900, "CM"},
+            {1000, "M"}};
+
         string out;
-        for (int i = size - 1; i >= 0; --i) {
-            int n = nums[i];
-            string s = symbols[i];
+        for (auto i = m.rbegin(); i != m.rend(); ++i) {
+            int n = i->first;
+            string s = i->second;
 
             int div = number / n;
-            number = number % n;
-            while (div-- > 0)
+            while (div-- > 0) // eg. print "M" 9 times
                 out += s;
+            number %= n; // eg. 9843 becomes 843
         }
         return out;
     }
@@ -170,7 +182,7 @@ public:
 
     // Roman to integer
     // III -> 3, IV -> 4, IX -> 9, LVIII -> 58, MCMXCIV -> 1994
-    // Note: scan the string from right to left
+    // Key: scan the string from right to left
     // Hit a smaller numter? sum minus; hit a larger or equal number, sum plus
     int romanToInt(string s) {
         unordered_map<char, int> m = 
@@ -182,12 +194,15 @@ public:
             { 'D' , 500 },
             { 'M' , 1000 } };
 
-        int sum = m[s.back()];
-        for (int i = s.length() - 2; i >= 0; --i) {
-            if (m[s[i]] < m[s[i + 1]])
-                sum -= m[s[i]];
+        int sum = 0;
+        int prev = -1;
+        for (int i = s.length() - 1; i >= 0; --i) {
+            int curr = m[s[i]];
+            if (curr < prev)
+                sum -= curr; // eg. IV, hit V first, plus 5; then hit I, minus 1
             else
-                sum += m[s[i]];
+                sum += curr;
+            prev = curr;
         }
 
         return sum;

@@ -4,19 +4,6 @@ int main()
 {
     Array sol;
 
-    // Integer to roman
-    {
-        auto res = sol.intToRoman(4);
-        res = sol.intToRoman(9);
-        res = sol.intToRoman(58);
-        res = sol.intToRoman(3999);
-    }
-
-    // Roman to integer
-    {
-        auto res = sol.romanToInt("IX");
-    }
-
     // 2 Sum
     {
         auto res = sol.TwoSum(vector<int>{2, 4, 2, 1}, 4);

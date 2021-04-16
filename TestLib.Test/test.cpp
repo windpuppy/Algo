@@ -51,4 +51,32 @@ namespace ArrayTests {
         vector<int> b{ 3, 4, 2, 2, 2 };
         auto res = obj.commonNumbersOfTwoArrays3(a, b);
     }
+
+    TEST(ArrayTests, RomanToIngeter)
+    {
+        auto res = obj.intToRoman(4);
+        EXPECT_EQ("IV", res);
+        res = obj.intToRoman(9);
+        EXPECT_EQ("IX", res);
+        res = obj.intToRoman(53);
+        EXPECT_EQ("LIII", res);
+        res = obj.intToRoman(3999);
+        EXPECT_EQ("MMMCMXCIX", res);
+        res = obj.intToRoman(9843);
+        EXPECT_EQ("MMMMMMMMMDCCCXLIII", res);
+    }
+
+    TEST(ArrayTests, IntegerToRoman)
+    {
+        auto res = obj.romanToInt("III");
+        EXPECT_EQ(3, res);
+        res = obj.romanToInt("IV");
+        EXPECT_EQ(4, res);
+        res = obj.romanToInt("IX");
+        EXPECT_EQ(9, res);
+        res = obj.romanToInt("LVIII");
+        EXPECT_EQ(58, res);
+        res = obj.romanToInt("MCMXCIV");
+        EXPECT_EQ(1994, res);
+    }
 }
