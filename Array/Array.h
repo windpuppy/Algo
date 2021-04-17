@@ -196,7 +196,7 @@ public:
 
         int sum = 0;
         int prev = -1;
-        for (int i = s.length() - 1; i >= 0; --i) {
+        for (int i = (int)s.length(); i >= 0; --i) {
             int curr = m[s[i]];
             if (curr < prev)
                 sum -= curr; // eg. IV, hit V first, plus 5; then hit I, minus 1
@@ -231,13 +231,13 @@ public:
     // Two Sum, return a pair of index instead
     // If multiple solutions, return any pair
     vector<int> TwoSum2(vector<int>& nums, int target) {
-        unordered_map<int, int> map;
-        for (int i = 0; i < nums.size(); ++i) {
-            int needed = target - nums[i];
-            if (!map.count(needed))
-                map.insert({ nums[i], i });
+        unordered_map<int, int> m; // val, index
+        for (auto i = 0; i < nums.size(); ++i) {
+            auto needed = target - nums[i];
+            if (m.count(needed))
+                return vector<int>{m[needed], i};
             else
-                return vector<int>{map[needed], i};
+                m.insert({ nums[i], i });
         }
         return vector<int>();
     }

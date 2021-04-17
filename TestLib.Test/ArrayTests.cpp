@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
-#include "../Array/Array.h"
+#include "TestFixture.h"
+#include <Array/Array.h>
 
 namespace ArrayTests {
 
@@ -50,6 +50,8 @@ namespace ArrayTests {
         vector<int> a{ 1, 2, 3, 2 };
         vector<int> b{ 3, 4, 2, 2, 2 };
         auto res = obj.commonNumbersOfTwoArrays3(a, b);
+        vector<int> c{ 2, 2, 3 };
+        EXPECT_EQV(c, res);
     }
 
     TEST(ArrayTests, RomanToIngeter)
@@ -86,5 +88,12 @@ namespace ArrayTests {
         EXPECT_EQ(true, res);
         res = obj.TwoSum(vector<int>{2, 4, 1}, 4);
         EXPECT_EQ(false, res);
+    }
+
+    TEST(ArrayTests, TwoSumAnyPair)
+    {
+        auto res = obj.TwoSum2(vector<int>{2, 4, 2, 1, 3}, 4);
+        vector<int> a{ 0, 2 };
+        EXPECT_EQV(a, res);
     }
 }
