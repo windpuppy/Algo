@@ -4,12 +4,6 @@ int main()
 {
     Array sol;
 
-    // 2 Sum
-    {
-        auto res = sol.TwoSum(vector<int>{2, 4, 2, 1}, 4);
-        res = sol.TwoSum(vector<int>{2, 4, 1}, 4);
-    }
-
     // 2 Sum all pairs
     {
         auto res = sol.TwoSumAllPairs(vector<int>{1, 3, 2, 4}, 5);

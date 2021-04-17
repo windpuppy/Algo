@@ -217,11 +217,11 @@ public:
     // 
     // Note: typical two sum problems can also use sort + two pointers method, Time O(nlogn), but Space O(1) - eg. heap sort
     bool TwoSum(vector<int> nums, int target) {
-        unordered_set<int> set;
+        unordered_set<int> s;
         for (auto n : nums) {
-            if (set.count(target - n))
+            if (s.count(target - n))
                 return true;
-            set.insert(n);
+            s.insert(n);
         }
         return false;
     }

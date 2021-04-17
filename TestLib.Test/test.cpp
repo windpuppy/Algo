@@ -79,4 +79,12 @@ namespace ArrayTests {
         res = obj.romanToInt("MCMXCIV");
         EXPECT_EQ(1994, res);
     }
+
+    TEST(ArrayTests, TwoSum)
+    {
+        auto res = obj.TwoSum(vector<int>{2, 4, 2, 1}, 4);
+        EXPECT_EQ(true, res);
+        res = obj.TwoSum(vector<int>{2, 4, 1}, 4);
+        EXPECT_EQ(false, res);
+    }
 }
