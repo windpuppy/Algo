@@ -248,17 +248,18 @@ public:
     // User a book to record <i, vector<all i's locations>>
     vector<vector<int>> TwoSumAllPairs(vector<int> input, int target) {
         vector<vector<int>> res;
-        unordered_map<int, vector<int>> map; //<i, vector<all i's locations>>
+        unordered_map<int, vector<int>> m; // <i, vector<all i's locations>>
 
-        for (int i = 0; i < input.size(); ++i) {
-            if (map.count(target - input[i])) {
-                auto indices = map[target - input[i]];
-                for (auto j : indices)
-                    res.push_back(vector<int>{j, i});
+        for (int i = 0; i < (int)input.size(); ++i) {
+            int num = input[i];
+            int needed = target - num;
+
+            if (m.count(needed) > 0) {
+                for (auto j : m[needed])
+                    res.push_back(vector<int>{j, i}); // j always on i's left
             }
 
-            // do this regardless
-            map[input[i]].push_back(i);
+            m[num].push_back(i); // push regardless
         }
         return res;
     }

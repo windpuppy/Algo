@@ -96,4 +96,13 @@ namespace ArrayTests {
         vector<int> a{ 0, 2 };
         EXPECT_EQV(a, res);
     }
+
+    TEST(ArrayTests, TwoSumAllPairs)
+    {
+        auto res = obj.TwoSumAllPairs(vector<int>{1, 4, 0, 2, 3, 4}, 5);
+        vector<vector<int>> a{ vector<int>{0, 1}, vector<int>{3, 4}, vector<int>{0, 5} };
+        EXPECT_EQV(a[0], res[0]);
+        EXPECT_EQV(a[1], res[1]);
+        EXPECT_EQV(a[2], res[2]);
+    }
 }
