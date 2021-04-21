@@ -216,7 +216,7 @@ public:
     // space: O(n)
     // 
     // Note: typical two sum problems can also use sort + two pointers method, Time O(nlogn), but Space O(1) - eg. heap sort
-    bool TwoSum(vector<int> nums, int target) {
+    bool TwoSum_Values_Any(vector<int> nums, int target) {
         unordered_set<int> s;
         for (auto n : nums) {
             if (s.count(target - n))
@@ -230,7 +230,7 @@ public:
 
     // Two Sum, return a pair of index instead
     // If multiple solutions, return any pair
-    vector<int> TwoSum2(vector<int>& nums, int target) {
+    vector<int> TwoSum_Indices_Any(vector<int>& nums, int target) {
         unordered_map<int, int> m; // val, index
         for (auto i = 0; i < nums.size(); ++i) {
             auto needed = target - nums[i];
@@ -244,9 +244,9 @@ public:
 
 
 
-    // Two Sum, return all pairs (their indices, not values)
+    // Two Sum, return all qualified indices, no dedup
     // User a book to record <i, vector<all i's locations>>
-    vector<vector<int>> TwoSumAllPairs(vector<int> input, int target) {
+    vector<vector<int>> TwoSum_Indices_All(vector<int> input, int target) {
         vector<vector<int>> res;
         unordered_map<int, vector<int>> m; // <i, vector<all i's locations>>
 
@@ -266,28 +266,28 @@ public:
 
 
 
-    // Need to dedup result
-    // Use one set to record i, another to record all visited & qualified pairs so we don't repeat
+    // Two Sum, return all qualified values, dedup
+    // Use one set to record num & target, another set for visited
     // Potential space optimization:
     //     check map<int, count>, if count > 1, then skip
     //     https://docs.google.com/document/d/1Kh1KP02TH1j-Lcjuntr0V0xTkglENgRggZ3iV79xsoQ/edit
-    vector<vector<int>> TwoSumAllPairs2(vector<int> input, int target) {
+    vector<vector<int>> TwoSum_Values_Dedup(vector<int> input, int target) {
         vector<vector<int>> res;
-        unordered_set<int> set;
+        unordered_set<int> s;
         unordered_set<int> visited;
 
         for (auto n : input) {
             if (visited.count(n))
                 continue;
 
-            // A qualified pair? Push to result, and mark it "visited"
-            if (set.count(target - n)) {
-                res.push_back(vector<int>{n, target - n});
+            int needed = target - n;
+            if (s.count(needed)) {
+                res.push_back(vector<int>{needed, n});
                 visited.insert(n);
-                visited.insert(target - n);
+                visited.insert(needed);
             }
             else {
-                set.insert(n);
+                s.insert(n);
             }
         }
         return res;
@@ -298,30 +298,30 @@ public:
     // Sort + two pointers
     // Time: Sorting O(nlogn), plus O(n) single while loop, so it's O(nlogn)
     // Space: depending on the sorting, O(1) for heapsort, but we assume O(n) for mergesort, or O(logn) for quicksort
-    vector<int> TwoSumClosest(vector<int> input, int target) {
+    vector<int> TwoSum_Values_Closest(vector<int> input, int target) {
         sort(input.begin(), input.end());
         vector<int> res(2);
         int minDiff = INT_MAX;
-        int i = 0, j = input.size() - 1;
 
+        int i = 0, j = (int)input.size() - 1;
         while (i < j) {
-            int diff = target - (input[i] + input[j]);
+            int a = input[i];
+            int b = input[j];
+            int diff = target - a - b;
+
             if (diff == 0) {
-                res[0] = input[i];
-                res[1] = input[j];
-                return res;
+                return vector<int>{a, b}; // exact target
             }
             else {
                 if (abs(diff) < minDiff) {
+                    res = vector<int>{ a, b }; // update solution
                     minDiff = abs(diff);
-                    res[0] = input[i];
-                    res[1] = input[j];
                 }
 
                 if (diff > 0)
-                    i++;
+                    i++; // move left bound
                 else
-                    j--;
+                    j--; // reduce right bound
             }
         }
         return res;

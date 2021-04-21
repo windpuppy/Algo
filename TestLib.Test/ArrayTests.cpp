@@ -82,27 +82,46 @@ namespace ArrayTests {
         EXPECT_EQ(1994, res);
     }
 
-    TEST(ArrayTests, TwoSum)
+    TEST(ArrayTests, TwoSum_Values_Any)
     {
-        auto res = obj.TwoSum(vector<int>{2, 4, 2, 1}, 4);
+        auto res = obj.TwoSum_Values_Any(vector<int>{2, 4, 2, 1}, 4);
         EXPECT_EQ(true, res);
-        res = obj.TwoSum(vector<int>{2, 4, 1}, 4);
+        res = obj.TwoSum_Values_Any(vector<int>{2, 4, 1}, 4);
         EXPECT_EQ(false, res);
     }
 
-    TEST(ArrayTests, TwoSumAnyPair)
+    TEST(ArrayTests, TwoSum_Indices_Any)
     {
-        auto res = obj.TwoSum2(vector<int>{2, 4, 2, 1, 3}, 4);
+        auto res = obj.TwoSum_Indices_Any(vector<int>{2, 4, 2, 1, 3}, 4);
         vector<int> a{ 0, 2 };
         EXPECT_EQV(a, res);
     }
 
-    TEST(ArrayTests, TwoSumAllPairs)
+    TEST(ArrayTests, TwoSum_Indices_All)
     {
-        auto res = obj.TwoSumAllPairs(vector<int>{1, 4, 0, 2, 3, 4}, 5);
+        auto res = obj.TwoSum_Indices_All(vector<int>{1, 4, 0, 2, 3, 4}, 5);
         vector<vector<int>> a{ vector<int>{0, 1}, vector<int>{3, 4}, vector<int>{0, 5} };
         EXPECT_EQV(a[0], res[0]);
         EXPECT_EQV(a[1], res[1]);
         EXPECT_EQV(a[2], res[2]);
+    }
+
+    TEST(ArrayTests, TwoSum_Values_Dedup)
+    {
+        auto res = obj.TwoSum_Values_Dedup(vector<int>{1, 4, 0, 2, 3, 4}, 5);
+        vector<vector<int>> a{ vector<int>{1, 4}, vector<int>{2, 3} };
+        EXPECT_EQV(a[0], res[0]);
+        EXPECT_EQV(a[1], res[1]);
+    }
+
+    TEST(ArrayTests, TwoSum_Values_Closest)
+    {
+        auto res = obj.TwoSum_Values_Closest(vector<int>{1, 4, 7, 13}, 7); // 1, 7
+        vector<int> a{ 1, 7 };
+        EXPECT_EQV(a, res);
+
+        res = obj.TwoSum_Values_Closest(vector<int>{1, 2, 3}, -100);
+        vector<int> b{ 1, 2 };
+        EXPECT_EQV(b, res);
     }
 }

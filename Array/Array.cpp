@@ -4,17 +4,6 @@ int main()
 {
     Array sol;
 
-    // 2 Sum all pairs 2
-    {
-        auto res = sol.TwoSumAllPairs2(vector<int>{1, 2, 3, 1, 2, 3, 2, 2, 2}, 4);
-    }
-
-    // 2 Sum closest
-    {
-        auto res = sol.TwoSumClosest(vector<int>{1, 4, 7, 13}, 7); // 1, 7
-        res = sol.TwoSumClosest(vector<int>{1, 2, 3}, -100);
-    }
-
     // 2 Sum smaller
     {
         auto res = sol.TwoSumSmaller(vector<int>{1, 2, 3, 4, 5, 6}, 8);
