@@ -4,11 +4,6 @@ int main()
 {
     Array sol;
 
-    // 2 Sum smaller
-    {
-        auto res = sol.TwoSumSmaller(vector<int>{1, 2, 3, 4, 5, 6}, 8);
-    }
-
     // 2 Sum 2 arrays
     {
         auto res = sol.TwoSumTwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 7);

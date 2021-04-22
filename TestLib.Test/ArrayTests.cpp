@@ -124,4 +124,13 @@ namespace ArrayTests {
         vector<int> b{ 1, 2 };
         EXPECT_EQV(b, res);
     }
+
+    TEST(ArrayTests, TwoSum_NumPairs_Smaller)
+    {
+        auto res = obj.TwoSum_NumPairs_Smaller(vector<int>{1, 2, 3, 4, 5, 6}, 8);
+        EXPECT_EQ(9, res);
+
+        res = obj.TwoSum_NumPairs_Smaller(vector<int>{1, 5, 4, 3, 2, 6}, 8);
+        EXPECT_EQ(9, res);
+    }
 }

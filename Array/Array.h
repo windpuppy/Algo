@@ -329,17 +329,21 @@ public:
 
 
 
-    // Count 2sum pairs smaller than target
+    // Count number of 2sum pairs smaller than target
+    // Note: sort first, then use two pointers
     // For each i,j pair, if sum < target, elements from i to j-1 all form valid pairs
     // Time: O(nlogn) because of sorting, Space: O(1)
-    int TwoSumSmaller(vector<int> nums, int target) {
+    int TwoSum_NumPairs_Smaller(vector<int> nums, int target) {
         sort(nums.begin(), nums.end());
-        int i = 0, j = nums.size() - 1, count = 0;
+        int i = 0, j = (int)nums.size() - 1, count = 0;
         while (i < j) {
-            if (nums[i] + nums[j] < target)
-                count += j - i++;
-            else
+            if (nums[i] + nums[j] < target) {
+                count += j - i;
+                i++;
+            }
+            else {
                 j--;
+            }
         }
         return count;
     }
