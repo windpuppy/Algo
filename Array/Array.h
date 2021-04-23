@@ -351,16 +351,20 @@ public:
 
 
     // Return the largest sum smaller than target
-    int TwoSumSmaller2(vector<int>& nums, int target) {
+    // Note: sort first, then use two pointers
+    // Push both i and j. Once a valid pair is found, don't stop yet, can we push i further?
+    int TwoSum_MaxSum_Smaller(vector<int>& nums, int target) {
         sort(nums.begin(), nums.end());
-        int i = 0, j = nums.size() - 1, max = INT_MIN;
-        while(i < j) {
+        int i = 0, j = (int)nums.size() - 1, max = INT_MIN;
+        while (i < j) {
             int sum = nums[i] + nums[j];
-            if (sum < target && sum > max)
-                max = sum;
-
-            if (sum < target) i++;
-            else j--;
+            if (sum < target) {
+                max = std::max(max, sum);
+                i++;
+            }
+            else {
+                j--;
+            }
         }
         return max;
     }
