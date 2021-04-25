@@ -3,16 +3,10 @@
 int main()
 {
     Array sol;
+    
+    // 2 Sum BST
 
-    // 2 Sum 2 arrays
-    {
-        auto res = sol.TwoSumTwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 7);
-    }
 
-    // 3 Sum
-    {
-        auto res = sol.ThreeSum(vector<int>{1, 2, 2, 3, 2, 4}, 8);
-    }
 
     // 3 Sum 3 arrays
     {

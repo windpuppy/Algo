@@ -142,4 +142,20 @@ namespace ArrayTests {
         res = obj.TwoSum_MaxSum_Smaller(vector<int>{2, 4, 6, 8, 10}, 9);
         EXPECT_EQ(8, res);
     }
+
+    TEST(ArrayTests, TwoSum_TwoArrays)
+    {
+        auto res = obj.TwoSum_TwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 7);
+        EXPECT_TRUE(true);
+
+        res = obj.TwoSum_TwoArrays(vector<int>{3, 1, 5}, vector<int>{2, 8}, 10);
+        EXPECT_FALSE(res);
+    }
+
+    TEST(ArrayTests, ThreeSum_AllCombo)
+    {
+        vector<vector<int>> a{ vector<int>{1, 3, 4}, vector<int>{2, 2, 4} };
+        auto res = obj.ThreeSum_AllCombo(vector<int>{1, 2, 2, 3, 2, 4}, 8);
+        EXPECT_EQV(a, res);
+    }
 }

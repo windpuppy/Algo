@@ -16,6 +16,9 @@
 
 using namespace std;
 
+#pragma warning(push)
+#pragma warning(disable : 26451)
+
 class Array {
 public:
     // Merge one and two into three
@@ -373,15 +376,11 @@ public:
 
     // Two sum, pick one from each array
     // Hashset a, check b against it
-    bool TwoSumTwoArrays(vector<int> a, vector<int> b, int target) {
-        unordered_set<int> set;
-        for (auto i : a)
-            set.insert(i);
-
-        for (auto j : b)
-            if (set.find(target - j) != set.end())
+    bool TwoSum_TwoArrays(vector<int> a, vector<int> b, int target) {
+        unordered_set<int> s(a.begin(), a.end());
+        for (auto n : b)
+            if (s.count(target - n))
                 return true;
-
         return false;
     }
 
@@ -391,6 +390,7 @@ public:
     // Time: O(n)
     // Space: O(height)
     // Note: we can not use the BST property to go left and right, we have to search both subtree, because tree might contain negative elements
+    // eg. target 10, left 2, right 7. Go down further we might get left -1, right 11.
     bool TwoSumBST(TreeNode* root, int target) {
         if (!root) return false;
         unordered_set<int> set;
@@ -410,38 +410,42 @@ public:
     // Return 3 Sum, no duplicates
     // Solution:
     //     1. sort
-    //     2. pick i, use two pointers to run TwoSun in the rest elements
-    //     3. dedup i as well
+    //     2. pick i, use two pointers (j, k) to run TwoSun in the remaining elements
+    //     3. dedup i, j, k
+    //        - dedup i with i + 1
+    //        - dedup j with j + 1, and k with k - 1
     // Time: O(n^2)
-    vector<vector<int>> ThreeSum(vector<int> nums, int target) {
+    vector<vector<int>> ThreeSum_AllCombo(vector<int> nums, int target) {
         vector<vector<int>> res;
-        const int size = nums.size();
+        const int size = (int)nums.size();
         sort(nums.begin(), nums.end());
 
-        for (int k = 0; k < size; ++k) {
-            int targetSum = target - nums[k];
-            int i = k + 1;
-            int j = size - 1;
+        for (int i = 0; i < size; ++i) {
+            int needed = target - nums[i];
+            int j = i + 1, k = size - 1;
 
-            while (i < j) {
-                if (nums[i] + nums[j] < targetSum)
-                    i++;
-                else if (nums[i] + nums[j] > targetSum)
-                    j--;
+            while (j < k) {
+                int twoSum = nums[j] + nums[k];
+                if (twoSum < needed)
+                    j++;
+                else if (twoSum > needed)
+                    k--;
                 else {
-                    res.push_back(vector<int>{nums[k], nums[i], nums[j]});
+                    res.push_back(vector<int>{nums[i], nums[j], nums[k]}); // valid solution
 
-                    int front = nums[i++];
-                    while (i < j && nums[i] == front) i++; // dedup i
+                    j++;
+                    while (j < k && nums[j] == nums[j - 1])
+                        j++;
 
-                    int back = nums[j--];
-                    while (i < j && nums[j] == back) j--; // dedup j
+                    k--;
+                    while (k > j && nums[k] == nums[k + 1])
+                        k--;
                 }
+
+                while (i < size - 1 && nums[i] == nums[i + 1])
+                    i++;
             }
-
-            while (k + 1 < size && nums[k + 1] == nums[k]) k++; // dedup n
         }
-
         return res;
     }
 
@@ -1395,3 +1399,4 @@ public:
     }
 };
 
+#pragma warning(pop)
