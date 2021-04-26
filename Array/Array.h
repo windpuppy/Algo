@@ -453,14 +453,12 @@ public:
 
     // Similar to 2 sum 2 arrays
     // Hash a, use double for loop on b and c, check 2 sum against a
-    bool ThreeSumThreeArrays(vector<int> a, vector<int> b, vector<int> c, int target) {
-        unordered_set<int> set;
-        for (auto n : a)
-            set.insert(n);
-
+    // Time: O(n^2)
+    bool ThreeSum_ThreeArrays(vector<int> a, vector<int> b, vector<int> c, int target) {
+        unordered_set<int> s(a.begin(), a.end());
         for (auto i : b)
             for (auto j : c)
-                if (set.count(target - i - j))
+                if (s.count(target - i - j))
                     return true;
         return false;
     }

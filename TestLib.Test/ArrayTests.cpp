@@ -158,4 +158,10 @@ namespace ArrayTests {
         auto res = obj.ThreeSum_AllCombo(vector<int>{1, 2, 2, 3, 2, 4}, 8);
         EXPECT_EQV(a, res);
     }
+
+    TEST(ArrayTests, ThreeSum_ThreeArrays)
+    {
+        auto res = obj.ThreeSum_ThreeArrays(vector<int>{1, 3, 5}, vector<int>{8, 2}, vector<int>{3}, 14);
+        EXPECT_TRUE(res);
+    }
 }

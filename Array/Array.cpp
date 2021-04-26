@@ -8,11 +8,6 @@ int main()
 
 
 
-    // 3 Sum 3 arrays
-    {
-        auto res = sol.ThreeSumThreeArrays(vector<int>{1, 3, 5}, vector<int>{8, 2}, vector<int>{3}, 14);
-    }
-
     // 4 Sum
     {
         auto res = sol.FourSum(vector<int>{1, 2, 2, 3, 4}, 9);
