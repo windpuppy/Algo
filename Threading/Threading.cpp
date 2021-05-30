@@ -5,6 +5,8 @@
 #include <thread>
 #include <mutex> // mutex, unique_lock
 #include <condition_variable>
+#include <chrono>
+#include <future> // std::this_thread
 
 std::condition_variable cv;
 bool ready = false;
@@ -91,13 +93,33 @@ void print_send_receive() {
     }
 }
 
+
+
+
+// Sleep sort. Just for fun!
+void wait(int seconds) {
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+    std::cout << seconds << std::endl;
+}
+
+void sleepSort(std::vector<int>& nums) {
+    std::vector<std::thread> threadList;
+    for (auto n : nums)
+        threadList.push_back(std::thread(wait, n));
+
+    std::for_each(threadList.begin(), threadList.end(), std::mem_fn(&std::thread::join));
+}
+
 int main()
 {
     //print_two_lines();
     
-    print_race();
+    //print_race();
 
     //print_send_receive();
+
+    std::vector<int> v{ 1, 3, 5, 2, 4, 6 };
+    sleepSort(v);
 
     return 0;
 }

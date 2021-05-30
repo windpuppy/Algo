@@ -9,7 +9,6 @@
 #include <iostream>
 #include <chrono>
 #include <future>
-#include <thread>
 #include <Windows.h>
 
 using namespace std;
