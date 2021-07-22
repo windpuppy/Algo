@@ -141,6 +141,13 @@
   <ItemGroup>
     <ClCompile Include="Threading.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="PrintBlock.h" />
+    <ClInclude Include="PrintOrdered.h" />
+    <ClInclude Include="PrintRace.h" />
+    <ClInclude Include="SleepSort.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
