@@ -4,7 +4,35 @@
 namespace ArrayTests {
 
     Array obj;
+
+    class example {
+    public:
+        int* val;
+    };
     TEST(ArrayTests, Merge2SortedArrays) {
+        std::shared_ptr<example> e1;
+        std::shared_ptr<example> e2;
+        std::shared_ptr<example> e3;
+
+        std::vector<std::shared_ptr<example>*> vec { &e1, &e2, &e3 };
+        for(auto &n : vec) {
+            *n = std::make_shared<example>();
+            (*n)->val = new int[2]{ 1, 2 };
+        }
+
+        for (auto i = 0; i < vec.size(); ++i) {
+            *vec[i] = std::make_shared<example>();
+            (*vec[i])->val = new int[2]{ 3, 4 };
+        }
+
+        int g1 = e1->val[0];
+        int g2 = e1->val[1];
+        int g3 = e2->val[0];
+        int g4 = e2->val[1];
+        int g5 = e3->val[0];
+        int g6 = e3->val[1];
+
+
         vector<int> a{ 1, 3, 5, 10, 100, 2000 };
         vector<int> b{ 50, 99, 1999, 5000 };
         auto res = obj.mergeTwoSortedArrays(a, b);
