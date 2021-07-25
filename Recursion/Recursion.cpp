@@ -4,27 +4,6 @@ int main()
 {
   Recursion sol;
 
-  // Fibonnaci
-  {
-    auto res = sol.fibonacci(0); // 0
-    res = sol.fibonacci(1); // 1
-    res = sol.fibonacci(5); // 5
-    cout << endl;
-  }
-
-  // Power
-  {
-    auto res = sol.power(0, 2); // 0
-    res = sol.power(2, 0); // 1
-    res = sol.power(3, 4); // 81;
-    res = sol.power(3, 3); // 27
-  }
-
-  // String abbreviation matching
-  {
-    auto res = sol.stringAbbreviationMatching("lovercom", "3er3");
-  }
-
   // Spiral order traverse 1
   {
     vector<vector<int>> matrix {

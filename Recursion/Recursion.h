@@ -54,29 +54,30 @@ public:
     return match_recur(word, pattern, 0, 0);
   }
 
-  bool match_recur(string& s, string& t, int si, int ti) {
+  bool match_recur(string& s, string& p, int si, int pi) {
     int slen = s.length();
-    int tlen = t.length();
+    int plen = p.length();
 
-    // The ONLY base case that returns true
-    // when both s and t run out, we have a match
-    if (si == slen && ti == tlen)
+    // base case 1: if both s and t just run out, we have a match
+    if (si == slen && pi == plen)
       return true;
 
-    // if either of them runs out, no match
-    if (si >= slen || ti >= tlen)
+    // base case 2: if either of them runs out, no match
+    if (si >= slen || pi >= plen)
       return false;
 
-    // case 1: if current t is not a digit - easier case - keep matching
-    if (!isdigit(t[ti]))
-      return s[si] == t[ti] ? match_recur(s, t, si + 1, ti + 1) : false;
+    // Now look at pattern
+    char ch = p[pi];
 
-    // case 2: if current t is a digit - tougher case
-    // need to handle multiple digits
+    // case 1: if current p is not a digit - easy - keep matching
+    if (!isdigit(ch))
+      return s[si] == p[pi] ? match_recur(s, p, si + 1, pi + 1) : false;
+
+    // case 2: if current p is a digit - grab the number (can be multiple digits)
     int num = 0;
-    while (ti < tlen && isdigit(t[ti]))
-      num = num * 10 + t[ti++] - '0';
-    return match_recur(s, t, si + num, ti); // e.g. book skip "oo", pattern skip "2"
+    while (pi < plen && isdigit(ch))
+      num = num * 10 + p[pi++] - '0';
+    return match_recur(s, p, si + num, pi); // e.g. book skip "oo", pattern skip "2"
   }
 
 
