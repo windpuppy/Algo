@@ -35,5 +35,8 @@
     <ClInclude Include="SleepSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MainVersusWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

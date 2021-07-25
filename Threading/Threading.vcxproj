@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="MainVersusWorker.h" />
     <ClInclude Include="PrintBlock.h" />
     <ClInclude Include="PrintOrdered.h" />
     <ClInclude Include="PrintRace.h" />

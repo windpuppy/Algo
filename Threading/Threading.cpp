@@ -9,6 +9,7 @@
 #include "PrintBlock.h"
 #include "PrintRace.h"
 #include "PrintOrdered.h"
+#include "MainVersusWorker.h"
 #include "SleepSort.h"
 
 int main()
@@ -24,6 +25,10 @@ int main()
     // Print ordered race, to demonstrate cv controlled race
     PrintOrdered po;
     po.print_ordered();
+
+    // Main thread vs worker threads
+    MainVersusWorkder mvw;
+    mvw.print_range();
 
     // Sleep sort, just for fun
     std::vector<int> v{ 7, 10, 1, 8, 3, 5, 9, 2, 4, 6 };
