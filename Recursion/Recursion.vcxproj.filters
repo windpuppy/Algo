@@ -3,7 +3,4 @@
   <ItemGroup>
     <ClInclude Include="Recursion.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Recursion.cpp" />
-  </ItemGroup>
 </Project>
