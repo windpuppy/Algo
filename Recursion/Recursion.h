@@ -75,7 +75,7 @@ public:
 
     // case 2: if current p is a digit - grab the number (can be multiple digits)
     int num = 0;
-    while (pi < plen && isdigit(ch))
+    while (pi < plen && isdigit(p[pi]))
       num = num * 10 + p[pi++] - '0';
     return match_recur(s, p, si + num, pi); // e.g. book skip "oo", pattern skip "2"
   }
@@ -87,8 +87,10 @@ public:
   // | o o |
   // | o o |
   // | - - -
-  // starting from 1, we go right 3 times, down 3 times, up 3 times
+  // starting from 1, we traverse right, down, left, then up, to make a full circle
   // then call recursion for the inner matrix, of size - 2
+  // one circle is one recursion
+  // at each level, make sure to have 2 base cases: one for odd matrix, one for even matrix
   // Guaranteed - square matrix
   vector<int> spiralTraverse(vector<vector<int>>& matrix) {
     vector<int> res;
@@ -124,6 +126,8 @@ public:
 
 
   // Rectangular matrix, not neccesarily square
+  // Pretty much the same as the above square matrix handling
+  // Except we check single row / single column left situations
   vector<int> spiralTraverse2(vector<vector<int>>& matrix) {
     vector<int> res;
     const int height = matrix.size();

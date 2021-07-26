@@ -4,16 +4,7 @@ int main()
 {
   Recursion sol;
 
-  // Spiral order traverse 1
-  {
-    vector<vector<int>> matrix {
-      vector<int>{1, 2, 3, 4},
-      vector<int>{5, 6, 7, 8},
-      vector<int>{9, 10, 11, 12},
-      vector<int>{13, 14, 15, 16},
-    };
-    auto res = sol.spiralTraverse(matrix);
-  }
+
 
   // Spiral order traverse 2
   {

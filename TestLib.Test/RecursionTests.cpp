@@ -33,4 +33,27 @@ namespace RecursionTests {
         EXPECT_TRUE(res);
     }
 
+    TEST(RecursionTests, SpiralTraverse) {
+        vector<vector<int>> matrix{
+            vector<int>{1, 2, 3, 4},
+            vector<int>{5, 6, 7, 8},
+            vector<int>{9, 10, 11, 12},
+            vector<int>{13, 14, 15, 16},
+        };
+        auto res = obj.spiralTraverse(matrix);
+        vector<int> expected{ 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10 };
+        EXPECT_EQV(res, expected);
+    }
+
+    TEST(RecursionTests, SpiralTraverse2) {
+        vector<vector<int>> matrix{
+            vector<int>{1, 2, 3, 4},
+            vector<int>{5, 6, 7, 8},
+            vector<int>{9, 10, 11, 12}
+        };
+        auto res = obj.spiralTraverse2(matrix);
+        vector<int> expected{ 1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7};
+        EXPECT_EQV(res, expected);
+    }
+
 }
