@@ -151,44 +151,6 @@ int main()
 		cache.get(4);
 	}
 
-	// LRU Cache --------------------------------------------------------------
-	{
-		int val = 0;
-
-		LRUCache<int, int> c(2);
-		c.set(1, 1);   // [1]
-		c.set(2, 2);   // [2 1]
-		c.get(1, val); // [1 2] val = 1
-		c.set(3, 3);   // [3 1]
-		c.get(2, val); // false
-		c.set(4, 4);   // [4 3]
-		c.get(1, val); // false
-		c.get(3, val); // [3 4] val = 3
-		c.get(4, val); // [4 3] val = 4
-
-		LRUCacheInt c2(2);
-		c2.set(1, 1);   // [1]
-		c2.set(2, 2);   // [2 1]
-		c2.get(1, val); // [1 2] val = 1
-		c2.set(3, 3);   // [3 1]
-		c2.get(2, val); // false
-		c2.set(4, 4);   // [4 3]
-		c2.get(1, val); // false
-		c2.get(3, val); // [3 4] val = 3
-		c2.get(4, val); // [4 3] val = 4
-	}
-
-	// Threading --------------------------------------------------------------
-	{
-		std::thread t1(print_hello_1); // t1 starts running
-		cout << "hello 2" << endl;
-		//t1.join(); // main thread waits for t1
-		t1.detach(); // t1 freely runs on its own - deamon
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-		cout << "hello 3" << endl;
-	}
-
 	// Inheritence --------------------------------------------------------------
 	{
 		Parent* parent = new Parent(1, 2);

@@ -8,6 +8,7 @@ using namespace std;
 // 2. Need to have control of the head and tail of the list: head for most recent, tail for least recent
 // 3. Need to have an overview of all the nodes: map, for O(1) look up!
 //    map<key, Node<Key, value>>
+//    note: when saving node in the map, save it's iterator, NOT a deep copy of the node itself
 
 class LRUCacheInt {
 public:
@@ -35,6 +36,7 @@ public:
 			return;
 		}
 
+		// key not found, now we insert
 		// if cache is full, we need to evict one from the tail
 		if (nodes_.size() == limit_)
 			evict();
