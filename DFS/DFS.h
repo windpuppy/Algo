@@ -54,13 +54,13 @@ public:
 		queue<string> q;
 		q.push("");
 		while (!q.empty()) {
-		  string curr = q.front();
-		  q.pop();
-		  res.push_back(curr);
+			string curr = q.front();
+			q.pop();
+			res.push_back(curr);
 
-		  for (auto c : input)
-		    if (curr.empty() || curr.back() < c)
-		      q.push(curr + c);
+			for (auto c : input)
+				if (curr.empty() || curr.back() < c)
+					q.push(curr + c);
 		}
 		return res;
 	}

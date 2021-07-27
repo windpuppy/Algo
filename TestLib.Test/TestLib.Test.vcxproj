@@ -34,6 +34,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="ArrayTests.cpp" />
+    <ClCompile Include="BFSTests.cpp" />
     <ClCompile Include="DFSTests.cpp" />
     <ClCompile Include="RecursionTests.cpp" />
   </ItemGroup>
