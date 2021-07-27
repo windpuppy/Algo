@@ -138,13 +138,13 @@ public:
 
 		// Need to ierate through all nodes
 		for (auto n : graph)
-			if (!bipartitie_bfs(n, grouped))
+			if (!bipartite_bfs(n, grouped))
 				return false;
 
 		return true;
 	}
 
-	bool bipartitie_bfs(GraphNode* node, unordered_map<GraphNode*, int>& grouped) {
+	bool bipartite_bfs(GraphNode* node, unordered_map<GraphNode*, int>& grouped) {
 		// Already grouped? no need to check
 		if (grouped.count(node)) return true;
 
@@ -175,7 +175,8 @@ public:
 	}
 
 
-
+	// Given a 2D matrix, on each row it's monotonically increasing, same for columns
+	// Find the kth smallest element in that matrix
 	// Time: O(klogk)
 	// Space: O(k + n^2), k for heap, n^2 for 2-D map
 	// Solution: BFS, using a min heap
@@ -249,6 +250,7 @@ public:
 		return minHeap.top().value;
 	}
 
+	// Given k, get kth smallest product with 3&5&7 as the only factors
 	// Use min heap of size k
 	// push 3^1 * 5^1 * 7*1 into it
 	// keep pushing with adding a mutiplier from either one of 3/5/7
@@ -268,17 +270,17 @@ public:
 			prod = pq.top();
 			pq.pop();
 
-			if (visited.find(prod * 3) == visited.end()) {
+			if (visited.count(prod * 3) == 0) {
 				pq.push(prod * 3);
 				visited.insert(prod * 3);
 			}
 
-			if (visited.find(prod * 5) == visited.end()) {
+			if (visited.count(prod * 5) == 0) {
 				pq.push(prod * 5);
 				visited.insert(prod * 5);
 			}
 
-			if (visited.find(prod * 7) == visited.end()) {
+			if (visited.count(prod * 7) == 0) {
 				pq.push(prod * 7);
 				visited.insert(prod * 7);
 			}
@@ -289,9 +291,9 @@ public:
 	}
 
 	// Same as above
-	// Only difference: power starts from 0, not 1!
+	// Only difference: power of 2 and 3 instead of factors
 	int kthSmallest23(int k) {
-		long prod = 1; // 2^0 * 3^0
+		long prod = 1; // 2^0 * 3^0, because power starts at ZERO
 
 		// min heap
 		priority_queue<int, vector<int>, greater<int>> pq;
@@ -344,7 +346,8 @@ public:
 
 
 
-	// Common elements of 3 sorted? Move the smallest one
+	// Common elements of 3 sorted arrays
+	// Key: move the smallest one forward to try to find a common element
 	vector<int> commonElementsInThreeSortedArray(vector<int> a, vector<int> b, vector<int> c) {
 		vector<int> res;
 		int i = 0, j = 0, k = 0;
@@ -665,8 +668,11 @@ public:
 	}
 
 
-
-	// '0' good, '1' obstacles, 's' src, 'd' dst
+	// 1 - 0 - 1 - s
+	// 0 - 1 - 0 - 0
+	// 1 - 0 - 0 - 0
+	// d - 0 - 1 - 0
+	// Shortest distance from s to d. 0 = good, 1 = obstacle
 	// The nature of BFS: we move ahead one unit in each path at the SAME time
 	//    which means the first time we see the destination - that's the shortest path
 	int shortestDistanceTwoCells(vector<vector<char>> grid) {
@@ -676,7 +682,7 @@ public:
 		vector<bool> tmp(cols);
 		vector<vector<bool>> visited(rows, tmp);
 
-		// Pre-process: mark all obstacles as "visited"; also locate src, and mark it "visited" as well
+		// Pre-process: mark all obstacles + src as "visited"
 		for (int i = 0; i < rows; ++i)
 			for (int j = 0; j < cols; ++j) {
 				visited[i][j] = grid[i][j] == '1' ? true : false;

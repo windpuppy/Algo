@@ -5,24 +5,6 @@ int main()
 {
 	BFS obj;
 
-	// K Smallest min heap
-	{
-		vector<int> values{ 3, 1, 5, 2, 4 };
-		auto res = obj.kSmallest_minheap(values, 5);
-	}
-
-	// K Smallest max heap
-	{
-		vector<int> values{ 3, 1, 5, 2, 4 };
-		auto res = obj.kSmallest_maxheap(values, 5);
-	}
-
-	// K Smallest quick sort
-	{
-		vector<int> values{ 3, 1, 5, 2, 4 };
-		auto res = obj.kSmallest_quicksort(values, 5);
-	}
-
 	// Bipartitie
 	{
 		vector<vector<int>> values{
@@ -35,45 +17,12 @@ int main()
 		bool res = obj.bipartite(graph);
 	}
 
-	// Kth Smallest in sorted matrix
-	{
-		vector<vector<int>> values{
-		{1, 2, 3, 5, 6},
-		{2, 3, 3, 6, 8},
-		{3, 4, 5, 7, 9},
-		{4, 5, 6, 8, 10},
-		{5, 6, 9, 10, 11} };
-		auto res = obj.kthSmallest(values, 7); // 3
-		res = obj.kthSmallest(values, 10); // 5
-
-		vector<vector<int>> values2{ {1} };
-		res = obj.kthSmallest(values2, 1);
-	}
-
-	// Kth smallest with 3, 5, 7 factors
-	{
-		auto res = obj.kthSmallest357(40);
-	}
-
-	// Kth smallest with 2, 3, factors
-	{
-		auto res = obj.kthSmallest23(40);
-	}
-
 	// kth closest to (0, 0, 0)
 	{
 		vector<int> a{ 1, 2, 3 };
 		vector<int> b{ 2, 4 };
 		vector<int> c{ 1, 2 };
-		//auto res = sol.kthClosestPointToOrigin(a, b, c, 10);
-	}
-
-	// Minimum distance of three arrays
-	{
-		vector<int> a{ 1, 2, 3 };
-		vector<int> b{ 4, 5 };
-		vector<int> c{ 3, 4 };
-		auto res = obj.minimumThreeArrayDistance(a, b, c); // 2 (min dist between 3, 4, 3 or 3, 4, 4)
+		//auto res = obj.kthClosestPointToOrigin(a, b, c, 10);
 	}
 
 	// Smallest range
@@ -98,16 +47,6 @@ int main()
 	{
 		vector<int> primes{ 2, 7, 13, 19 };
 		auto res = obj.superUglyNumber(12, primes);
-	}
-
-	// Shortest distance between two cells
-	{
-		vector<vector<char>> grid{
-		  {'1', '0', '1', 's'},
-		  {'0', '1', '0', '0'},
-		  {'1', '0', '0', '0'},
-		  {'d', '0', '0', '0'} };
-		auto res = obj.shortestDistanceTwoCells(grid); // 6
 	}
 
 	// Shortest distance from all points
