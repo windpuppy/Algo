@@ -53,7 +53,7 @@ public:
 	// In total: O(nlogn) for both
 	//
 	// Space complexity:
-	// Both users O(logn) for call stack, but the array version uses O(n) extra for merge
+	// Both use O(logn) for call stack, but the array version uses O(n) extra for merge
 	// n dominates logn
 	// Conclusion: O(n) for array, O(logn) for LL
 	vector<int> mergeSort(const vector<int>& array) {

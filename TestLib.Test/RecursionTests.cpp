@@ -42,7 +42,7 @@ namespace RecursionTests {
         };
         auto res = obj.spiralTraverse(matrix);
         vector<int> expected{ 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10 };
-        EXPECT_EQV(res, expected);
+        EXPECT_EQ(res, expected);
     }
 
     TEST(RecursionTests, SpiralTraverse2) {
@@ -53,7 +53,7 @@ namespace RecursionTests {
         };
         auto res = obj.spiralTraverse2(matrix);
         vector<int> expected{ 1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7};
-        EXPECT_EQV(res, expected);
+        EXPECT_EQ(res, expected);
     }
 
 }

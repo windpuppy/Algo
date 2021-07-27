@@ -79,7 +79,7 @@ namespace ArrayTests {
         vector<int> b{ 3, 4, 2, 2, 2 };
         auto res = obj.commonNumbersOfTwoArrays3(a, b);
         vector<int> c{ 2, 2, 3 };
-        EXPECT_EQV(c, res);
+        EXPECT_EQ(c, res);
     }
 
     TEST(ArrayTests, RomanToIngeter)
@@ -122,35 +122,32 @@ namespace ArrayTests {
     {
         auto res = obj.TwoSum_Indices_Any(vector<int>{2, 4, 2, 1, 3}, 4);
         vector<int> a{ 0, 2 };
-        EXPECT_EQV(a, res);
+        EXPECT_EQ(a, res);
     }
 
     TEST(ArrayTests, TwoSum_Indices_All)
     {
         auto res = obj.TwoSum_Indices_All(vector<int>{1, 4, 0, 2, 3, 4}, 5);
         vector<vector<int>> a{ vector<int>{0, 1}, vector<int>{3, 4}, vector<int>{0, 5} };
-        EXPECT_EQV(a[0], res[0]);
-        EXPECT_EQV(a[1], res[1]);
-        EXPECT_EQV(a[2], res[2]);
+        EXPECT_EQ(res, a);
     }
 
     TEST(ArrayTests, TwoSum_Values_Dedup)
     {
         auto res = obj.TwoSum_Values_Dedup(vector<int>{1, 4, 0, 2, 3, 4}, 5);
         vector<vector<int>> a{ vector<int>{1, 4}, vector<int>{2, 3} };
-        EXPECT_EQV(a[0], res[0]);
-        EXPECT_EQV(a[1], res[1]);
+        EXPECT_EQ(res, a);
     }
 
     TEST(ArrayTests, TwoSum_Values_Closest)
     {
         auto res = obj.TwoSum_Values_Closest(vector<int>{1, 4, 7, 13}, 7); // 1, 7
         vector<int> a{ 1, 7 };
-        EXPECT_EQV(a, res);
+        EXPECT_EQ(a, res);
 
         res = obj.TwoSum_Values_Closest(vector<int>{1, 2, 3}, -100);
         vector<int> b{ 1, 2 };
-        EXPECT_EQV(b, res);
+        EXPECT_EQ(b, res);
     }
 
     TEST(ArrayTests, TwoSum_NumPairs_Smaller)
@@ -184,7 +181,7 @@ namespace ArrayTests {
     {
         vector<vector<int>> a{ vector<int>{1, 3, 4}, vector<int>{2, 2, 4} };
         auto res = obj.ThreeSum_AllCombo(vector<int>{1, 2, 2, 3, 2, 4}, 8);
-        EXPECT_EQV(a, res);
+        EXPECT_EQ(a, res);
     }
 
     TEST(ArrayTests, ThreeSum_ThreeArrays)

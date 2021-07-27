@@ -9,12 +9,12 @@ namespace SortingTests {
         auto array = vector<int>{ 3, 2, 1 };
         auto res = obj.mergeSort(array);
         vector<int> expected{ 1, 2, 3 };
-        EXPECT_EQV(res, expected);
+        EXPECT_EQ(res, expected);
 
         array = vector<int>{ 4, 2, -3, 6, 1 };
         res = obj.mergeSort(array);
         expected = vector<int>{ -3, 1, 2, 4, 6 };
-        EXPECT_EQV(res, expected);
+        EXPECT_EQ(res, expected);
     }
 
     TEST(SortingTests, kthSmallestInTwoSortedArrays) {

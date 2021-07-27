@@ -9,17 +9,17 @@ namespace BFSTests {
 		vector<int> values{ 3, 1, 5, 2, 4 };
 		auto res = obj.kSmallest_minheap(values, 3);
 		auto expected = vector<int>{ 1, 2, 3};
-		EXPECT_EQV(res, expected);
+		EXPECT_EQ(res, expected);
 
 		// Using max heap
 		res = obj.kSmallest_maxheap(values, 2);
 		expected = vector<int>{ 1, 2 };
-		EXPECT_EQV(res, expected);
+		EXPECT_EQ(res, expected);
 
 		// Using quick sort
 		res = obj.kSmallest_maxheap(values, 4);
 		expected = vector<int>{ 1, 2, 3, 4 };
-		EXPECT_EQV(res, expected);
+		EXPECT_EQ(res, expected);
 	}
 
 	TEST(BFSTests, KthSmallestInSortedMatrix) {
@@ -71,7 +71,7 @@ namespace BFSTests {
 		vector<int> c{ 2, 6, 8, 10 };
 		auto res = obj.commonElementsInThreeSortedArray(a, b, c);
 		vector<int> expected{ 2, 10 };
-		EXPECT_EQV(res, expected);
+		EXPECT_EQ(res, expected);
 	}
 
 	TEST(BFSTest, ShortestDistanceTwoCells) {

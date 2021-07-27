@@ -26,7 +26,7 @@ public:
     M[1] = 1;
     for (int i = 2; i <= k; ++i)
       M[i] = M[i - 1] + M[i - 2];
-    return M[k];
+    return M.back();
   }
 
   long fibonacci2_iter(int k) {
@@ -67,9 +67,9 @@ public:
   }
 
   // M[i] represents: the length of LAS ending at i
-  // Induction rule: for each i, M[i] = 1 + max(M[j]), if there is a j between (0,i) and a[j] < a[i]
-  //                             physical meaning: find the max answer at j (a[j] also a smaller number than myself), then plus 1 (myself) is my current answer
-  //                             M[i] = 1, if no such j exists
+  // Induction rule:
+  // for each i, M[i] = max(M[j]) + 1, if there is a j between [0,i) and a[j] < a[i]
+  // M[i] = 1, if no such j exists
   // Return, max(M)
   // eg.
   // Use M as usual, also use pred for "predecessor"
@@ -153,6 +153,7 @@ public:
 
 
 
+  // Find longest common substring between two given strings
   // Fill 2D table
   // M[i][j] = M[i-1][j-1] if s[i] == s[j]
   //           0, otherwise
@@ -162,30 +163,30 @@ public:
   // c 0 0 2 0 0
   // y 0 0 0 0 0
   // f 0 0 0 0 1
-  // Note: in practice, we create n+1 by m+1 2D table, so that we can conveniently prefill all zeros, and just copy zeros from the first row/column
-  // ie. first row/column means: "" is not a common string with any character
   string longestCommonSubstring(string a, string b) {
-    if (a.empty() || b.empty()) return "";
-    const int lena = a.size();
-    const int lenb = b.size();
-    vector<vector<int>> M(lena+1, vector<int>(lenb+1, 0));
-    int maxPos = 0, maxLen = 0;
+      if (a.empty() || b.empty()) return "";
+      const int lena = a.size();
+      const int lenb = b.size();
+      vector<vector<int>> M(lena, vector<int>(lenb, 0));
+      int maxPos = 0, maxLen = 0;
 
-    for (int i = 1; i <= lena; ++i)
-      for (int j = 1; j <= lenb; ++j) {
-        if (a[i - 1] == b[j - 1]) {
-          M[i][j] = M[i - 1][j - 1] + 1;
-          if (M[i][j] > maxLen) {
-            maxLen = M[i][j];
-            maxPos = i;
+      for (int i = 0; i < lena; ++i)
+          for (int j = 0; j < lenb; ++j) {
+              if (i == 0 || j == 0)
+                  M[i][j] = a[i] == b[j] ? 1 : 0;
+              else if (a[i] == b[j]) {
+                  M[i][j] = M[i - 1][j - 1] + 1;
+                  if (M[i][j] > maxLen) {
+                      maxLen = M[i][j];
+                      maxPos = i;
+                  }
+              }
           }
-        }
-      }
-    return a.substr(maxPos - maxLen, maxLen);
+      return a.substr(maxPos - maxLen + 1, maxLen);
   }
 
 
-
+  // Find longest common subsequence between two given strings
   // Fill 2D table
   //
   //   a b c d a f
@@ -196,23 +197,29 @@ public:
   // f 1
   // Induction rule:
   // If same char, fill with diag + 1; if not, fill with max (top, left)
-  // Like wise, we create the 2D table of n+1 by m+1 for convenience
-  int longestCommonSubsequence(string a, string b) {
-    if (a.empty() || b.empty()) return 0;
-    const int lena = a.size();
-    const int lenb = b.size();
-    vector<vector<int>> M(lena + 1, vector<int>(lenb + 1, 0));
-    int maxPos = 0, maxLen = 0;
 
-    for (int i = 1; i <= lena; ++i)
-      for (int j = 1; j <= lenb; ++j) {
-        char one = a[i - 1], two = b[j - 1];
-        if (one == two)
-          M[i][j] = M[i - 1][j - 1] + 1;
-        else
-          M[i][j] = max(M[i - 1][j], M[i][j - 1]);
-      }
-    return M.back().back();
+  int longestCommonSubsequence(string a, string b) {
+      if (a.empty() || b.empty()) return 0;
+      const int lena = a.size();
+      const int lenb = b.size();
+      vector<vector<int>> M(lena, vector<int>(lenb, 0));
+      int maxPos = 0, maxLen = 0;
+
+      for (int i = 0; i < lena; ++i)
+          for (int j = 0; j < lenb; ++j) {
+              if (i == 0 && j == 0) // top left corder, compare 1st characters
+                  M[i][j] = a[i] == b[j] ? 1 : 0;
+              else if (i == 0) // first row, copy left
+                  M[i][j] = M[i][j - 1];
+              else if (j == 0) // first column, copy above
+                  M[i][j] = M[i - 1][j];
+              else if (a[i] == b[j]) // equal? copy diag
+                  M[i][j] = M[i - 1][j - 1] + 1;
+              else // not equal? max(top, left)
+                  M[i][j] = max(M[i - 1][j], M[i][j - 1]);
+          }
+              
+      return M.back().back();
   }
 
 
