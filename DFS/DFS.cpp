@@ -3,121 +3,91 @@
 
 int main()
 {
-  DFS sol;
+  DFS obj;
   srand(time(NULL));
-
-  // Subsets
-  {
-    auto res = sol.subsets("abc");
-    res = sol.subsets_bfs("abcd");
-    res = sol.subsets_bitwise("abc");
-    res = sol.subsets("");
-  }
 
   // Subsets - dedup
   {
-    auto res = sol.subsets2("abb");
-    res = sol.subsets2("abab");
+    auto res = obj.subsets2("abb");
+    res = obj.subsets2("abab");
   }
 
   // Subsets of K
   {
-    auto res = sol.subsetsOfK("abc", 2);
+    auto res = obj.subsetsOfK("abc", 2);
   }
 
   // subsets of K - dedup
   {
-    auto res = sol.subsetsOfK2("abab", 2);
+    auto res = obj.subsetsOfK2("abab", 2);
   }
 
   // subset of k in n
   {
-    auto res = sol.subsetsOfK_nums(4, 2);
-  }
-
-  // Valid parentheses
-  {
-    auto res = sol.validParentheses(3);
+    auto res = obj.subsetsOfK_nums(4, 2);
   }
 
   // Valid parentheses 2
   {
-    auto res = sol.validParentheses2(1, 1, 0);
-    res = sol.validParentheses2(1, 0, 0);
+    auto res = obj.validParentheses2(1, 1, 0);
+    res = obj.validParentheses2(1, 0, 0);
   }
 
   // Remove invalid parentheses
   {
     string input = "((a)(())))";
     //string input = ")())))))))))";
-    auto res = sol.removeInvalidParentheses(input);
-  }
-
-  // Coin combinations
-  {
-    vector<int> coins{ 25, 10, 5, 1 };
-    auto res = sol.coinCombinations(coins, 99);
-
-    coins = vector<int>{ 1, 5, 10, 25 };
-    res = sol.coinCombinations(coins, 99);
-
-    coins = vector<int>{ 34, 31, 29, 16, 2 };
-    res = sol.coinCombinations(coins, 10);
+    auto res = obj.removeInvalidParentheses(input);
   }
 
   // Factor combinations
   {
-    auto res = sol.factorCombinations(24);
-  }
-
-  // All permutations
-  {
-    auto res = sol.permutations("abc");
+    auto res = obj.factorCombinations(24);
   }
 
   // All Permutations 2
   {
-    auto res = sol.permutations2("abbca");
+    auto res = obj.permutations2("abbca");
   }
 
   // All permutations of subsets
   {
-    auto res = sol.permutationOfSubsets("abc");
+    auto res = obj.permutationOfSubsets("abc");
   }
 
   // Palindrome permutation 1 & 2
   {
-    auto res = sol.palindromePermutation("aabbcc");
-    auto res2 = sol.palindromePermutation2("aabb");
+    auto res = obj.palindromePermutation("aabbcc");
+    auto res2 = obj.palindromePermutation2("aabb");
   }
 
   // Combination sum
   {
     vector<int> input{ 2, 2, 2, 4, 4, 8, 6, 6, 6 };
-    auto res = sol.combinationSum(input, 8);
+    auto res = obj.combinationSum(input, 8);
 
     vector<int> input2{ 1, 2, 3, 6 };
-    res = sol.combinationSum(input2, 12);
+    res = obj.combinationSum(input2, 12);
   }
 
   // Combination sum 2 (each candidate can only be used once)
   {
     vector<int> input{ 1, 1, 2, 3 };
-    auto res = sol.combinationSum2(input, 4);
+    auto res = obj.combinationSum2(input, 4);
 
     vector<int> input2{ 10, 1, 2, 7, 6, 1, 5 };
-    res = sol.combinationSum2(input2, 8);
+    res = obj.combinationSum2(input2, 8);
   }
 
   // Telephone pad
   {
-    auto res = sol.telephonePad(213);
-    res = sol.telephonePad_bfs(102);
+    auto res = obj.telephonePad(213);
+    res = obj.telephonePad_bfs(102);
   }
 
   // N queens
   {
-    auto res = sol.nQueens(4);
+    auto res = obj.nQueens(4);
   }
 
   // Number of islands
@@ -129,9 +99,9 @@ int main()
       {'0', '0', '0', '0', '0'},
       {'1', '0', '1', '1', '0'}};
     auto g = grid;
-    auto res = sol.numIslands(g); // 4
+    auto res = obj.numIslands(g); // 4
     g = grid;
-    res = sol.numIslands(g, false);
+    res = obj.numIslands(g, false);
 
     vector<vector<char>> grid2{
       {'1', '1', '0', '0', '0'},
@@ -139,9 +109,9 @@ int main()
       {'0', '0', '1', '0', '0'},
       {'0', '0', '0', '1', '1'}};
     g = grid2;
-    res = sol.numIslands(g); // 3
+    res = obj.numIslands(g); // 3
     g = grid2;
-    res = sol.numIslands(g, false);
+    res = obj.numIslands(g, false);
   }
 
   // Cheapest flight with k most stops
@@ -150,40 +120,40 @@ int main()
       {0, 1, 100},
       {0, 2, 1000},
       {1, 2, 200}};
-    auto res = sol.cheapestFlightsWithKStops(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestFlightsWithKStops(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    auto res = obj.cheapestFlightsWithKStops(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = obj.cheapestFlightsWithKStops(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
 
-    res = sol.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    res = obj.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = obj.cheapestFlightsWithKStops_bfs(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
 
-    res = sol.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
-    res = sol.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
+    res = obj.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 1); // city 0 to 2, 1 stop, price 300
+    res = obj.cheapestFlightsWithKStops_dp(3, flights, 0, 2, 0); // city 0 to 2, 0 stop, price 1000
   }
 
   // Restore IP address
   {
-    auto res = sol.restoreIpAddress("25525511135");
+    auto res = obj.restoreIpAddress("25525511135");
   }
 
   // Keep distance of identical elements
   {
-    auto res = sol.keepDistance(3);
+    auto res = obj.keepDistance(3);
   }
 
   // Generate random maze
   {
-    auto res = sol.generateRandomMaze(5);
+    auto res = obj.generateRandomMaze(5);
   }
 
   // Optimal account balancing
   {
     vector<vector<int>> debt{ {0, 1, 10},{1, 0, 1},{1, 2, 5},{2, 0, 5} };
-    auto res = sol.optimalAccountBalancing(debt);
+    auto res = obj.optimalAccountBalancing(debt);
   }
 
   // Different ways to add parentheses
   {
-    auto res = sol.differentWaysToAddParentheses("2-1-1");
+    auto res = obj.differentWaysToAddParentheses("2-1-1");
   }
 
   cin.get();

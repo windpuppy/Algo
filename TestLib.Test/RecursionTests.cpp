@@ -5,14 +5,14 @@ namespace RecursionTests {
 
     Recursion obj;
 
-    TEST(RecursionTests, fibonacci) {
+    TEST(RecursionTests, Fibonacci) {
         int res = obj.fibonacci(8);
         EXPECT_EQ(res, 21);
         res = obj.fibonacci(1);
         EXPECT_EQ(res, 1);
     }
 
-    TEST(RecursionTests, power) {
+    TEST(RecursionTests, Power) {
         long res = obj.power(2, 5);
         EXPECT_EQ(res, 32);
         res = obj.power(2, 0);
