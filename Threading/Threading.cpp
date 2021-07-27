@@ -11,6 +11,7 @@
 #include "PrintOrdered.h"
 #include "MainVersusWorker.h"
 #include "SleepSort.h"
+#include "SharedPointer.h"
 
 int main()
 {
@@ -34,6 +35,11 @@ int main()
     std::vector<int> v{ 7, 10, 1, 8, 3, 5, 9, 2, 4, 6 };
     SleepSort ss;
     ss.sleepSort(v);
+
+    // Shared pointer demo
+    SharedPointer sp;
+    sp.demo_reference_count();
+    sp.demo_inheritence();
 
     return 0;
 }

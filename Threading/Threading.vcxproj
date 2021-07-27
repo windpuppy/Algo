@@ -147,6 +147,7 @@
     <ClInclude Include="PrintBlock.h" />
     <ClInclude Include="PrintOrdered.h" />
     <ClInclude Include="PrintRace.h" />
+    <ClInclude Include="SharedPointer.h" />
     <ClInclude Include="SleepSort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
