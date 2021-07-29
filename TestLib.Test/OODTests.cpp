@@ -1,6 +1,7 @@
 #include "TestFixture.h"
 #include <OOD/LRUCacheInt.h>
 #include <OOD/LRUCache.h>
+#include <OOD/TicTacToe.h>
 
 namespace OODTests {
 
@@ -46,5 +47,32 @@ namespace OODTests {
 		EXPECT_EQ(val, 3);
 		EXPECT_TRUE(obj.get(4, val)); // [4 3]
 		EXPECT_EQ(val, 4);
+	}
+
+	TEST(OODTests, TicTacToe) {
+		TicTacToe ttt(3);
+		EXPECT_EQ(-1, ttt.move(0, -1, 1));
+		EXPECT_EQ(-1, ttt.move(-1, 1, 1));
+		EXPECT_EQ(-1, ttt.move(0, 3, 1));
+		EXPECT_EQ(-1, ttt.move(0, 0, 3));
+
+		EXPECT_EQ(0, ttt.move(0, 0, 1));
+		EXPECT_EQ(0, ttt.move(0, 1, 2));
+		EXPECT_EQ(0, ttt.move(1, 1, 1));
+		EXPECT_EQ(0, ttt.move(2, 2, 2));
+		EXPECT_EQ(0, ttt.move(1, 0, 1));
+		EXPECT_EQ(0, ttt.move(2, 0, 2));
+		EXPECT_EQ(0, ttt.move(2, 1, 1));
+		EXPECT_EQ(0, ttt.move(0, 2, 2));
+
+		EXPECT_EQ(-1, ttt.move(0, 0, 1)); // visited
+
+		EXPECT_EQ(1, ttt.move(1, 2, 1));
+
+
+
+
+
+
 	}
 }
