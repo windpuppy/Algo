@@ -43,11 +43,11 @@ public:
 		return result;
 	}
 
-	// assumption: input sorted, only 1 missing
+	// Given (unsorted) array, all continusous number starting from 1 to n (except one), find the missing number
 	// method 1: hash 3, 1, 4; then from 1-4, check hash
 	// method 2: vector<bool> seen, 3, 1, 4 all true, missing 4
 	// method 3: sum of 1-n, sum of input, minus the two
-	// method 4: bit operation
+	// method 4: bit operation using XOR
 	int missingNumber(vector<int> nums) {
 		if (nums.empty()) return 1;
 		int n = nums.size() + 1;
