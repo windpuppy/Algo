@@ -57,6 +57,10 @@ public:
 		return res;
 	}
 
+	// Given two sorted arrays (can have duplicates), return common elements (with dups)
+	// [1, 1, 2, 3, 3]
+	// [2, 3, 3, 4, 5]
+	// return [2, 3, 3]
 	vector<int> commonNumbers(vector<int> a, vector<int> b) {
 		vector<int> res;
 		int i = 0, j = 0;
@@ -73,35 +77,40 @@ public:
 		return res;
 	}
 
+	// Remove certain characters from a given string
+	// "abcde", "cef" ==> "abd"
 	// Lets try in-place
 	string removeCertainCharacters(string input, string t) {
 		if (input.empty() || t.empty()) return input;
 		unordered_set<char> set(t.begin(), t.end());
 
 		// slow faster pointers
-		int slow = 0;
-		for (int fast = slow; fast < input.size(); ++fast)
-			if (set.find(input[fast]) == set.end())
-				input[slow++] = input[fast];
+		// fast is in the set? skip fast
+		int i = 0;
+		for (int j = i; j < input.size(); ++j)
+			if (set.count(input[j]) == 0)
+				input[i++] = input[j];
 
-		return input.substr(0, slow);
+		return input.substr(0, i);
 	}
 
+	// Remove all redundant spaces in a given string
+	// e.g. "  i love coding  " ==> "i love coding"
 	// Do it in-place
 	string removeSpaces(string input) {
 		if (input.empty()) return input;
 		char space(' ');
 
-		int slow = 0;
-		for (int fast = 0; fast < input.size(); ++fast) {
+		int i = 0;
+		for (int j = 0; j < input.size(); ++j) {
 			// skip spaces if 1) at begining, or 2) repeating space
-			if (input[fast] == space && (fast == 0 || input[fast - 1] == space))
+			if (input[j] == space && (j == 0 || input[j - 1] == space))
 				continue;
-			input[slow++] = input[fast]; // end <= i is guaranteed, so no worries on overwriting
+			input[i++] = input[j]; // end <= i is guaranteed, so no worries on overwriting
 		}
 
 		// trim useless part
-		input = input.substr(0, slow);
+		input = input.substr(0, i);
 
 		// can still contain one space at the end
 		if (input.back() == space)
@@ -114,34 +123,30 @@ public:
 
 	// Dedup, keep 1 of the dups
 	// "aaabbc" -> "abc"
-	// [0, slow): result
-	// [fast, n): to be explored
+	// [0, i): result
+	// [j, n): to be explored
 	string removeAdjacentRepeatedChars(string input) {
 		const int size = input.size();
 		if (size <= 1) return input;
-		int slow = 1;
-		for (int fast = 1; fast < size; ++fast)
-			if (input[fast] != input[fast - 1])
-				input[slow++] = input[fast];
+		int i = 1;
+		for (int j = 1; j < size; ++j)
+			if (input[j] != input[j - 1])
+				input[i++] = input[j];
 
-		return input.substr(0, slow);
+		return input.substr(0, i);
 	}
 
-
-
-	// Dedup, keep 2 of each group
+	// Dedup, keep 2 of the dups
 	// "aaabbbc" -> "aabbc"
 	string removeAdjacentRepeatedChars2(string input) {
 		const int size = input.size();
 		if (size <= 1) return input;
-		int slow = 2;
-		for (int fast = 2; fast < size; ++fast)
-			if (input[fast] != input[slow - 2])
-				input[slow++] = input[fast];
-		return input.substr(0, slow);
+		int i = 2;
+		for (int j = 2; j < size; ++j)
+			if (input[j] != input[i - 2])
+				input[i++] = input[j];
+		return input.substr(0, i);
 	}
-
-
 
 	// Dedup, keep none (input string is sorted)
 	// "aaabbc" --> "c"
@@ -149,32 +154,30 @@ public:
 		const int size = input.size();
 		if (size <= 1) return input;
 
-		int slow = 0, fast = 0, count = 0;
-		while (fast < size) {
-			if (input[slow] == input[fast]) {
-				fast++;
+		int i = 0, j = 0, count = 0;
+		while (j < size) {
+			if (input[i] == input[j]) {
+				j++;
 				count++;
 			}
 			else {
 				if (count == 1)
-					slow++;
-				input[slow] = input[fast];
+					i++;
+				input[i] = input[j];
 				count = 0;
 			}
 		}
 
 		// Edge case: if last char is unique, we need to include it (slow will not reach there)
 		if (count == 1)
-			slow++;
+			i++;
 
-		return input.substr(0, slow);
+		return input.substr(0, i);
 	}
 
-
-
 	// Dedup, keep none (input string not sorted)
-	// "abbbaaccz" ¡ú "aaaccz" ¡ú "ccz" ¡ú "z"
-	// "aabccdc" ¡ú "bccdc" ¡ú "bdc"
+	// "abbbaaccz" -> "aaaccz" -> "ccz" -> "z"
+	// "aabccdc" -> "bccdc" -> "bdc"
 	// Use a stack but simulate it by a deque for convenience
 	string removeAdjacentRepeatedChars4(string input) {
 		const int size = input.size();
@@ -196,10 +199,8 @@ public:
 		return string(s.begin(), s.end());
 	}
 
-
-
 	// Check if a string is the substring of another string
-	// Time: O(mn)
+	// Time: O(mn) -- room for improvement?
 	int isSubstring(string large, string small) {
 		if (large.size() < small.size()) return -1;
 		if (small.empty()) return 0;
@@ -220,6 +221,8 @@ public:
 	}
 
 	// The Rabin Karp method for above
+	// Build hashcode for the subwindow. Everytime the window moves by 1, do 3 things:
+	// 1) add new char, 2) remove old char, 3) existing * MAGIC_NUMBER
 	// Time O(n)
 	int isSubstring_RabinKarp(string large, string small) {
 		if (large.size() < small.size()) return -1;
@@ -273,7 +276,7 @@ public:
 	}
 
 
-
+	// Right shift string by n position
 	string rightShift(string input, int n) {
 		if (input.empty() || input.size() == 0) return input;
 		n %= input.size();
@@ -365,52 +368,36 @@ public:
 
 
 
-	// Reorder string
-	// In LL version, we use split (+ reverse 2nd) + combine method, but here we try to do it in place.
-	// For ABCD1234 to make it A1B2C3D4
-	// AB CD 12 34
-	// AB 12 CD 34 (4 chunks, swap middle to chunks), then keep recursing
-	// Here we use a more general case
-	// ABC DEFG 123 4567
-	//     |    |   |
-	//     lm   m   rm
-	// Work out the 3 boundaries, then call recursion as below:
-	// swap chunk 2 and 3
-	// reorder ABC123, reorder DEFG4567
-	// so on...
-	vector<int> reorderArray(vector<int> input) {
-		if (input.size() % 2 == 0)
-			reorder(input, 0, input.size() - 1);
-		else
-			reorder(input, 0, input.size() - 2); // odd size array? ignore the last element
+	// Encode space
+	// This is essentially a "string replace longer" problem
+	// We scan the string twice. First time, count spaces then expand string; Second time, replace them with "%20"
+	string encodeSpace(string input) {
+		if (input.empty()) return input;
+
+		int count = 0;
+		for (auto c : input)
+			if (c == ' ') count++;
+		if (count == 0) return input;
+
+		// resize
+		const int size = input.size();
+		input += string(count * 2, ' ');
+		const int newSize = input.size();
+
+		int slow = size - 1;
+		int fast = newSize - 1;
+		while (slow >= 0) {
+			if (input[slow] != ' ') {
+				input[fast--] = input[slow];
+			}
+			else {
+				input[fast--] = '%';
+				input[fast--] = '0';
+				input[fast--] = '2';
+			}
+			slow--;
+		}
 		return input;
-	}
-
-	// ABC DEFG 123 4567
-	//     |    |   |
-	//     lm   m   rm
-	void reorder(vector<int>& input, int left, int right) {
-		int length = right - left + 1;
-
-		// base case
-		// <= 2? we are done.
-		if (length <= 2)
-			return;
-
-		int mid = left + length / 2;
-		int lm = left + length / 4;
-		int rm = left + length * 3 / 4;
-
-		int sizeChunk1 = lm - left;
-		// ABC DEFG 123 4567
-		reverse(input.begin() + lm, input.begin() + mid);   // ABC GFED 123 4567
-		reverse(input.begin() + mid, input.begin() + rm);   // ABC GFED 321 4567
-		reverse(input.begin() + lm, input.begin() + rm);    // ABC 123 DEFG 4567
-															//         |
-															//      new mid
-		int newMid = left + sizeChunk1 * 2;
-		reorder(input, left, newMid - 1);
-		reorder(input, newMid, right);
 	}
 
 
@@ -633,36 +620,52 @@ public:
 
 
 
-	// Encode space
-	// This is essentially a "string replace longer" problem
-	// We scan the string twice. First time, count spaces then expand string; Second time, replace them with "%20"
-	string encodeSpace(string input) {
-		if (input.empty()) return input;
-
-		int count = 0;
-		for (auto c : input)
-			if (c == ' ') count++;
-		if (count == 0) return input;
-
-		// resize
-		const int size = input.size();
-		input += string(count * 2, ' ');
-		const int newSize = input.size();
-
-		int slow = size - 1;
-		int fast = newSize - 1;
-		while (slow >= 0) {
-			if (input[slow] != ' ') {
-				input[fast--] = input[slow];
-			}
-			else {
-				input[fast--] = '%';
-				input[fast--] = '0';
-				input[fast--] = '2';
-			}
-			slow--;
-		}
+	// Reorder string
+	// In LL version, we use split (+ reverse 2nd) + combine method, but here we try to do it in place.
+	// For ABCD1234 to make it A1B2C3D4
+	// AB CD 12 34
+	// AB 12 CD 34 (4 chunks, swap middle to chunks), then keep recursing
+	// Here we use a more general case
+	// ABC DEFG 123 4567
+	//     |    |   |
+	//     lm   m   rm
+	// Work out the 3 boundaries, then call recursion as below:
+	// swap chunk 2 and 3
+	// reorder ABC123, reorder DEFG4567
+	// so on...
+	vector<int> reorderArray(vector<int> input) {
+		if (input.size() % 2 == 0)
+			reorder(input, 0, input.size() - 1);
+		else
+			reorder(input, 0, input.size() - 2); // odd size array? ignore the last element
 		return input;
+	}
+
+	// ABC DEFG 123 4567
+	//     |    |   |
+	//     lm   m   rm
+	void reorder(vector<int>& input, int left, int right) {
+		int length = right - left + 1;
+
+		// base case
+		// <= 2? we are done.
+		if (length <= 2)
+			return;
+
+		int mid = left + length / 2;
+		int lm = left + length / 4;
+		int rm = left + length * 3 / 4;
+
+		int sizeChunk1 = lm - left;
+		// ABC DEFG 123 4567
+		reverse(input.begin() + lm, input.begin() + mid);   // ABC GFED 123 4567
+		reverse(input.begin() + mid, input.begin() + rm);   // ABC GFED 321 4567
+		reverse(input.begin() + lm, input.begin() + rm);    // ABC 123 DEFG 4567
+															//         |
+															//      new mid
+		int newMid = left + sizeChunk1 * 2;
+		reorder(input, left, newMid - 1);
+		reorder(input, newMid, right);
 	}
 
 

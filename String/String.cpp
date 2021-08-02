@@ -5,44 +5,6 @@ int main()
 {
 	String obj;
 
-	// Top K frequent words
-	{
-		vector<string> input{ "d","a","c","b","d","a","b","b","a","d","d","a","d" };
-		auto res = obj.topKFrequentWords(input, 5);
-	}
-
-	// Common numbers
-	{
-		vector<int> a{ 1, 1, 2, 3, 3 };
-		vector<int> b{ 2, 3, 3, 4, 5 };
-		auto res = obj.commonNumbers(a, b);
-	}
-
-	// Remove certain characters
-	{
-		auto res = obj.removeCertainCharacters("abcde", "cef");
-	}
-
-	// Remove spaces
-	{
-		auto res = obj.removeSpaces("  i love laicode  ");
-	}
-
-	// Remove adjacent repeated chars 1 - 4
-	{
-		auto res = obj.removeAdjacentRepeatedChars("aaabbbc"); // abc
-		res = obj.removeAdjacentRepeatedChars2("aaabbbc"); // aabbc
-		res = obj.removeAdjacentRepeatedChars3("aaabbbc"); // c
-		res = obj.removeAdjacentRepeatedChars4("abbbbacd"); // cd
-		res = obj.removeAdjacentRepeatedChars4("aaaaa"); // ""
-	}
-
-	// Is substring
-	{
-		auto res = obj.isSubstring("abcde", "bcd");
-		res = obj.isSubstring_RabinKarp("abcde", "bcd");
-	}
-
 	// Reverse string
 	{
 		auto res = obj.reverseString("abc");
@@ -53,11 +15,6 @@ int main()
 		auto res = obj.reverseWords("Hi there");
 	}
 
-	// Right shift
-	{
-		auto res = obj.rightShift("abcdefg", 3);
-	}
-
 	// String replace
 	{
 		auto res = obj.replace("appledog", "apple", "dog");
@@ -65,10 +22,9 @@ int main()
 		res = obj.replace("applecatapp", "app", "pear");
 	}
 
-	// ReOrder array 2
+	// Encode Space
 	{
-		vector<int> input{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-		auto res = obj.reorderArray(input);
+		auto res = obj.encodeSpace("ab d");
 	}
 
 	// Compress string 2
@@ -86,10 +42,13 @@ int main()
 		auto res = obj.decompress2("a2b0c1d3"); // 0 will be ignored
 	}
 
-	// Encode Space
+	// ReOrder array 2
 	{
-		auto res = obj.encodeSpace("ab d");
+		vector<int> input{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+		auto res = obj.reorderArray(input);
 	}
+
+	
 
 	// Longest no repeat
 	{
