@@ -35,6 +35,7 @@
   <ItemGroup>
     <ClCompile Include="ArrayTests.cpp" />
     <ClCompile Include="BFSTests.cpp" />
+    <ClCompile Include="BinarySearchTests.cpp" />
     <ClCompile Include="DFSTests.cpp" />
     <ClCompile Include="DPTests.cpp" />
     <ClCompile Include="OODTests.cpp" />

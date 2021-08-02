@@ -13,8 +13,18 @@
 #include "SleepSort.h"
 #include "SharedPointer.h"
 
+int* fn() {
+    int n = 10;
+    return &n;
+}
+
 int main()
 {
+    {
+        int* p = fn();
+        auto a = *p; // a = 10, but how do I explain this???
+    }
+
     // Print continuous block, to demonstrate locking
     PrintBlock pb;
     pb.print_two_lines();
