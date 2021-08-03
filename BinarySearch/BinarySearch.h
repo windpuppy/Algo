@@ -136,6 +136,35 @@ public:
 
 
 
+	// Total occurance
+	// given a sorted array (can have dups) and target, find its occurrence
+	int totalOccurrence(vector<int> nums, int target) {
+		if (nums.empty()) return 0;
+		int left = 0, right = nums.size() - 1;
+		while (left <= right) {
+			int mid = left + (right - left) / 2;
+			int midVal = nums[mid];
+
+			if (midVal == target) {
+				int count = 1;
+				int mid_bk = mid;
+				while (--mid >= 0 && nums[mid] == target)
+					count++;
+				mid = mid_bk;
+				while (++mid < nums.size() && nums[mid] == target)
+					count++;
+				return count;
+			}
+			else if (midVal > target)
+				right = mid - 1;
+			else
+				left = mid + 1;
+		}
+		return 0;
+	}
+
+
+
 	// Given a sorted array (can have dups), return k elements that are closest to the target
 	// Notes:
 	// 1) find the largest "less equal" target, or if the target itself it doesn't matter first/last occurrence
@@ -300,7 +329,8 @@ public:
 
 
 	// Given a shifted softed array e.g. [3,4,5,1,2], find the index of the min element
-	int shiftPosition(vector<int> nums) {
+	// Key: compare mid against left and right, decide if it's a left or right shift
+	int findShiftPosition(vector<int> nums) {
 		if (nums.empty()) return -1;
 		int left = 0, right = nums.size() - 1;
 		while (left < right) {
@@ -322,32 +352,4 @@ public:
 		return left;
 	}
 
-
-
-	// Total occurance
-	// given a sorted array (can have dups) and target, find its occurrence
-	int totalOccurrence(vector<int> nums, int target) {
-		if (nums.empty()) return 0;
-		int left = 0, right = nums.size() - 1;
-		while (left <= right) {
-			int mid = left + (right - left) / 2;
-			int midVal = nums[mid];
-
-			if (midVal == target) {
-				int count = 1;
-				int mid_bk = mid;
-				while (--mid >= 0 && nums[mid] == target)
-					count++;
-				mid = mid_bk;
-				while (++mid < nums.size() && nums[mid] == target)
-					count++;
-				return count;
-			}
-			else if (midVal > target)
-				right = mid - 1;
-			else
-				left = mid + 1;
-		}
-		return 0;
-	}
 };

@@ -50,6 +50,12 @@ namespace BinarySearchTests {
 		EXPECT_EQ(res, -1);
 	}
 
+	TEST(BinarySearchTests, TotalOccurances) {
+		vector<int> array{ 1, 2, 3, 4, 4, 6, 8, 9 };
+		auto res = obj.totalOccurrence(array, 4);
+		EXPECT_EQ(res, 2);
+	}
+
 	TEST(BinarySearchTests, KClosest) {
 		vector<int> array{ 1, 2, 3 };
 		auto res = obj.kClosest(array, 2, 1);
@@ -76,7 +82,17 @@ namespace BinarySearchTests {
 
 		// With dups
 		array = vector<int>{ 3, 4, 5, 1, 1, 2 };
-		res = obj.searchInShiftedSortedArray(array, 1);
+		res = obj.searchInShiftedSortedArrayDups(array, 1);
 		EXPECT_EQ(res, 4);
+	}
+
+
+	TEST(BinarySearchTests, ShiftPosition) {
+		auto res = obj.findShiftPosition(vector<int>{3, 4, 5, 1, 2});
+		EXPECT_EQ(res, 3);
+		res = obj.findShiftPosition(vector<int>{4, 5, 1, 2, 3});
+		EXPECT_EQ(res, 2);
+		res = obj.findShiftPosition(vector<int>{1, 2, 3, 4, 5});
+		EXPECT_EQ(res, 0);
 	}
 }
