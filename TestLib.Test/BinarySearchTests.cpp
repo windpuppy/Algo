@@ -86,7 +86,6 @@ namespace BinarySearchTests {
 		EXPECT_EQ(res, 4);
 	}
 
-
 	TEST(BinarySearchTests, ShiftPosition) {
 		auto res = obj.findShiftPosition(vector<int>{3, 4, 5, 1, 2});
 		EXPECT_EQ(res, 3);

@@ -189,4 +189,9 @@ namespace ArrayTests {
         auto res = obj.ThreeSum_ThreeArrays(vector<int>{1, 3, 5}, vector<int>{8, 2}, vector<int>{3}, 14);
         EXPECT_TRUE(res);
     }
+
+    TEST(ArrayTests, FourSum) {
+        auto res = obj.FourSum(vector<int>{1, 2, 2, 3, 4}, 9);
+        EXPECT_TRUE(res);
+    }
 }

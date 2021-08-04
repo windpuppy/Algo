@@ -468,21 +468,23 @@ public:
     // We look pair by pair
     // First we use double i,j for loops to get the first pair
     // For each (i, j), we look towards the left (in hashmap) to see if we can find a matching pair
+    // o o o o o o o o o o | o o o o o 
+    //     map<2sum, j'>  <==  i   j
     // Note: hashmap should only store the left-most pair of the same value, so that we don't wrongly use the same number twice
     // Time: O(n^2)
     bool FourSum(vector<int> nums, int target) {
         unordered_map<int, int> map; // <2sum, right index of that 2sum pair>
-        // pair(j, i) is considered the "right pair", we look to its left to find the other 2sum
-        for (int i = 0; i < nums.size(); ++i) {
-            for (int j = 0; j < i; ++j) {
-                int sum2 = nums[j] + nums[i];
+        // pair(i, j) is considered the "right pair", we look to its left to find the other 2sum
+        for (int j = 0; j < nums.size(); ++j) {
+            for (int i = 0; i < j; ++i) {
+                int sum2 = nums[i] + nums[j];
 
-                if (map.count(target - sum2) && map[target - sum2] < j)
+                if (map.count(target - sum2) && map[target - sum2] < i)
                     return true;
 
                 // for all the pairs with the same value, only store the left most pair
                 else if (!map.count(sum2))
-                    map[sum2] = i;
+                    map[sum2] = j;
             }
         }
         return false;
