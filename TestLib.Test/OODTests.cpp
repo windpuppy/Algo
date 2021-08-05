@@ -1,6 +1,7 @@
 #include "TestFixture.h"
 #include <OOD/LRUCacheInt.h>
 #include <OOD/LRUCache.h>
+#include <OOD/LFUCache.h>
 #include <OOD/TicTacToe.h>
 #include <OOD/AllOne.h>
 #include <OOD/FirstNonRepeating.h>
@@ -49,6 +50,23 @@ namespace OODTests {
 		EXPECT_EQ(val, 3);
 		EXPECT_TRUE(obj.get(4, val)); // [4 3]
 		EXPECT_EQ(val, 4);
+	}
+
+	TEST(OODTests, LFUCache) {
+		LFUCache obj(3);
+		obj.put("a", 1); // a1
+		obj.put("b", 2); // a1 b1 -- which means a freq 1, b freq 1
+		EXPECT_EQ(obj.get("a"), 1); // b1 | a2 -- which means b freq 1, a freq 2
+
+		obj.put("c", 3); // b1 c1 | a2
+		EXPECT_EQ(obj.get("b"), 2); // c1 | a2 b2 -- b goes to bucket 2
+		EXPECT_EQ(obj.get("c"), 3); // a2 b2 c2 -- c goes to bucket 2
+		EXPECT_EQ(obj.get("a"), 1); // b2 c2 | a3 -- a goes to bucket 3 
+
+		obj.put("d", 4); // d1 | c2 | a3 -- cache is full, so b gets evicted
+		EXPECT_EQ(obj.get("b"), -1); // b is gone 
+		EXPECT_EQ(obj.get("c"), 3); // d1 | a3 c3
+		EXPECT_EQ(obj.get("d"), 4); // d2 | a3 c3
 	}
 
 	TEST(OODTests, TicTacToe) {

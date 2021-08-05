@@ -13,16 +13,16 @@ using namespace std;
 //
 // head --- 1 --- 3 --- 5      frequencies            ===> Iit (more frequent)
 //          |     |     |                           ||
-//        (2,3) (4,3) (1,2)   (key,value) pair      Jit
-//                |                                 (newer)
-//              (3,7)
+//        (b,3) (d,3) (a,2)   (key,value) pair      Jit
+//                |                                 (more recent)
+//              (c,7)
 // Vertically, we contain a list of LRU nodes with list<pair<int,int>>, ie list of key-value pair. We call such a bucket.
 // Horizontally, we store a list of buckets.
 // both directions are doubly linked list.
 // Then we use a global unordered_map<int, pair<Iit, Jit>> to gain O(1) access of all nodes.
 //    where int is key, Iit and Jit are iterators along both directions
 
-typedef pair<int, int> Node; // <key, value>
+typedef pair<string, int> Node; // <key, value>
 
 struct Bucket {
 	int freq;
@@ -38,11 +38,12 @@ public:
 	LFUCache(int limit) : limit_(limit) {}
 
 	// O(1) Get the node, also increment its frequency
-	int get(int key) {
+	int get(string key) {
 		int val = -1;
 
 		if (map_.count(key)) {
-			map_[key] = promote(key); // promote the key to the next frequency bucket
+			auto it = promote(key); // promote the key to the next frequency bucket
+			map_[key] = it;
 			val = map_[key].second->second;
 		}
 
@@ -50,7 +51,7 @@ public:
 	}
 
 	// O(1) Set the node, also increment its frequency
-	void put(int key, int value) {
+	void put(string key, int value) {
 		if (limit_ <= 0) return;
 
 		if (!map_.count(key)) { //  need to worry about cache being full
@@ -64,17 +65,16 @@ public:
 		}
 	}
 
-
-
 private:
 
 	list<Bucket> buckets_;
 	int limit_;
-	unordered_map<int, pair<Iit, Jit>> map_;
+	unordered_map<string, pair<Iit, Jit>> map_;
 
-	// O(1) insert a brand new node (freq = 1)
-	// Returns its 2D position
-	pair<Iit, Jit> insert(int key, int val) {
+	// O(1) insert
+	// insert a brand new node (freq = 1)
+	// returns its 2D position, a 2D iterator
+	pair<Iit, Jit> insert(string key, int val) {
 		Iit i = buckets_.begin();
 		if (i == buckets_.end() || i->freq != 1) // insert if empty, or the first freq node is not 1 (if 1, just connect below)
 			i = buckets_.insert(i, Bucket(1));
@@ -83,7 +83,10 @@ private:
 		return { i, j };
 	}
 
-	// O(1) remove a node at the lowest frequency, least recent
+	// O(1) evict
+	// remove a node at the lowest frequency
+	// if there is a tie, remove the least recent
+	// if that frequency bucket becomes empty, remove the bucket as well
 	void evict() {
 		Iit i = buckets_.begin();
 		Jit j = i->nodes.begin();
@@ -94,9 +97,10 @@ private:
 			buckets_.erase(i);
 	}
 
-	// O(1) promote a node to the "frequency + 1" place (might or might not exist in the current frequency list)
-	// also put it at the bottom of that frequency bucket - because it's the newest!
-	pair<Iit, Jit> promote(int key) {
+	// O(1) promote
+	// promote a node to its next frequency bucket (that bucket might not exist in the current bucket chain)
+	// also put it at the bottom of that frequency bucket - most recent!
+	pair<Iit, Jit> promote(string key) {
 		Iit i;
 		Jit j;
 		std::tie(i, j) = map_[key];
@@ -105,17 +109,17 @@ private:
 		int val = j->second;
 		int freq = i->freq + 1;
 
-		// erase current node, if no more left in this frequency bucket, erase this bucket as well
+		// erase current node, and remove bucket if empty
 		i->nodes.erase(j);
 		if (i->nodes.empty())
 			buckets_.erase(i);
 
-		// relocate i: do we need a new frequency slot? (either at the end, or in the middle)
+		// relocate i: do we need a new frequency bucket? (either at the end, or in the middle)
 		i = iNext != buckets_.end() && iNext->freq == freq
 			? iNext
 			: buckets_.insert(iNext, Bucket(freq));
 
-		// relocate j: push to the bottom at the frequency bucket, because it's the newlest
+		// relocate j: push to the bottom at the frequency bucket, because it's the most recent
 		j = i->nodes.insert(i->nodes.end(), { key, val });
 		return { i, j };
 	}

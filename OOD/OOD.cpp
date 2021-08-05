@@ -115,23 +115,6 @@ int main()
 		auto s4 = ac.input('#');
 	}
 
-	// LFU Cache --------------------------------------------------------------
-	{
-		int val = 0;
-
-		LFUCache cache(2);
-		cache.put(1, 1);
-		cache.put(2, 2);
-		val = cache.get(1);
-		cache.put(3, 3);
-		val = cache.get(2);
-		val = cache.get(3);
-		cache.put(4, 4);
-		cache.get(1);
-		cache.get(3);
-		cache.get(4);
-	}
-
 	// Inheritence --------------------------------------------------------------
 	{
 		Parent* parent = new Parent(1, 2);
