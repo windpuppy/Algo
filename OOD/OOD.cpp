@@ -104,25 +104,6 @@ int main()
 		v = set.getRandom();
 	}
 
-	// First non-repeating ----------------------------------------------------
-	{
-		FirstNonRepeating fnr;
-		fnr.read('a');
-		char c = fnr.firstNonRepeating();
-		fnr.read('b');
-		c = fnr.firstNonRepeating();
-		fnr.read('c');
-		c = fnr.firstNonRepeating();
-		fnr.read('a');
-		c = fnr.firstNonRepeating();
-		fnr.read('c');
-		c = fnr.firstNonRepeating();
-		fnr.read('c');
-		c = fnr.firstNonRepeating();
-		fnr.read('b');
-		c = fnr.firstNonRepeating();
-	}
-
 	// Auto complete ----------------------------------------------------------
 	{
 		vector<string> sentences{ "i love you", "island", "iroman", "i love leetcode" };

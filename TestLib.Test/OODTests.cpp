@@ -2,6 +2,8 @@
 #include <OOD/LRUCacheInt.h>
 #include <OOD/LRUCache.h>
 #include <OOD/TicTacToe.h>
+#include <OOD/AllOne.h>
+#include <OOD/FirstNonRepeating.h>
 
 namespace OODTests {
 
@@ -51,11 +53,13 @@ namespace OODTests {
 
 	TEST(OODTests, TicTacToe) {
 		TicTacToe ttt(3);
+		// invalid - out of bound / invalid player
 		EXPECT_EQ(-1, ttt.move(0, -1, 1));
 		EXPECT_EQ(-1, ttt.move(-1, 1, 1));
 		EXPECT_EQ(-1, ttt.move(0, 3, 1));
 		EXPECT_EQ(-1, ttt.move(0, 0, 3));
 
+		// valid moves
 		EXPECT_EQ(0, ttt.move(0, 0, 1));
 		EXPECT_EQ(0, ttt.move(0, 1, 2));
 		EXPECT_EQ(0, ttt.move(1, 1, 1));
@@ -65,14 +69,49 @@ namespace OODTests {
 		EXPECT_EQ(0, ttt.move(2, 1, 1));
 		EXPECT_EQ(0, ttt.move(0, 2, 2));
 
-		EXPECT_EQ(-1, ttt.move(0, 0, 1)); // visited
+		// invalid - visited
+		EXPECT_EQ(-1, ttt.move(0, 0, 1));
 
+		// winner
 		EXPECT_EQ(1, ttt.move(1, 2, 1));
+	}
 
+	TEST(OODTests, AllOne) {
+		AllOne obj;
 
+		obj.inc("apple");
+		obj.inc("grape");
+		obj.inc("apple");
+		EXPECT_EQ(obj.getMaxKey(), "apple");
+		EXPECT_EQ(obj.getMinKey(), "grape");
 
+		obj.dec("non-existing");
+		obj.dec("grape");
+		EXPECT_EQ(obj.getMaxKey(), "apple");
+		EXPECT_EQ(obj.getMinKey(), "apple"); // "grape" is now gone
+	}
 
+	TEST(OODTests, FirstNonRepeating) {
+		FirstNonRepeating obj;
+		obj.read('a');
+		EXPECT_EQ(obj.firstNonRepeating(), 'a');
 
+		obj.read('b');
+		EXPECT_EQ(obj.firstNonRepeating(), 'a');
 
+		obj.read('c');
+		EXPECT_EQ(obj.firstNonRepeating(), 'a');
+
+		obj.read('a');
+		EXPECT_EQ(obj.firstNonRepeating(), 'b');
+
+		obj.read('c');
+		EXPECT_EQ(obj.firstNonRepeating(), 'b');
+
+		obj.read('c');
+		EXPECT_EQ(obj.firstNonRepeating(), 'b');
+
+		obj.read('b');
+		EXPECT_EQ(obj.firstNonRepeating(), ' ');
 	}
 }

@@ -26,37 +26,42 @@ using namespace std;
 
 class FirstNonRepeating {
 public:
-  FirstNonRepeating() {
-    nodes_.push_back(' ');
-  }
+	FirstNonRepeating() {
+		unique_.push_back(' ');
+	}
 
-  void read(char ch) {
-    if (repeated_.count(ch)) // repeating char, do nothing
-      return;
+	void read(char ch) {
+		// already in repeated group, do nothing
+		if (repeated_.count(ch))
+			return;
 
-    if (!nodesDict_.count(ch)) {
-      nodes_.push_back(ch);
-      nodesDict_[ch] = --nodes_.end();
-    }
-    else {
-      nodes_.erase(nodesDict_[ch]);
-      nodesDict_.erase(ch);
-      repeated_.insert(ch);
-    }
-  }
+		// not in repeated group? two cases
 
-  char firstNonRepeating() {
-    if (nodes_.size() == 1)
-      return ' ';
-    auto it = nodes_.begin();
-    advance(it, 1);
-    return *it;
-  }
+		// 1) brand new char
+		if (!uniqueMap_.count(ch)) {
+			unique_.push_back(ch);
+			uniqueMap_[ch] = --unique_.end();
+		}
+		// 2) flipping an unique char into repeated
+		else {
+			unique_.erase(uniqueMap_[ch]);
+			uniqueMap_.erase(ch);
+			repeated_.insert(ch);
+		}
+	}
+
+	char firstNonRepeating() {
+		if (unique_.size() == 1)
+			return ' ';
+		auto it = unique_.begin();
+		advance(it, 1);
+		return *it;
+	}
 
 private:
-  list<char> nodes_;
-  unordered_map<char, list<char>::iterator> nodesDict_;
-  unordered_set<char> repeated_;
+	list<char> unique_;
+	unordered_map<char, list<char>::iterator> uniqueMap_;
+	unordered_set<char> repeated_;
 };
 
 
