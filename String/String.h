@@ -230,16 +230,16 @@ public:
 
 		unsigned long long targetHash = getHashCode(small);
 
-		int slow = 0;
-		int fast = small.size() - 1;
-		unsigned long long currHash = getHashCode(large, slow, fast);
+		int i = 0;
+		int j = small.size() - 1;
+		unsigned long long currHash = getHashCode(large, i, j);
 		if (currHash == targetHash)
-			return slow;
+			return i;
 
-		for (fast = small.size(), slow = 1; fast < large.size(); fast++, slow++) {
-			updateHashCode(large, slow, fast, currHash);
+		for (j = small.size(), i = 1; j < large.size(); j++, i++) {
+			updateHashCode(large, i, j, currHash);
 			if (currHash == targetHash)
-				return slow;
+				return i;
 		}
 		return -1;
 	}
@@ -734,8 +734,8 @@ public:
 	// Given "cbaebabacd" and "abc", return starting indices of all anagrams of "abc" (0, 6 here)
 	// Solution: sliding window with a map<char, count>, and a match counter
 	//
-	// Note: this solution is NOT Robin-Karp! You can consider this as a variation of it,
-	//    but Robin-Karp re-computes the actual hash code of the sliding window everytime,
+	// Note: this solution is NOT Rabin-Karp! You can consider this as a variation of it,
+	//    but Rabin-Karp re-computes the actual hash code of the sliding window everytime,
 	//    and this solution does not (it only updates the HashMap based on the frequency change)
 	vector<int> allAnagrams(string large, string small) {
 		vector<int> res;
