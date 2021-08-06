@@ -83,4 +83,29 @@ namespace BFSTests {
 		auto res = obj.shortestDistanceTwoCells(grid); // 6
 		EXPECT_EQ(res, 6);
 	}
+
+	// Pacific   ~   ~    ~    ~
+	//       ~  1    2    2   (3) *
+	//       ~  3    2    3   (4) *
+	//       ~  2    4   (5)   3  *
+	//       ~ (6)  (7)   1    4  *
+	//          *    *    *    *  Atlantic
+	TEST(BFSTest, PacificAtlantic) {
+		vector<vector<int>> grid{
+			vector<int>{1, 2, 2, 3},
+			vector<int>{3, 2, 3, 4},
+			vector<int>{2, 4, 5, 3},
+			vector<int>{6, 7, 1, 4} };
+		auto res = obj.pacificAtlantic_dfs(grid);
+		vector<vector<int>> expected{
+			vector<int>{0, 3},
+			vector<int>{1, 3},
+			vector<int>{2, 2},
+			vector<int>{3, 0},
+			vector<int>{3, 1} };
+		EXPECT_EQ(res, expected);
+
+		res = obj.pacificAtlantic_bfs(grid);
+		EXPECT_EQ(res, expected);
+	}
 }

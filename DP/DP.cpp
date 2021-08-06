@@ -5,20 +5,6 @@ int main()
 {
 	DynamicProgramming obj;
 
-	// Largest square of ones
-	{
-		vector<vector<int>> matrix{
-		  {1, 0, 1, 1, 1},
-		  {1, 1, 1, 1, 1},
-		  {1, 1, 0, 1, 0},
-		  {1, 1, 1, 1, 1},
-		  {1, 1, 1, 0, 0} };
-		auto res = obj.largestSquareOfOnes(matrix);
-
-		vector<vector<int>> matrix2(5, { 0, 1, 1, 1, 1 });
-		res = obj.largestSquareOfOnes(matrix2);
-	}
-
 	// Largest rectangle in histogram
 	{
 		vector<int> input{ 2, 1, 2, 3, 1 };

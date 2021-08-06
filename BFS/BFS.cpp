@@ -104,7 +104,7 @@ int main()
 	// Pacific Atlantic flow
 	{
 		vector<vector<int>> grid{ {1,2,2,3},{3,2,3,4},{2,4,5,3},{6,7,1,4} };
-		auto res = obj.pacificAtlantic(grid);
+		auto res = obj.pacificAtlantic_dfs(grid);
 		res = obj.pacificAtlantic_bfs(grid);
 	}
 

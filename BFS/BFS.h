@@ -1010,7 +1010,7 @@ public:
 	//       ~ (6)  (7)   1    4  *
 	//          *    *    *    *  Atlantic
 	// DFS solution: O(4^(mn))
-	vector<vector<int>> pacificAtlantic(vector<vector<int>> grid) {
+	vector<vector<int>> pacificAtlantic_dfs(vector<vector<int>> grid) {
 		if (grid.empty() || grid[0].empty()) return vector<vector<int>>();
 		const int rows = grid.size();
 		const int cols = grid[0].size();

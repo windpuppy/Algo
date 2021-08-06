@@ -160,4 +160,19 @@ namespace DPTests {
 		auto res = obj.largestSubmatrixProduct(matrix);
 		EXPECT_DOUBLE_EQ(res, 115.2);
 	}
+
+	TEST(DPTests, LargestSquareOfOnes) {
+		vector<vector<int>> matrix{
+		  {1, 0, 1, 1, 1},
+		  {1, 1, 1, 1, 1},
+		  {1, 1, 0, 1, 0},
+		  {1, 1, 1, 1, 1},
+		  {1, 1, 1, 0, 0} };
+		auto res = obj.largestSquareOfOnes(matrix);
+		EXPECT_EQ(res, 2);
+
+		vector<vector<int>> matrix2(5, { 0, 1, 1, 1, 1 });
+		res = obj.largestSquareOfOnes(matrix2);
+		EXPECT_EQ(res, 4);
+	}
 }
